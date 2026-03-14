@@ -1,0 +1,747 @@
+\documentclass{jsarticle}
+\usepackage[margin=15mm]{geometry}
+\usepackage{amsmath,amssymb,amscd,accents,amsthm}
+\usepackage{multicol}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage[dvipdfmx]{color}
+\usepackage{ascmac,fancybox}
+\usepackage{latexsym}
+\usepackage{here}
+\usepackage{bm}
+\usepackage{float}
+\usepackage{color}
+\usepackage{comment}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{dsfont}
+\usepackage{booktabs}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\theoremstyle{definition}
+\newtheorem{defi}{定義}
+\newtheorem{example}{例}
+\newtheorem{lem}{補題}
+\newtheorem{result}{結果}
+\newtheorem{thm}{定理}
+\newtheorem{prop}{命題}
+\newtheorem{caution}{注意}
+\newtheorem{assumption}{仮定}
+\newtheorem{corollary}{系}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{breqn}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{arydshln}
+\newcommand{\argmax}{\mathop{\rm arg~max}}
+\newcommand{\argmin}{\mathop{\rm arg~min}}
+\usepackage{cite}
+\usepackage{enumitem} %enumerate環境において[start=3]で3からのナンバリングになる
+
+
+
+% 画像ファイルのパス指定
+\graphicspath{{./Images/}}
+
+% 画像貼付コマンド
+\begin{comment}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=**cm]{***.png}
+    \caption{キャプション}
+    \label{ラベル}
+\end{figure}
+\end{comment}
+
+% 表コマンド
+\begin{comment}
+\begin{table}[H]
+    \centering
+    \caption{キャプション}
+    \begin{tabular}{>{\centering\arraybackslash}m{3cm}|>{\centering\arraybackslash}m{3cm}>{\centering\arraybackslash}m{3cm}>{\centering\arraybackslash}m{3cm}  }
+        \hline
+        (0,0) & (0,1) & (0.2) & (0,3)\
+        \hline
+        (1,0) & (1,1) & (1,2) & (1,3)\
+        (2,0) & (2,1) & (2,2) & (2,3)\
+       \hline
+    \end{tabular}
+\end{table}
+\end{comment}
+
+\title{物体の領域と特徴の生成を表現した画像生成モデルを仮定した下でのベイズ最適なセグメンテーションと計算量削減アルゴリズム}
+\author{王 逸倫}
+\date{\today}
+\begin{document}
+\maketitle
+\section*{発表の目的}
+現在検討している画像の生成モデルおよび画像セグメンテーションの計算アルゴリズムの概要について報告することを目的とする．
+
+\tableofcontents
+
+\newpage
+
+\section{画像セグメンテーションにおける本研究の立ち位置}
+
+\subsection{画像セグメンテーションとは}
+
+画像セグメンテーションとは，画像をオブジェクトの領域ごとに分割すること，またはそれに加え，どの領域に何が写っているのかを推定する画像処理のことを指す．
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=12cm]{Pic1_(1).png}
+    \caption{画像セグメンテーションの処理例}
+    \label{Pic1}
+\end{figure}
+
+画像セグメンテーションの応用先は，衛星画像や運転風景，医用画像や動物写真など幅広い．しかし，対象物ごとに特徴が異なるため，対象物ごとに数理モデルもアルゴリズムも変わる．
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=12cm]{Pic2_(1).png}
+    \caption{画像セグメンテーションの応用例}
+    \label{Pic2}
+\end{figure}
+
+\subsection{画像セグメンテーション研究の整理結果と本研究の立ち位置}
+
+画像セグメンテーションの手法は，
+
+\begin{enumerate}
+  \item 画像を領域ごとに分割
+  \item 物体の特徴から物体を判別
+\end{enumerate}
+
+の2つのタスクに分解され，更にそれぞれのタスクに対して，
+
+\begin{enumerate}
+  \item (確率モデルを仮定しない)信号処理的手法
+  \item (確率モデルを仮定した)統計的手法
+\end{enumerate}
+
+の2種類のアプローチ方法がある．
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lcccc}
+    \toprule
+    & \multicolumn{2}{c}{物体の領域} & \multicolumn{2}{c}{物体の特徴} \\
+    & Split（過分割） & Merge（統合） & 境界の特徴 & 領域内部の特徴 \\
+    \midrule
+    信号処理的手法（確率モデル仮定なし） & (1) & (2) & (3) & (4) \\
+    統計的手法（確率モデル仮定あり） & (5) & (6) & (7) & (8) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+画像セグメンテーションの各手法は，対象とする物体や処理の目的に応じて，この表の各要素の組み合わせで表現できると解釈している．
+
+\begin{example}
+従来手法の一例およびそれらが持つ要素
+  \begin{itemize}
+    \item SLIC\cite{b10}: (1)クラスタリングによる小領域分割
+    \item Quadtree Split and Merge\cite{b11}: 四分木による(1)小領域分割および(2)領域統合
+    \item SLIC + CNN: (1)小領域分割 + (4)矩形領域内の特徴抽出
+    \item Gaussian Mixture Model (GMM)\cite{b26}: (8)各オブジェクトのピクセル値が正規分布に従うとするモデル化
+    \item Markov Random Field (MRF) \cite{b20}: (8)隣り合うピクセルの相関のモデル化 + GMM 
+    \item Object-based MRF \cite{b21,b22}: (1)クラスタリングによる小領域分割 + (6)隣り合う小領域の相関 + GMM(8)
+  \end{itemize}
+\end{example}
+
+しかし，確率モデルを仮定する研究の中で，特に物体の領域を生成するモデルを仮定した研究が存在しない．
+
+本研究は，領域および内部の特徴だけでなく，小領域の組み合わせで物体の領域を生成する確率モデルを画像に仮定する((5)+(6)+(7)+(8))ことで，領域および内部の特徴だけでなく，物体の領域に関してもベイズ最適な意思決定が実現可能になることが強みである．
+
+
+
+
+\section{画像に仮定する生成モデル}
+
+\subsection{ピクセルの座標に関するノーテーション}
+
+今回扱う二次元画像は，$D\times D$ 個のピクセルから構成されるものとする．ここでは，$D = 2^{d_{\mathrm{max}}}$ かつ $d_{\mathrm{max}}\in\mathbb{Z}_{\ge0}$ である．各ピクセルの座標を $(i,j)$ と表し，全ピクセルの座標集合を
+\begin{align}
+s_{\lambda} = \{(i,j)\mid 0\le i\le D,\;0\le j\le D,\;i,j\in\mathbb{Z}_{\ge0}\}
+\end{align}
+と定義する．
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{image_coords.png}
+    \caption{画像を構成するピクセルとその座標}
+    \label{image_coords}
+\end{figure}
+
+
+
+\subsection{確率的な画像生成モデル}
+
+今回は，特有の特徴を持つ領域の組み合わせで表現されるような画像に対して，
+
+\begin{enumerate}
+  \item オブジェクトの領域
+  \item オブジェクトの特徴
+\end{enumerate}
+
+を生成するような確率モデルを仮定する．
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{region_based_stochastic_model.png}
+    \caption{オブジェクトの領域および特徴を生成するモデル}
+    \label{region_based_stochastic_model}
+\end{figure}
+
+今回は，
+
+\begin{enumerate}
+  \item オブジェクトの領域: 四分木の葉ノードの組み合わせで構成
+  \item オブジェクトの特徴: オブジェクトごとに異なる確率分布によって発生
+\end{enumerate}
+
+するようなモデルとして画像の生成モデルを仮定する．
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=15cm]{quadtree_based_stochastic_model.png}
+    \caption{本研究で提案する生成モデル}
+    \label{quadtree_based_stochastic_model}
+\end{figure}
+
+\subsection{小領域(スーパーピクセル)生成モデル}
+
+\begin{defi}
+集合 $s_{\lambda}$ の部分集合は次のように表される．整数 $d$ を $0 \leq d \leq d_{\mathrm{max}}$ を満たすもの，および $x_d, y_d \in \{0,1\}$ とすると，
+$s_{(x_1,y_1)\dots(x_d,y_d)}$ を次のように定義する：
+\begin{align}
+s_{(x_1,y_1)\dots(x_d,y_d)}\coloneqq \Bigl\{(i,j)\in\mathbb{Z}^2 \Bigm|\sum_{d'=1}^d \frac{x_{d'}}{2^{d'}}\leq \frac{i}{2^{d_{\mathrm{max}}}}<　\Bigl(\sum_{d'=1}^d \frac{x_{d'}}{2^{d'}} + \frac{1}{2^d}\Bigr),\;
+\sum_{d'=1}^d \frac{y_{d'}}{2^{d'}}\leq \frac{j}{2^{d_{\mathrm{max}}}}<\Bigl(\sum_{d'=1}^d \frac{y_{d'}}{2^{d'}} + \frac{1}{2^d}\Bigr)\Bigr\}.
+\end{align}
+さらに，サイズが $D \times D$ 以下のすべてのブロックの集合は次のように表される：
+\begin{eqnarray}
+\mathcal{S}_{d_{\mathrm{max}}} \coloneqq \{s_{\lambda},\,s_{(00)},\,\dots,\,s_{(00)(00)},\dots,\,s_{(11)(11)\dots(11)}\}.
+\end{eqnarray}
+\end{defi}
+
+\begin{defi}
+$s \in \mathcal{S}_{d_{\mathrm{max}}}$ の深さを $d \coloneqq \mathrm{depth}(s)$ で表す．つまり，$\mathrm{depth}(s)$ は $|s|=4^{d_{\mathrm{max}}-d}$ を満たす $d$ を出力する．
+\end{defi}
+
+\begin{defi}
+$n$個目のデータに対応する四分木を$T_n$ とする．これは$\mathcal{S}_{d_{\mathrm{max}}}$ の要素の一部またはすべてをノードとして割り当てて構成する．$N$ 個の四分木の組を $\bm{T}^N=(T_1,\dots,T_N)$ と定義する．さらに，$L(T_n)$ を $T_n$ の葉ノード集合，$I(T_n)$ を内部ノード集合，$\mathcal{N}(T_n)=L(T_n)\cup I(T_n)$ をノード集合とする．$T_{\mathrm{max}}$ は最大深さの完全四分木を表し，$\mathcal{T}_{d_{\mathrm{max}}}$ は深さが $d_{\mathrm{max}}$ 以下のすべての四分木の集合を表す．
+\end{defi}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=13cm]{quadtree.png}
+  \caption{深さ $d_{\mathrm{max}}$ 以下のすべての四分木の集合} \label{quadtree}%ラベル
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=13cm]{t2.png}
+  \caption{四分木と領域分割の対応関係} \label{t2}%ラベル
+\end{figure}
+
+\begin{defi}
+$s$ の子ノード集合を $\mathrm{Ch}(s)$，祖先ノード集合を $\mathrm{An}(s)$ と表す．
+\end{defi}
+
+例えば，$d_{\mathrm{max}}=3$ のとき，$s_{(00)(10)}$ の子ノード集合は
+\begin{align*}
+\mathrm{Ch}(s_{(00)(10)}) &= \{s_{(00)(10)(00)},\,s_{(00)(10)(01)},\,s_{(00)(10)(10)},\,s_{(00)(10)(11)}\}, \\
+\mathrm{An}(s_{(00)(10)}) &= \{s_{(00)},\,s_{\lambda}\}.
+\end{align*}
+また，$s_{(00)(10)}$ の祖先ノード集合は $\mathrm{An}(s_{(00)(10)})=\{s_{(00)},\,s_{\lambda}\}$ である．\\
+
+各画像 $Y_n$ の四分木 $T_n$ は未知であるため，四分木に対して確率分布を仮定できる．
+
+\begin{assumption}
+  各四分木$T_n$ はパラメトリックな確率分布 $p(T;\bm{g})$ から生成されるものと仮定する．
+\end{assumption}
+
+
+\subsection{オブジェクトの領域モデル}
+生成された四分木 $T$ の葉ノード集合 $L(T)$ から，複数の結合領域 $R$ を生成するプロセスを定式化する．本研究では，距離依存中華料理店過程（ddCRP）\cite{b33}の枠組みを応用し，葉ノードの深さや位置関係に依存した，確率的な結合プロセスによって各領域を形成する．
+
+自然な画像領域を生成するために，領域の境界が滑らかであり，かつ均質な領域内部は大面積のノードで構成され，複雑な境界付近は小面積のノードで構成されるよう，生成モデルを設計する．
+
+ddCRPに基づく領域生成を考えるため，ノード間の結合のしやすさを表す非対称な親和度関数 $f(s, s')$ を設定する．
+
+\begin{example}
+隣接する葉ノード $s, s' \in L(T)$ 間の共有境界線の長さを $B(s, s')$，それぞれの深さを $\mathrm{depth}(s)$，$\mathrm{depth}(s')$ とする．
+\begin{align}
+f(s, s') = 
+\begin{cases} 
+\exp\Bigl(\beta B(s, s') + \eta (\mathrm{depth}(s) - \mathrm{depth}(s'))\Bigr) & (s \text{と} s' \text{が隣接する場合}) \\ 
+0 & (\text{隣接しない場合}) 
+\end{cases}
+\end{align}
+ここで，$\beta \geq 0$ は共有境界の長さに応じて境界の平滑性を高めるパラメータであり，$\eta \geq 0$ はノードサイズの階層性を制御するパラメータである．$\eta(\mathrm{depth}(s) - \mathrm{depth}(s'))$ の項により，微小な境界ノード（深さが深い）から巨大な内部ノード（深さが浅い）への結合確率が高くなる．
+\end{example}
+
+領域集合 $R$ は，各葉ノード $s \in \mathcal{L}(T)$ が，自身を含む新しい領域 $r$ の起点となるか，あるいは隣接する他のノード $s'$ と結合するかを独立に選択することで生成される．
+この選択を表す変数を $c_s \in  \mathcal{L}(T)$ とすると，生成モデルにおいて各 $c_s$ は以下の確率に従ってサンプリングされる：
+\begin{align}
+p(c_s = s' \mid T; \alpha, \beta, \eta) \propto 
+\begin{cases} 
+\frac{f(s, s')}{\alpha + \sum_{s" \in  \mathcal{L}(T) \setminus \{s\}} f(s, s")} & (s \neq s') \\ 
+\frac{\alpha}{\alpha +  \sum_{s" \in  \mathcal{L}(T) \setminus \{s\}} f(s, s")} & (s = s') 
+\end{cases}
+\end{align}
+ここで $\alpha > 0$ は，ノードが自身を参照（$c_s = s$）し，新しい独立した領域 $r$ を発生させる確率をあらわすパラメータである．
+
+以上から，全葉ノード$s\in \mathcal{L}(T)$における結合選択$\boldsymbol{c} = \{c_s\}_{s \in  \mathcal{L}(T)}$の同時確率は以下のように記述できる．
+\begin{align}
+ p(\boldsymbol{c} \mid T; \alpha, \beta, \eta) = \prod_{s \in  \mathcal{L}(T)}  p(c_s \mid T; \alpha, \beta, \eta)
+\end{align}　
+
+
+全葉ノードの結合選択 $\boldsymbol{c} = \{c_s\}_{s \in  \mathcal{L}(T)}$ が生成されると，これらを有効辺とするグラフが形成される．このグラフにおいて，方向を無視して互いに繋がっているノードの集合が領域を形成する．結合$\bm{c}$から得られる領域分割を$R(\bm{c})$と定義する．
+
+\subsection{オブジェクトの特徴の生成モデル}
+
+$Y_n=(y_{n,(i,j)})_{D\times D}\in\mathcal{Y}^{D\times D}$ を第 $n$ 番目の画像データとする．ここで座標 $(i,j)$ に対応する第 $n$ 番目の画像のピクセル値を $y_{n,(i,j)}$ と定義し，ピクセル値の集合を $\mathcal{Y}$ で表す．例えば RGB 画像は$y_{n,(i,j)} = \bigl(y_{n,(i,j)}^{\mathrm{R}},\,y_{n,(i,j)}^{\mathrm{G}},\,y_{n,(i,j)}^{\mathrm{B}}\bigr)
+\in \mathcal{Y} = \{0,1,\dots,255\}^3$
+で表される．さらに $N$ 枚の画像の組を $\bm{Y}^N=(Y_1,Y_2,\dots,Y_N)$ と定義する．
+
+同様に $X_n=(x_{n,(i,j)})_{D\times D}\in\mathcal{X}^{D\times D}$ を第 $n$ 番目のラベル行列とする．ここで座標 $(i,j)$ に対応する第 $n$ 番目の画像のラベル値を $x_{n,(i,j)}$ と定義し，ラベル値の集合を $\mathcal{X}$ で表す．例えば二値ラベル分類ではラベル集合を$\mathcal{X} = \{0,1\}$
+と表す．さらに $N$ 枚のラベル行列の組を $\bm{X}^N=(X_1,X_2,\dots,X_N)$ と定義する．
+
+関数定義など特定のデータインスタンスが問題とならない一般的な表現においては，データインデックス $n$ を付さない $Y,X$ や $y_{(i,j)},x_{(i,j)}$ といった表記を用いる．
+
+\subsubsection{オブジェクトラベルの生成モデル}
+
+
+本節では，領域ごとにラベルが1つ割り当てられるような確率モデルを仮定する．
+
+\begin{assumption}
+  領域 $r\in R(\bm{c})$ 内のピクセルには同一のラベル $x_{n,r}$ が割り当てられる．
+  \begin{eqnarray}
+    (i,j),(i',j')\in r\in R(\bm{c}),\quad x_{n,(i,j)}=x_{n,(i',j')}\coloneqq x_{n,r}.
+  \end{eqnarray}
+\end{assumption}
+
+
+\begin{assumption}
+  ラベル $x_{n,r}$ は確率分布 $p(X\mid R(\bm{c}))$ に従って生成されるものと仮定する．
+  \begin{eqnarray}
+    p(X\mid T)=\prod_{r\in R}p(x_r\mid R(\bm{c})).
+  \end{eqnarray}
+  さらに，任意の $R(\bm{c}), R'(\bm{c}), r\in R(\bm{c}) \cap R'(\bm{c})$ に対して，以下を仮定する：
+  \begin{eqnarray}
+    p(x_r\mid R(\bm{c}))=p(x_r\mid R'(\bm{c}))\coloneqq p(x_r).
+  \end{eqnarray}
+  よって，
+  \begin{align}
+    p(X\mid R(\bm{c}))=\prod_{r\in R(\bm{c})}p(x_r).
+  \end{align}
+\end{assumption}
+
+領域$r$に対してラベル$x$が割り当てられる確率を表す$p(x|r)$は，領域に依存するモデルとして表現される．つまり，画像内でのオブジェクトの大きさ，形，位置などの特徴からオブジェクトのラベルが生成される過程をモデル化している．
+
+\begin{example}
+    領域 $r$ に対してラベルの生起確率$p(x_r)$ を，領域の幾何学的特徴量$\bm{\phi}(r)$の分布から決定する．
+    
+幾何的特徴量は、推定の対象とする物体に応じて設計することが可能である．例えば，領域$r$の面積，周の長さ，円形度を特徴量とする場合，
+\begin{eqnarray}
+  \bm{\phi}(r) = (1, \phi_1(r), \phi_2(r), \phi_3(r)) = (1, \text{Area}(r), \text{Perm}(r), \text{Circ}(r))
+\end{eqnarray}
+という3次元の特徴量が設計できる．ここで，領域の面積$\text{Area}(r)$は
+\begin{eqnarray}
+\mathrm{Area}(r) &\coloneqq& |r|
+\end{eqnarray}
+とする．また，ピクセル$(i,j)$に対する上下左右の近傍ピクセルの集合を
+\begin{eqnarray}
+\mathcal{N}_4(i,j) &\coloneqq& \{(i+1,j),(i-1,j),(i,j+1),(i,j-1)\}
+\end{eqnarray}
+と定め，離散境界辺集合とその基数（周長）を
+\begin{eqnarray}
+\partial r &\coloneqq& \{((i,j),(i',j'))\ \big|\ (i,j)\in r,\ (i',j')\notin r,\ (i',j')\in \mathcal{N}_4(i,j)\}\\
+\mathrm{Prm}(r) &\coloneqq& |\partial r|
+\end{eqnarray}
+円形度（コンパクトさ）の離散版は
+\begin{eqnarray}
+\mathrm{Cir}(r) &\coloneqq& \frac{4\pi \mathrm{Area}(r)}{\mathrm{Prm}(r)^2}
+\end{eqnarray}
+と定義する．
+
+そして，これらの特徴量ベクトル $\bm{\phi}(r)$ に対して，各ラベル $x \in \mathcal{X}$ に固有の重みベクトル $\bm{\omega}_x$ をパラメータとして持つソフトマックス関数を適用し、ラベルのカテゴリカルパラメータを決定する．($\bm{\omega} = \{\bm{\omega}_x\}_{x\in \mathcal{X}}$)
+
+\begin{eqnarray}
+  p(x_r;\bm{\omega}) =\frac{\exp \left( {\bm{\omega}_{x}}^{\top} \bm{\phi}(r) \right)}{\sum_{x\in X} \exp \left( {\bm{\omega}_{x}}^{\top} \bm{\phi}(r) \right)}
+\end{eqnarray}
+
+\end{example}
+
+
+\subsubsection{ピクセル値の生成モデル}
+
+領域 $r$ 内のピクセル値 $Y_{n,r}$ は，クラス $x_r$ ごとに異なる確率分布に従うと仮定するモデルとして表現される．
+
+\begin{assumption}
+  画像 $Y_n$ の領域 $r$ 内のピクセル値 $Y_{n,r}=(y_{n,(i,j)})_{(i,j)\in r}$ は，確率分布 $p(Y_r\mid x_{r};\bm{\theta})$ に従うと仮定する：
+  \begin{eqnarray}
+    p(Y_r\mid x_{r};\bm{\theta}) = p(Y_r;\bm{\theta}_{x_{r}}).
+  \end{eqnarray}
+  これは，同一ノード内のピクセル値が同一の分布から生成されることを意味する．
+  ここで，$\bm{\theta}=(\bm{\theta}_{0},\dots,\bm{\theta}_{|\mathcal{X}|-1})\in\Theta^{|\mathcal{X}|}$ である．
+  \label{assumption4}
+\end{assumption}
+
+領域 $r$ 内のピクセル値 $Y_r$ は，オブジェクトごとに異なる確率分布から生成されるモデルとして表現される．
+すなわち，画像内のオブジェクトの色やテクスチャの特徴をモデル化している．
+
+\begin{example}
+
+各ラベル$x_r\in \mathcal{X}$ごと，色に関して特徴があるとき，各ピクセルごとにピクセル値は独立な正規分布から生成されるとして仮定することができる．
+
+\begin{eqnarray}
+  && p(Y_r\mid x_r;\bm{\theta})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)};\bm{\theta}_{x_r}\bigr) \\
+  && \undertilde{y}_{(i,j)}=
+      \underbracket{\boldsymbol{\mu}_{x_r}}_{\mbox{\scriptsize オブジェクト特有の色}}
+      +
+      \underbracket{\undertilde{\epsilon}_{(i,j)}}_{\mbox{\scriptsize ノイズ項}}\\
+  && \undertilde{\epsilon}_{(i.j)} \sim N^3(0_{\text{v}}, \Sigma_{x_r})
+\end{eqnarray}
+
+ここで，$\mathcal{Y}=\{0,1,\dots,255\}^3$,
+$\bm{\theta}_{x_r}=(\bm{\mu}_{x_r},\,\Sigma_{x_r})$，
+$\bm{\mu}_{x_r}=(\mu^R_{x_r},\,\mu^G_{x_r},\,\mu^B_{x_r})$，
+$\Sigma_{x_r}: 3\times3正方行列$
+とする．
+  
+\end{example}
+
+
+\begin{example}
+各ラベル$x_r\in \mathcal{X}$ごと，色，テクスチャに関して特徴があるとき，各ピクセルごとにピクセル値は自己回帰モデルから生成されるとして仮定することができる．
+
+\begin{eqnarray}
+  && p(Y_r\mid x_r;\bm{\theta})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)}|\{(y_{(i+\Delta i,j+\Delta j)}\}_{(\Delta i, \Delta j)\in \Omega}; \bm{\theta}_{x_r}\bigr) \\
+  && \undertilde{y}_{(i,j)}=
+      \underbracket{\boldsymbol{\mu}_{x_r}}_{\mbox{\scriptsize オブジェクト特有の色}}
+      +
+      \underbracket{\sum_{(\Delta i, \Delta j) \in \{(\Delta i', \Delta j')\in \Omega| (i+\Delta i',j+\Delta j')\in r \}}  a_{(\Delta i,\Delta j)}^{(x_r)} (y_{(i+\Delta i,j+\Delta j)} - \boldsymbol{\mu}_{x_r})}_{\mbox{\scriptsize オブジェクト特有のテクスチャ}}
+      +
+      \underbracket{\undertilde{\epsilon}_{(i,j)}}_{\mbox{\scriptsize ノイズ項}}\\
+  && \undertilde{\epsilon}_{(i.j)} \sim N^3(0_{\text{v}}, \Sigma_{x_r})
+\end{eqnarray}
+
+ここで，$\mathcal{Y}=\{0,1,\dots,255\}^3$,
+$\bm{\theta}_{x_r}=(\bm{\mu}_{x_r}, A_{x_r}, \Sigma_{x_r})$，
+$\bm{\mu}_{x_r}=(\mu^R_{x_r},\,\mu^G_{x_r},\,\mu^B_{x_r})$，
+$A_{x_r} = \{a_{(\Delta i,\Delta j)}^{(x_r)}\}_{(\Delta i, \Delta j)\in \Omega}$,
+$\Sigma_{x_r}: 3\times3正方行列$
+とする．
+
+また，$\Omega$は近傍領域を表す座標の差分集合である．
+
+
+\begin{enumerate}
+  \item \cite{b27, b28}(逐次型) ある正の整数$P, Q$を指定したとき，
+  \begin{eqnarray}
+    \Omega = \{(\Delta i, \Delta j)| -P\leq \Delta i \leq 0, -Q \leq \Delta j \leq 0\} \backslash \{(0,0)\}
+  \end{eqnarray}
+  \item \cite{b29}(逐次型) 
+  \begin{eqnarray}
+    \Omega = \{(-2,0), (-1,0), (-1, -1). (0, -1), (1, -1). (0, -2)\}
+  \end{eqnarray}
+  \item \cite{b30}(同時型) ある正の整数$P, Q$を指定したとき，
+  \begin{eqnarray}
+    \Omega = \{(\Delta i, \Delta j)| -P\leq \Delta i \leq P, -Q \leq \Delta j \leq Q\} \backslash \{(0,0)\}
+  \end{eqnarray}
+\end{enumerate}
+
+近傍領域の定義の仕方によって，ピクセル値が1ピクセルごとに生成される逐次型自己回帰モデルとなるのか，それとも隣接するピクセル値が互いに依存する同時型確率場モデルとなるのかが変わる．
+
+\end{example}
+
+\section{問題設定}
+問題設定をまとめたものを以下に記載する．
+
+
+\begin{itembox}[l]{問題設定}%枠囲み，[]内はタイトルの位置，{}はタイトル%
+  \fbox{目的} 
+    \begin{itemize}
+      \item 2次元の画像データが与えられた時，各ピクセルがどのオブジェクトに属するかを推定する．
+    \end{itemize}
+  
+  \fbox{既知} 
+    \begin{itemize}
+      \item $d_{\mathrm{max}}$\quad(すなわち，画像サイズ$2^{d_{\mathrm{max}}}\times2^{d_{\mathrm{max}}}$および四分木集合$\mathcal{T}_{d_{\mathrm{max}}}$が既知となる．)
+      \item $N$枚の学習データ$(\bm{Y}^N, \bm{X}^N)$から推定した，ラベル$X$およびピクセル値$Y$の確率分布それぞれに対応するパラメータ$\hat{\bm{g}}, \hat{\bm{\omega}},\hat{\bm{\theta}}$ (パラメータ推定の詳細は本レジュメでは省略)
+      \item パラメータ$\alpha, \beta, \eta$ (ユーザー設定)
+      \item 推定対象の画像データ$Y_{N+1}$
+      \item ピクセル値集合$\mathcal{Y}$
+      \item ラベルの集合$\mathcal{X}$
+      \item ピクセル値が従う分布のパラメータの集合$\Theta$
+    \end{itemize}
+    
+  \fbox{未知} 
+    \begin{itemize}
+      \item 推定対象の画像データに対応するラベル$X_{N+1}$，領域$R_{N+1}$，四分木$T_{N+1}$
+      \item 統合領域が従う確率分布のパラメータ$\alpha(s, s')$: 今回は分析者が設定するものとする．
+    \end{itemize}
+
+  \fbox{仮定}
+    \begin{itemize}
+      \item $T\sim p(T;\bm{g})$
+      \item $\bm{c} \sim p(\bm{c}|T;\alpha, \beta, \eta)$
+      \item $X \sim p(X|R(\bm{c});\bm{\omega})$
+      \item $(i,j),(i',j')\in r\in R(\bm{c}), x_{n,(i,j)}=x_{n,(i',j')}\coloneqq x_{n,r}.$
+      \item $Y \sim p(Y|X; \bm{\theta})$
+    \end{itemize}
+    
+  \fbox{決定関数}
+    \begin{itemize}
+      \item $\delta_{(i,j)} : \mathcal{Y}^{2^{d_{\text{max}}}\times 2^{d_{\text{max}}}} \rightarrow \mathcal{X},\quad {Y}_{N+1}\mapsto \hat{x}_{N+1,(i,j)}$
+      \item $\bm{\delta}=(\delta_{(i,j)})_{0 \leq i, j <2^{d_{\text{max}}}} : \mathcal{Y}^{2^{d_{\text{max}}}\times 2^{d_{\text{max}}}} \rightarrow \mathcal{X}^{2^{d_{\text{max}}}\times 2^{d_{\text{max}}}},\quad {Y}_{N+1}\mapsto \hat{X}_{N+1}$
+    \end{itemize}
+
+
+  \fbox{評価基準} 
+    \begin{itemize}
+      \item 損失関数を各ピクセルごとの0-1誤差損失の平均(Overall Loss)
+            \begin{eqnarray}
+        L(X_{N+1}, \bm{\delta}(Y_{N+1})) = \frac{1}{D\times D} \sum_{(i,j)\in s_{\lambda}} \mathds{1} \{x_{N+1, (i,j)} \neq \delta_{(i,j)}(Y_{N+1})\}.
+      \end{eqnarray}
+        とした時のベイズ危険関数
+      \begin{eqnarray}
+        BR(\bm{\delta}) =&& \sum_{T_{N+1}\in \mathcal{T}_{d_{\text{max}}}} p(T_{N+1};\bm{g}) \sum_{\bm{c}_{N+1}} p(\bm{c}_{N+1}|T_{N+1})\sum_{X\in\mathcal{X}^{D\times D}} p(X_{N+1}|R(\bm{c}_{N+1})) \nonumber\\
+        &&\sum_{Y_{N+1}\in \mathcal{Y}^{D\times D}} p(Y_{N+1}|X_{N+1}) L(X_{N+1}, \bm{\delta}(Y_{N+1})).
+      \end{eqnarray}
+    \end{itemize}
+
+  \fbox{目標}
+  \begin{itemize}
+  \item ベイズ危険関数$BR(\bm{\delta})$を最小にするようなベイズ最適な決定$\bm{\delta}^*$を求める．
+  \end{itemize}
+  
+\end{itembox}
+
+\begin{prop}
+ベイズ最適な決定は，ベイズリスクを最小化する決定 $\delta^*$ であり，以下のベイズ最適決定関数によって計算できる．
+\begin{align}
+&\hat{x}_{N+1,(i,j)} = \delta^*_{(i,j)}(Y_{N+1}) \nonumber\\
+&= \argmax_{x_{(i,j)}\in\mathcal{X}}
+  \sum_{T\in\mathcal{T}_{d_{\mathrm{max}}}}
+    p(T\mid Y_{N+1})
+  \sum_{\bm{c}}
+    p(\bm{c}\mid T, Y_{N+1})
+    \,p(x_{(i,j)}\mid R(\bm{c}), Y_{N+1}).
+  \label{BayesOptimalEstimation2}
+\end{align}
+\label{proposition3}
+\end{prop}
+
+しかし，上式の総和部分は四分木集合 $\mathcal{T}_{d_{\mathrm{max}}}$ および各 $\mathcal{R}_T$ の要素ごとに計算する必要があるため，画像サイズ $D\times D$ に対して指数時間の計算量が発生する．次節では計算量削減のための効率的アルゴリズムを提案する．
+
+
+\section{ベイズ最適解の計算量削減のための近似アルゴリズム}
+
+\subsection{四分木$T$の事後分布計算}
+
+まず，四分木$T$ の特別な事前分布を以下のように仮定する \cite{b1}：
+\begin{assumption}
+  各ノード $s \in \mathcal{S}_{d_{\mathrm{max}}}$ に対してパラメータ $g_s\in[0,1]$ を設定する．
+  さらに，四分木$T$ の事前分布は次式で表される：
+  \begin{eqnarray}
+    p(T;\bm{g})=\prod_{s\in \mathcal{L}(T)}(1-g_s)\prod_{s'\in \mathcal{I}(T)}g_{s'}.
+  \end{eqnarray}
+  パラメータ $g_s$ はノード $s$ で分岐する確率を表す．また，$\mathrm{depth}(s)=d_{\mathrm{max}}$ のとき $g_s=0$ とする．
+  \label{prior_dist_T}
+\end{assumption}
+
+続いて，次のように再帰関数を定義する：
+\begin{defi}
+  $s\in\mathcal{S}_{d_{\mathrm{max}}}$ に対して，再帰関数 $q(Y_{s}\mid g_s)$ を次のように定義する \cite{b1}：\\
+  \begin{eqnarray}
+    q(Y_{s}\mid g_s) \coloneqq
+    \begin{dcases}
+      \frac{1}{|\mathcal{X}|} \sum_{x \in \mathcal{X}} \prod_{(i,j) \in s} p(y_{(i,j)} \mid x; \bm{\theta}_x), & \mathrm{depth}(s) = d_{\mathrm{max}},\\
+      (1-g_{s})\,\frac{1}{|\mathcal{X}|} \sum_{x \in \mathcal{X}} \prod_{(i,j) \in s} p(y_{(i,j)} \mid x; \bm{\theta}_x) + g_{s}\,\displaystyle\prod_{s'\in \mathrm{Ch}(s)}q(Y_{s'}\mid g_{s'}), & \mathrm{depth}(s) < d_{\mathrm{max}}.
+    \end{dcases}
+  \end{eqnarray}
+\end{defi}
+
+さらに，四分木の事後分布は次のように導出できる \cite{b1}：
+\begin{thm}
+  画像 $Y$ が与えられたとき，四分木$T$ の事後分布は次のようになる：
+  \begin{align}
+    p(T\mid Y;\bm{g})
+    = \prod_{s\in\mathcal{L}(T)}(1 - g_{s\mid Y})
+      \;\prod_{s\in\mathcal{I}(T)} g_{s\mid Y},
+    \label{m's posterior}
+  \end{align}
+  ここで，
+  \begin{eqnarray}
+    g_{s\mid Y}\coloneqq
+    \begin{dcases}
+      g_{s}, & \mathrm{depth}(s) = d_{\mathrm{max}},\\[6pt]
+      \displaystyle\frac{g_{s}
+        \displaystyle\prod_{s'\in \mathrm{Ch}(s)}q(Y_{s'}\mid g_{s'})}
+        {q(Y_s\mid g_s)}, & \mathrm{depth}(s) < d_{\mathrm{max}}.
+    \end{dcases}
+  \end{eqnarray}
+  \label{posterior_dist_T}
+\end{thm}
+
+\subsection{事後確率最大木のもとでギブスサンプリングする方法}
+
+\begin{enumerate}
+  \item $\displaystyle \hat{T} = \argmax_{T \in \mathcal{T}_{d_{\mathrm{max}}}} p(T|Y)$ により，事後確率最大の四分木を計算する．計算アルゴリズムは以下の通り．
+    \begin{itemize}
+      \item 全ノード$s\in T_{\mathrm{max}}$ に対してフラグ変数$f_s = 0$を設定． 
+      \item 以下の再帰アルゴリズムでフラグ変数を更新．
+      \begin{eqnarray}
+        \psi(s) &=& \max \left\{ (1 - g_{s \mid Y})\frac{1}{|\mathcal{X}|} \sum_{x \in \mathcal{X}} \prod_{(i,j) \in s} p(y_{(i,j)} \mid x; \bm{\theta}_x), \ g_{s \mid Y} \prod_{s' \in \mathrm{Ch}(s)} \psi(s') \right\}, \\
+        f_s &=& 
+        \begin{dcases}
+          1, & \text{if } (1 - g_{s \mid Y})\frac{1}{|\mathcal{X}|} \sum_{x \in \mathcal{X}} \prod_{(i,j) \in s} p(y_{(i,j)} \mid x; \bm{\theta}_x) < g_{s \mid Y} \prod_{s' \in \mathrm{Ch}(s)} \psi(s'), \\
+          0, & \text{otherwise}.
+        \end{dcases}
+      \end{eqnarray}
+      \item 以下の方法で構築された四分木が$\hat{T}$である．
+      \begin{enumerate}
+        \item 探索の起点として，現在のノードを $s = s_\lambda$ とする．
+        \item $f_s = 1$ の場合：ノード $s$ を $\hat{T}$ の内部ノード集合 $\mathcal{I}(\hat{T})$ に追加する．そして，すべての子ノード $s' \in \mathrm{Ch}(s)$ に対して再帰的に本ステップの探索を適用する．
+        \item $f_s = 0$ の場合：ノード $s$ を $\hat{T}$ の葉ノード集合 $\mathcal{L}(\hat{T})$ に追加し，そのノード以降の探索（分割）を停止する．
+      \end{enumerate}
+  \end{itemize}
+\item \textbf{結合変数の初期化}\\
+  事後確率最大の四分木 $\hat{T}$ を構成する葉ノード集合 $\mathcal{L}(\hat{T})$ の各ノード $s$ に対して，初期の結合先 $c_s \in \mathcal{L}(\hat{T})$ を割り当てる．例えば，初期状態としてすべてのノードが自身を参照する（$c_s = s$）自己結合を設定する．これにより，結合の集合 $\bm{c} = \{c_s\}_{s \in \mathcal{L}(\hat{T})}$ から初期の領域分割 $R(\bm{c})$ が一意に定まる．
+
+  \item \textbf{ラベルを周辺化したギブスサンプリング}\\
+  結合状態$\bm{c}$の事後分布$p(\bm{c}\mid T, Y)$の計算が困難であるが，葉ノード$s$以外のすべての結合状態$\bm{c}_{-s} \coloneqq \{c_s\}_{s\in\mathcal{L}(T)\backslash \{s\}}$と観測画像 $Y$ が与えられた下での条件付き確率$p(c_s\mid \bm{c}_{-s},T, Y)$は計算可能であるため，各葉ノード $s \in \mathcal{L}(\hat{T})$ の結合先 $c_s$ を逐次的にサンプリングすることで，事後分布を近似計算する．
+
+  \begin{defi}
+    あるノード$s$が，結合状態$\bm{c}$の下で属している領域を返す関数を$r_s(\bm{c})$とする．
+  \end{defi}
+
+  各葉ノード $s \in \mathcal{L}(\hat{T})$に対して，以下の手順でサンプリングを行う．
+  \begin{enumerate}
+    \item \textbf{結合の削除:} $\bm{c}_{-s}$は固定した状態で，現在の結合 $c_s$ を一旦グラフから削除する．
+    \item \textbf{新たな結合のサンプリング:} $p(c_s = s' \mid \bm{c}_{-s}, Y, \hat{T}) $に基づき，新たな結合先 $c_s = s'$ をサンプリングする．
+  \end{enumerate}
+
+\begin{screen}
+\begin{prop}
+  各候補 $s'$ が選ばれる条件付き確率は，尤度比を用いて以下のように計算される：
+\begin{align}
+p(c_s = s' \mid \bm{c}_{-s}, Y, \hat{T}) \propto
+\begin{dcases}
+p(c_s = s' \mid \hat{T}; \alpha, \beta, \eta) \frac{p(Y_{r_s(\bm{c}_{-s}) \cup r_{s'}(\bm{c}_{-s})})}{p(Y_{r_s(\bm{c}_{-s})}) p(Y_{r_{s'}(\bm{c}_{-s})})}, & (r_s(\bm{c}_{-s}) \neq r_{s'}(\bm{c}_{-s}) \text{ の場合}) \\
+p(c_s = s' \mid \hat{T}; \alpha, \beta, \eta), & (r_s(\bm{c}_{-s}) = r_{s'}(\bm{c}_{-s}) \text{ の場合})
+\end{dcases}
+\end{align}
+   ここで，領域 $r$ における画像データ $Y_r$ の周辺尤度 $p(Y_r)$ は次のように計算できる：
+  \begin{equation}
+    p(Y_r;\bm{\theta}, \bm{\omega}) = \sum_{x_r \in \mathcal{X}} p(x_r;\bm{\omega}) p(Y_r \mid x_r; \theta_x)
+  \end{equation}
+\end{prop}
+\end{screen}
+
+\begin{proof}
+ベイズの定理より，
+\begin{align}
+  p(c_s=s' \mid \bm{c}_{-s}, \hat{T}, Y) \propto p(c_s=s' \mid \hat{T}) p(Y \mid c_s=s', \bm{c}_{-s}, \hat{T})
+\end{align}
+
+ここで，新しい結合$c_s = s'$を追加した時の全体の結合状態を$\bm{c} = \bm{c}_{-s} \cup \{c_s=s'\}$ とすると，尤度項$p(Y \mid c_s=s', \bm{c}_{-s}, \hat{T})$は次のように書ける．
+\begin{align}
+  p(Y \mid c_s=s', \bm{c}_{-s}, \hat{T}) = \prod_{k \in R(\bm{c})} p(Y_k)
+\end{align}
+ここで，$R(\bm{c})$は$R(\bm{c}_{-s})$から以下のように構成することができる．
+\begin{enumerate}
+  \item \textbf{ケース1:}  $r_s(\bm{c}_{-s}) \neq r_{s'}(\bm{c}_{-s})$の場合
+  
+  2つの異なる領域が結合されるため，$R(\bm{c})$は以下のようになる．
+  \begin{align}
+    R(\bm{c}) = \Bigl( R(\bm{c}_{-s}) \setminus \{r_s(\bm{c}_{-s}), r_{s'}(\bm{c}_{-s})\} \Bigr) \cup \{r_s(\bm{c}_{-s}) \cup r_{s'}(\bm{c}_{-s})\}
+  \end{align}
+  以下，$r=r_s(\bm{c}_{-s})$, $r' = r_{s'}(\bm{c}_{-s})$としたとき，尤度は次のように計算できる．
+  \begin{align}
+  \prod_{k \in R(\bm{c})} p(Y_k) = p(Y_{r \cup r'}) \prod_{k \in R(\bm{c}_{-s}) \setminus \{r, r'\}} p(Y_k)
+  \end{align}
+  よって，
+  \begin{align}
+  p(c_s=s' \mid \dots)  &\propto p(c_s=s' \mid \hat{T}) p(Y_{r \cup r'})  \prod_{k \in R(\bm{c}_{-s})} p(Y_k) \\
+  &\propto p(c_s=s' \mid \hat{T}) \frac{p(Y_{r \cup r'})  \prod_{k \in R(\bm{c}_{-s})} p(Y_k)}{p(Y_r)p(Y_{r'})\prod_{k \in R(\bm{c}_{-s})} p(Y_k)} \\
+  &= p(c_s=s' \mid \hat{T}) \frac{p(Y_{r \cup r'})}{p(Y_r) p(Y_{r'})}
+  \end{align}
+  
+  \item \textbf{ケース2:}  $r_s(\bm{c}_{-s}) = r_{s'}(\bm{c}_{-s})$の場合
+
+  結合状態$\bm{c}_{-s}$の段階で$s$と$s'$が同じ領域に属しているか，もしくは$s' = s(c_s = s; リンク先として自身を選択する)$の時，新たな結合によって領域の形状は変わらない．
+  \begin{align}
+    R(\bm{c}) = R(\bm{c}_{-s})
+  \end{align}
+  以下，$r=r_s(\bm{c}_{-s})$としたとき，尤度は次のように計算できる．
+  \begin{align}
+  \prod_{k \in R(\bm{c})} p(Y_k) = p(Y_{r}) \prod_{k \in R(\bm{c}_{-s}) \setminus \{r\}} p(Y_k)
+  \end{align}
+  よって，
+  \begin{align}
+  p(c_s=s' \mid \dots)  &\propto p(c_s=s' \mid \hat{T}) p(Y_{r})  \prod_{k \in R(\bm{c}_{-s})} p(Y_k) \\
+  &\propto p(c_s=s' \mid \hat{T}) \frac{p(Y_{r})  \prod_{k \in R(\bm{c}_{-s})} p(Y_k)}{p(Y_r)\prod_{k \in R(\bm{c}_{-s})} p(Y_k)} \\
+  &= p(c_s=s' \mid \hat{T})
+  \end{align}
+\end{enumerate}
+\end{proof}
+
+
+  以上の処理を全葉ノードに対して反復し，事後分布への収束を図る．毎ステップ画像全体の尤度を再計算するのではなく，$r_s(\bm{c}_{-s}) \neq r_{s'}(\bm{c}_{-s})$の場合のみ尤度比を計算するため，計算コストを大幅に削減できる．
+
+  \item \textbf{事後確率に基づく各領域のラベル推定（MAP推定）}\\
+  ギブスサンプリングが収束し，最終的な領域分割 $R(\hat{\bm{c}})$ が確定した後，各領域 $r \in R(\hat{\bm{c}})$ に割り当てる最適なラベル $\hat{x}_r$ を推定する．領域 $r$ におけるラベル $x$ の事後確率はベイズの定理より $p(x_r = x \mid Y_r, r) \propto p(x_r;\bm{\omega}) p(Y_r \mid x; \theta_x)$ に比例する．したがって，事後確率を最大化するラベル（MAP推定値）は次式で求められる：
+  \begin{equation}
+    \hat{x}_r = \argmax_{x \in \mathcal{X}} \left( \ln p(x_r;\bm{\omega}) + \sum_{(i,j) \in r} \ln p(y_{(i,j)} \mid x; \theta_x) \right)
+  \end{equation}
+  得られた $\hat{x}_r$ を領域 $r$ 内の全ピクセル $(i,j) \in r$ に割り当てることで，ベイズ最適解に近似した最終的なセグメンテーション結果 $\hat{X}_{N+1}$ を得る．
+\end{enumerate}
+
+
+
+\bibliographystyle{junsrt}
+\begin{thebibliography}{00}
+  \bibitem{b1} Y. Nakahara and T. Matsushima, ``A Stochastic Model for Block Segmentation of Images Based on the Quadtree and the Bayes Code for It," Entropy, vol.23, no.8, 2021. https://doi.org/10.3390/e23080991
+  \bibitem{b2} Y. Nakahara, S. Shota, A. Kamatsuka and T. Matsushima, ``Probability Distribution on Full Rooted Trees," Entropy, vol.24, no.3, 2022. https://doi.org/10.3390/e24030328
+  \bibitem{b3} James O. Berger, ``Statistical Decision Theory and Bayesian Analysis," Springer, 1985.
+  \bibitem{b4} X.Gao, L.Liu, H.Gong, ``A Robust and Effective Network for Farmland Segmentation of Satellite Imagery,” Journal of Physics: Conference Series, volume 1651, the 2020 second International Conference on Artificial Intelligence Technologies and Application (ICAITA) 2020 21-23 August 2020, Dalian, China
+  \bibitem{b5} H. Lu, H. Wang, Z. Ma, Y. Ren, W. Fu, Y. Shan, S. Hu, G. Zhang, Z. Meng, ``Farmland boundary extraction based on the AttMobile-DeeplabV3+ network and least squares fitting of straight lines," Front. Plant Sci. 14:1228590, 2023, doi: 10.3389/fpls.2023.1228590
+  \bibitem{b6} C. Benedek, X. Descombes and J. Zerubia, ``\hyphenation{Build-ing} \hyphenation{De-vel-op-ment} Monitoring in \hyphenation{Mul-ti-tem-po-ral} Remotely Sensed Image Pairs with Stochastic Birth-Death Dynamics," in IEEE Transactions on Pattern Analysis and Machine Intelligence, vol.34, no.1, pp.33-50, Jan.2012, doi:10.1109/TPAMI.2011.94.
+  \bibitem{b7} Y. Shi, L. Cui, Z. Qi, F. Meng and Z. Chen, ``Automatic Road Crack Detection Using Random Structured Forests," in IEEE Transactions on Intelligent Transportation Systems, vol. 17, no. 12, pp. 3434-3445, Dec. 2016, doi: 10.1109/TITS.2016.2552248.
+  \bibitem{b8} M. Kim, D. Kim, S. Lee, ``Face recognition using the embedded HMM with second-order block-specific observations," Pattern Recognition, Volume 36, Issue 11, pp. 2723-2735,ISSN 0031-3203, 2003, https://doi.org/10.1016/S0031-3203(03)00137-7.
+  \bibitem{b9} S. Pereira, A. Pinto, V. Alves and C. A. Silva, ``Brain Tumor Segmentation Using Convolutional Neural Networks in MRI Images," in IEEE Transactions on Medical Imaging, vol. 35, no. 5, pp. 1240-1251, May 2016, doi: 10.1109/TMI.2016.2538465.
+  \bibitem{b10} R. Achanta, A. Shaji, K. Smith, A. Lucchi, P. Fua and S. Süsstrunk, ``SLIC Superpixels Compared to State-of-the-Art Superpixel Methods," in IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 34, no. 11, pp. 2274-2282, Nov. 2012, doi: 10.1109/TPAMI.2012.120.
+  \bibitem{b11}  G. Fu, H. Zhao, C. Li, and L. Shi, ``Segmentation for high-resolution optical remote sensing imagery using improved quadtree and region adjacency graph technique," Remote Sens., vol. 5, no. 7, pp. 3259–3279, Jul. 2013, doi: 10.3390/rs5073259.
+  \bibitem{b12} K. Lu, Y. Sun, S. H. Ong, ``Dual-Resolution U-Net: Building Extraction from Aerial Images," 2018 24th International Conference on Pattern Recognition (ICPR), Beijing, China, 2018, pp. 489-494, doi: 10.1109/ICPR.2018.8545190. 
+  \bibitem{b13} H. Wang, F. Miao, ``Building extraction from remote sensing images using deep residual U-Net," European Journal of Remote Sensing\_55\_(1), 71-85, 2022, https://doi.org/10.1080/22797254.2021.2018944
+  \bibitem{b14} S. Kosub, ``A note on the triangle inequality for the jaccard distance," arXiv preprint arXiv:1612.02696, 2016.
+  \bibitem{b15} A. J. Alberg, J. W. Park, B. W. Hager, M. V. Brock, M. Diener‐West, ``The use of `overall accuracy' to evaluate the validity of screening or diagnostic tests," Journal of General Internal Medicine, 19 (2004): 460-465. https://doi.org/10.1111/j.1525-1497.2004.30091.x.
+  \bibitem{b17} T. F. Chan and L. A. Vese, ``Active contours without edges," in IEEE Transactions on Image Processing, vol. 10, no. 2, pp. 266-277, Feb. 2001, doi: 10.1109/83.902291.
+  \bibitem{b18} J. An, Y. Shi, Y. Han, M. Sun, and Q. Tian, ``Extract and Merge: Superpixel Segmentation with Regional Attributes," in Proceedings of the European Conference on Computer Vision (ECCV), 2020.
+  \bibitem{b19} L. Li, J. Yao, J. Tu, X. Lu, K. Li and Y. Liu, ``Edge-based split-and-merge superpixel segmentation," 2015 IEEE International Conference on Information and Automation, Lijiang, China, 2015, pp. 970-975, doi: 10.1109/ICInfA.2015.7279427.
+  \bibitem{b20} Y. Zhang, M. Brady and S. Smith, ``Segmentation of brain MR images through a hidden Markov random field model and the expectation-maximization algorithm," in IEEE Transactions on Medical Imaging, vol. 20, no. 1, pp. 45-57, Jan 2001, doi: 10.1109/42.906424.
+  \bibitem{b21} C. Zheng, X. Pan, X. Chen, X. Yang, X. Xin, and L. Su, ``An object-based Markov random field model with anisotropic penalty for semantic segmentation of high spatial resolution remote sensing imagery," Remote Sens., vol. 11, no. 23, p. 2878, Dec. 2019, doi: 10.3390/rs11232878.
+  \bibitem{b22} H. Yao, X. Wang, L. Zhao, M. Tian, Z. Jian, L. Gong, and B. Li, ``An object-based Markov random field with partition-global alternately updated for semantic segmentation of high spatial resolution remote sensing image," Remote Sens., vol. 14, no. 1, p. 127, Dec. 2022, doi: 10.3390/rs14010127.
+  \bibitem{b23} D. Tsai, W. L. Chen, ``Coffee plantation area recognition in satellite images using Fourier transform," Computers and Electronics in Agriculture, Volume 135, 2017, Pages 115-127, ISSN 0168-1699, https://doi.org/10.1016/j.compag.2016.12.020.
+  \bibitem{b24} Hui Cheng and C. A. Bouman, ``Multiscale Bayesian segmentation using a trainable context model," in IEEE Transactions on Image Processing, vol. 10, no. 4, pp. 511-525, April 2001, doi: 10.1109/83.913586.
+  \bibitem{b25} P. Viola and M. Jones, ``Rapid object detection using a boosted cascade of simple features,” Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition. CVPR 2001, Kauai, HI, USA, 2001, pp. I-I, doi: 10.1109/CVPR.2001.990517.
+  \bibitem{b26} L. Gupta and T. Sortrakul, "A Gaussian-mixture-based image segmentation algorithm," Pattern Recognition, vol. 31, no. 3, pp. 315–325, 1998, doi: 10.1016/S0031-3203(97)00043-5.
+  \bibitem{b16} European Space Agency, "IKONOS ESA archive," Version 1.0, 2016.
+  \bibitem{b27} Oe, Shunichiro. "Texture segmentation method by using two-dimensional AR model and Kullback information." Pattern Recognition 26.2 (1993): 237-244.
+  \bibitem{b28} Cariou, Claude, and Kacem Chehdi. "Unsupervised texture segmentation using 2-D AR modeling and a stochastic version of the EM procedure." 1996 8th European Signal Processing Conference (EUSIPCO 1996). IEEE, 1996.
+  \bibitem{b29} Y. Nakahara and T. Matsushima, "Autoregressive Image Generative Models with Normal and t-distributed Noise and the Bayes Codes for Them," 2020 International Symposium on Information Theory and Its Applications (ISITA), Kapolei, HI, USA, 2020, pp. 81-85.
+  \bibitem{b30} Wang, Yao-Wei, et al. "A new method for classification and segmentation of the textured images." Picture Coding Symposium. PCS2003, Palais du Grand Large Saint-Malo, FRANCE, Apr. 23-25. 2003.
+  \bibitem{b31} Wooten ZT, Yu C, Court LE, Peterson CB. Predictive modeling using shape statistics for interpretable and robust quality assurance of automated contours in radiation treatment planning. Pac Symp Biocomput. 2023;28:395-406. PMID: 36540994; PMCID: PMC10091357.
+  \bibitem{b32} M. E. Leventon, W. E. L. Grimson and O. Faugeras, "Statistical shape influence in geodesic active contours," Proceedings IEEE Conference on Computer Vision and Pattern Recognition. CVPR 2000 (Cat. No.PR00662), Hilton Head, SC, USA, 2000, pp. 316-323 vol.1, doi: 10.1109/CVPR.2000.855835.
+  \bibitem{b33} Ghosh, S., Ungureanu, A., Sudderth, E.,Blei, D., "Spatial distance dependent Chinese restaurant processes for image segmentation." Advances in Neural Information Processing Systems, 24.,2011
+  \end{thebibliography}
+
+\end{document}
+
+
