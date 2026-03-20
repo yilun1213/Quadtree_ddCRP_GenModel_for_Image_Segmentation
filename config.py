@@ -41,7 +41,7 @@ class Config:
 
 # DATASET_DIR = "./generated_data"
 # DATASET_DIR = "./syn_data"
-DATASET_DIR = "./IKONOS"
+DATASET_DIR = "./generated_data2"
 
 
 config = Config(

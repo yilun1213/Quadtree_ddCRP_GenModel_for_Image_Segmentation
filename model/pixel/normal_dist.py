@@ -67,22 +67,34 @@ def generate_rgb_from_labels(label_image, region_dict, theta, width, height, see
 
     means, covs = _parse_mean_and_cov(theta)
     label_num, channels = means.shape
+    if "label_set" in theta and isinstance(theta["label_set"], list):
+        label_values = [int(v) for v in theta["label_set"]]
+    else:
+        label_values = list(range(label_num))
 
-    if channels != 3:
-        raise ValueError(f"normal_dist expects 3 channels (RGB), got {channels}")
+    if len(label_values) != label_num:
+        raise ValueError("theta['label_set'] length must match theta['mean'] rows")
+
+    if channels not in (1, 3):
+        raise ValueError(f"normal_dist supports channels=1 or 3, got {channels}")
 
     out = np.zeros((label_image.shape[0], label_image.shape[1], channels), dtype=np.float64)
 
-    for label in range(label_num):
-        mask = label_image == label
+    for label_idx, label_value in enumerate(label_values):
+        mask = label_image == label_value
         n = int(np.count_nonzero(mask))
         if n == 0:
             continue
-        cov = covs[label] + 1e-6 * np.eye(channels)
-        samples = np.random.multivariate_normal(mean=means[label], cov=cov, size=n)
+        cov = covs[label_idx] + 1e-6 * np.eye(channels)
+        samples = np.random.multivariate_normal(mean=means[label_idx], cov=cov, size=n)
         out[mask] = samples
 
-    return np.clip(out, 0, 255).astype(np.uint8)
+    out_u8 = np.clip(out, 0, 255).astype(np.uint8)
+
+    # generate.py saves an RGB image; when parameters are 1ch, replicate to 3ch.
+    if channels == 1:
+        return np.repeat(out_u8, 3, axis=2)
+    return out_u8
 
 
 def param_est(train_image_dir, train_label_dir, out_param_json, Omega):

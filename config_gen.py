@@ -18,6 +18,8 @@ class DataSavingConfig:
 @dataclass(frozen=True)
 class LabelModelConfig:
     label_num: int
+    label_set: List[int]
+    label_value_set: List[int]
     model: Callable
     param: Any
 
@@ -39,6 +41,10 @@ class PixelModelConfig:
 class Config:
     train: DataSavingConfig
     test: DataSavingConfig
+    param_dir: str
+    label_param_filename: str
+    pixel_param_filename: str
+    branch_probs_filename: str
     seed: Optional[int]
     quadtree_config: QuadtreeModelConfig
     affinity_func: Callable  # 親和度関数 f(s, s', adjacency_dict, **affinity_params)
@@ -49,7 +55,11 @@ class Config:
 
 
 # 設定
-DIR = "./generated_data"
+DIR = "./generated_data2"
+PARAM_DIRNAME = "true_param"
+LABEL_PARAM_FILENAME = "label_param.json"
+PIXEL_PARAM_FILENAME = "pixel_param.json"
+BRANCH_PROBS_FILENAME = "branch_probs.json"
 LABEL_FEATURE_NAMES = [
     "log_area",
     "log_perimeter",
@@ -57,20 +67,24 @@ LABEL_FEATURE_NAMES = [
 ]
 
 def load_config() -> Config:
-    param_dir = os.path.join(DIR, "true_param")
+    param_dir = os.path.join(DIR, PARAM_DIRNAME)
     
     # Load branch_probs
-    with open(os.path.join(param_dir, "branch_probs.json"), "r") as f:
+    with open(os.path.join(param_dir, BRANCH_PROBS_FILENAME), "r") as f:
         branch_data = json.load(f)
         branch_probs = branch_data["branch_probs"]
         
     # Load label_param
-    with open(os.path.join(param_dir, "label_param.json"), "r") as f:
+    with open(os.path.join(param_dir, LABEL_PARAM_FILENAME), "r") as f:
         label_data = json.load(f)
         
     # Load normal-distribution parameters
-    with open(os.path.join(param_dir, "norm_param.json"), "r") as f:
+    with open(os.path.join(param_dir, PIXEL_PARAM_FILENAME), "r") as f:
         norm_param_data = json.load(f)
+
+    label_num = int(label_data["label_num"])
+    label_set = [int(v) for v in label_data.get("label_set", list(range(label_num))) ]
+    label_value_set = [int(v) for v in label_data.get("label_value_set", label_set)]
 
     train_config = DataSavingConfig(
         num=100, dir=os.path.join(DIR, "train_data"))
@@ -85,13 +99,15 @@ def load_config() -> Config:
     )
 
     label_config = LabelModelConfig(
-        label_num=2,
+        label_num=label_num,
+        label_set=label_set,
+        label_value_set=label_value_set,
         model=label_model,
         param={
             "image_size": int(2**quadtree_config.max_depth),
             "feature_names": label_data.get("feature_names", LABEL_FEATURE_NAMES),
-            "weights": label_data["weights"][:2],
-            "bias": label_data["bias"][:2],
+            "weights": label_data["weights"],
+            "bias": label_data["bias"],
         },
     )
 
@@ -116,6 +132,10 @@ def load_config() -> Config:
     return Config(
         train=train_config,
         test=test_config,
+        param_dir=param_dir,
+        label_param_filename=LABEL_PARAM_FILENAME,
+        pixel_param_filename=PIXEL_PARAM_FILENAME,
+        branch_probs_filename=BRANCH_PROBS_FILENAME,
         seed=1,
         quadtree_config=quadtree_config,
         affinity_func=affinity_function,

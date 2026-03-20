@@ -1,6 +1,6 @@
 # generate.py
 
-from config_gen import Config, DIR, load_config
+from config_gen import Config, load_config
 import os
 import sys
 import numpy as np
@@ -260,18 +260,23 @@ def save_region_growing_image(max_depth: int, region_dict: dict[int, set[tuple[i
 def label_gen(config: Config, region_dict: dict[int, set[tuple[int, int]]], label_filename: str, label_vis_filename: str):
     size = 2 ** config.quadtree_config.max_depth
     label_image = np.zeros((size, size), dtype=np.uint8)
-    label_vis_image = np.zeros((size, size, 3), dtype=np.uint8)
+    label_vis_image = np.zeros((size, size), dtype=np.uint8)
+    label_set = config.label_config.label_set
+    label_value_map = {
+        int(label): int(value)
+        for label, value in zip(config.label_config.label_set, config.label_config.label_value_set)
+    }
     for idx, region in region_dict.items():
         probs = config.label_config.model.label_prior(
             region=region, param=config.label_config.param)
-        label = int(np.random.choice(
-            range(config.label_config.label_num), p=probs))
+        chosen_idx = int(np.random.choice(range(config.label_config.label_num), p=probs))
+        label = int(label_set[chosen_idx])
+        vis_value = int(label_value_map.get(label, label))
         for coords in region:
             i = int(coords[0])
             j = int(coords[1])
             label_image[i][j] = label
-            label_vis_image[i][j] = int(
-                label * 255 / (config.label_config.label_num - 1))
+            label_vis_image[i][j] = vis_value
     Image.fromarray(label_image).save(label_filename)
     Image.fromarray(label_vis_image).save(label_vis_filename)
     return label_image
@@ -325,34 +330,43 @@ def generate_data(config: Config, itr_num: int, out_dir: str):
 
 
 def main():
+    # 設定の読み込み（config_gen.py 側でパラメータディレクトリ/ファイル名を管理）
+    try:
+        config_gen = load_config()
+    except FileNotFoundError as e:
+        print("エラー: パラメータファイルが見つかりません。")
+        print(str(e))
+        sys.exit(1)
+
     # パラメータファイルの確認
-    true_param_dir = os.path.join(DIR, "true_param")
-    required_files = ["norm_param.json", "branch_probs.json", "label_param.json"]
+    param_dir = config_gen.param_dir
+    required_files = [
+        config_gen.pixel_param_filename,
+        config_gen.branch_probs_filename,
+        config_gen.label_param_filename,
+    ]
     missing_files = []
-    
-    if not os.path.exists(true_param_dir):
-         missing_files = required_files
+
+    if not os.path.exists(param_dir):
+        missing_files = required_files
     else:
         for f in required_files:
-            if not os.path.exists(os.path.join(true_param_dir, f)):
+            if not os.path.exists(os.path.join(param_dir, f)):
                 missing_files.append(f)
-                
+
     if missing_files:
         print("エラー: 以下のパラメータファイルが見つかりません。")
-        print(f"検索ディレクトリ: {true_param_dir}")
+        print(f"検索ディレクトリ: {param_dir}")
         for f in missing_files:
             print(f"- {f}")
-        print("\nパラメータを指定するためのJSONファイルを作成してください。")
-        print("\n[norm_param.json の例]")
-        print('{"mean": [[80, 80, 80], [180, 180, 180]], "std": [[20, 20, 20], [20, 20, 20]]}')
+        print("\ntrain.py 出力形式に合わせたJSONを配置してください。")
+        print("\n[pixel_param.json の例]")
+        print('{"label_set": [0, 1], "channels": 3, "mean": [[80, 80, 80], [180, 180, 180]], "variance": [[[400,0,0],[0,400,0],[0,0,400]], [[400,0,0],[0,400,0],[0,0,400]]], "std": [[20, 20, 20], [20, 20, 20]]}')
         print("\n[branch_probs.json の例]")
         print('{"branch_probs": [1.0, 0.67, ...]}')
         print("\n[label_param.json の例]")
-        print('{"label_num": 2, "categorical_probs_list": [[0.5, 0.5], ...]}')
+        print('{"label_num": 2, "label_set": [0, 1], "label_value_set": [0, 255], "weights": [[...], [...]], "bias": [...], "image_size": 128, "feature_names": ["log_area", "log_perimeter", "circularity"]}')
         sys.exit(1)
-
-    # 設定の読み込み
-    config_gen = load_config()
 
     ensure_split_dirs(config_gen.train.dir)
     ensure_split_dirs(config_gen.test.dir)
