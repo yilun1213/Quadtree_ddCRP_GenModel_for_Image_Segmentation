@@ -11,8 +11,20 @@ import model.region.affinity as affinity_module
 
 @dataclass(frozen=True)
 class DataSavingConfig:
-    num: int            # 生成枚数
     dir: str            # 出力先ディレクトリ
+    quadtree_num: int
+    regions_per_quadtree: int = 1
+    labels_per_region: int = 1
+    images_per_label: int = 1
+
+    @property
+    def total_images(self) -> int:
+        return (
+            self.quadtree_num
+            * self.regions_per_quadtree
+            * self.labels_per_region
+            * self.images_per_label
+        )
 
 
 @dataclass(frozen=True)
@@ -55,7 +67,7 @@ class Config:
 
 
 # 設定
-DIR = "./generated_data2"
+DIR = "./generated_data3"
 PARAM_DIRNAME = "true_param"
 LABEL_PARAM_FILENAME = "label_param.json"
 PIXEL_PARAM_FILENAME = "pixel_param.json"
@@ -87,10 +99,20 @@ def load_config() -> Config:
     label_value_set = [int(v) for v in label_data.get("label_value_set", label_set)]
 
     train_config = DataSavingConfig(
-        num=100, dir=os.path.join(DIR, "train_data"))
+        dir=os.path.join(DIR, "train_data"),
+        quadtree_num=100,
+        regions_per_quadtree=1,
+        labels_per_region=1,
+        images_per_label=1,
+    )
 
     test_config = DataSavingConfig(
-        num=2,  dir=os.path.join(DIR, "test_data"))
+        dir=os.path.join(DIR, "test_data"),
+        quadtree_num=3,
+        regions_per_quadtree=3,
+        labels_per_region=2,
+        images_per_label=2,
+    )
 
     quadtree_config = QuadtreeModelConfig(
         model=quadtree_model,
@@ -118,15 +140,15 @@ def load_config() -> Config:
     
     # 親和度関数の設定（論文 2.4 節の例 2）
     # 利用可能な親和度関数：
-    # - affinity_boundary_and_depth: 共有境界線の長さと深さ差に基づく（推奨）
-    # - affinity_boundary_depth_and_large_pair: 上記 + 大ノード同士ボーナス
-    # - affinity_target_shallow_exp: リンク先が浅いほど（大きいほど）優遇する単純モデル
-    # - affinity_boundary_only: 共有境界線の長さのみに基づく
-    # - affinity_constant: 一定の親和度（テスト用）
-    affinity_function = affinity_module.affinity_boundary_and_depth
+    # - log_affinity_boundary_and_depth: 共有境界線の長さと深さ差に基づく（推奨）
+    # - log_affinity_boundary_depth_and_large_pair: 上記 + 大ノード同士ボーナス
+    # - log_affinity_target_shallow_exp: リンク先が浅いほど（大きいほど）優遇する単純モデル
+    # - log_affinity_boundary_only: 共有境界線の長さのみに基づく
+    # - log_affinity_constant: 一定の親和度（テスト用）
+    affinity_function = affinity_module.log_affinity_boundary_and_depth
     affinity_function_params = {
-        "beta": 0.5,  # 共有境界長 B(s, s') の重み
-        "eta": 1.5,    # depth(s) - depth(s') の重み
+        "beta": 8.0,  # 共有境界長 B(s, s') の重み
+        "eta": 6.0,    # depth(s) - depth(s') の重み
     }
 
     return Config(
@@ -139,7 +161,7 @@ def load_config() -> Config:
         seed=1,
         quadtree_config=quadtree_config,
         affinity_func=affinity_function,
-        alpha=0.001,  # ddCRP パラメータ（小さくすると結合しやすく、新領域が減る）
+        alpha=0.00000001,  # ddCRP パラメータ（小さくすると結合しやすく、新領域が減る）
         affinity_params=affinity_function_params,
         label_config=label_config,
         pixel_config=pixel_config,

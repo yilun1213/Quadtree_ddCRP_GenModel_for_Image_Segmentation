@@ -1,6 +1,6 @@
 # generate.py
 
-from config_gen import Config, load_config
+from config_gen import Config, DataSavingConfig, load_config
 import os
 import sys
 import numpy as np
@@ -257,7 +257,7 @@ def save_region_growing_image(max_depth: int, region_dict: dict[int, set[tuple[i
     Image.fromarray(image).save(filename)
 
 
-def label_gen(config: Config, region_dict: dict[int, set[tuple[int, int]]], label_filename: str, label_vis_filename: str):
+def sample_label_images(config: Config, region_dict: dict[int, set[tuple[int, int]]]) -> tuple[np.ndarray, np.ndarray]:
     size = 2 ** config.quadtree_config.max_depth
     label_image = np.zeros((size, size), dtype=np.uint8)
     label_vis_image = np.zeros((size, size), dtype=np.uint8)
@@ -277,55 +277,106 @@ def label_gen(config: Config, region_dict: dict[int, set[tuple[int, int]]], labe
             j = int(coords[1])
             label_image[i][j] = label
             label_vis_image[i][j] = vis_value
+    return label_image, label_vis_image
+
+
+def save_label_images(
+    label_image: np.ndarray,
+    label_vis_image: np.ndarray,
+    label_filename: str,
+    label_vis_filename: str,
+) -> None:
     Image.fromarray(label_image).save(label_filename)
     Image.fromarray(label_vis_image).save(label_vis_filename)
-    return label_image
 
 
-def generate_data(config: Config, itr_num: int, out_dir: str):
-    seed = config.seed + itr_num if config.seed is not None else None
+def _seed_with_offset(seed: int | None, offset: int) -> int | None:
+    if seed is None:
+        return None
+    return seed + offset
 
-    print(f"Generating: quadtree {itr_num}")
-    qt = config.quadtree_config.model.QuadTree(
-        max_depth=config.quadtree_config.max_depth,
-        branch_prob=config.quadtree_config.branch_probs,
-        seed=seed
-    )
-    all_leaves = qt.get_leaves()
-    quadtree_colors = save_quadtree_image(
-        all_leaves=all_leaves, max_depth=config.quadtree_config.max_depth, filename=f"{out_dir}/quadtrees/{itr_num: 04d}.png")
 
-    print(f"Generating: region {itr_num}")
-    adjacency_dict = precompute_adjacencies(all_leaves)
-    region_dict = ddcrp_region_generation(
-        all_leaves=all_leaves,
-        adjacency_dict=adjacency_dict,
-        affinity_func=config.affinity_func,
-        alpha=config.alpha,
-        **config.affinity_params
-    )
-    print(f"  -> Generated {len(region_dict)} regions from {len(all_leaves)} leaves")
-    save_region_growing_image(
-        max_depth=config.quadtree_config.max_depth,
-        region_dict=region_dict,
-        filename=f"{out_dir}/regions/{itr_num: 04d}.png"
+def _sample_stem(quadtree_idx: int, region_idx: int, label_idx: int, image_idx: int) -> str:
+    return f"qt{quadtree_idx:04d}_rg{region_idx:04d}_lb{label_idx:04d}_im{image_idx:04d}"
+
+
+def generate_split_data(config: Config, split_cfg: DataSavingConfig, split_name: str) -> None:
+    quadtree_num = split_cfg.quadtree_num
+    total_images = split_cfg.total_images
+    generated_images = 0
+
+    print(
+        f"[{split_name}] quadtree={quadtree_num}, regions/quadtree={split_cfg.regions_per_quadtree}, "
+        f"labels/region={split_cfg.labels_per_region}, images/label={split_cfg.images_per_label}, "
+        f"total_images={total_images}"
     )
 
-    print(f"Generating: label {itr_num}")
-    label_array = label_gen(config=config, region_dict=region_dict,
-                            label_filename=f"{out_dir}/labels/{itr_num: 04d}.png", label_vis_filename=f"{out_dir}/labels/visualize/{itr_num: 04d}.png")
+    for qt_idx in range(quadtree_num):
+        qt_seed = _seed_with_offset(config.seed, qt_idx)
 
-    print(f"Generating: image {itr_num}")
-    rgb = config.pixel_config.model.generate_rgb_from_labels(
-        label_image=label_array,
-        region_dict=region_dict,
-        theta=config.pixel_config.param,
-        width=2**config.quadtree_config.max_depth,
-        height=2**config.quadtree_config.max_depth,
-        seed=seed
-    )
+        print(f"Generating: quadtree {split_name} qt={qt_idx}")
+        qt = config.quadtree_config.model.QuadTree(
+            max_depth=config.quadtree_config.max_depth,
+            branch_prob=config.quadtree_config.branch_probs,
+            seed=qt_seed
+        )
+        all_leaves = qt.get_leaves()
+        adjacency_dict = precompute_adjacencies(all_leaves)
 
-    Image.fromarray(rgb).save(f"{out_dir}/images/{itr_num: 04d}.png")
+        for rg_idx in range(split_cfg.regions_per_quadtree):
+            print(f"Generating: region {split_name} qt={qt_idx} rg={rg_idx}")
+            region_dict = ddcrp_region_generation(
+                all_leaves=all_leaves,
+                adjacency_dict=adjacency_dict,
+                affinity_func=config.affinity_func,
+                alpha=config.alpha,
+                **config.affinity_params
+            )
+            print(f"  -> Generated {len(region_dict)} regions from {len(all_leaves)} leaves")
+
+            for lb_idx in range(split_cfg.labels_per_region):
+                print(f"Generating: label {split_name} qt={qt_idx} rg={rg_idx} lb={lb_idx}")
+                label_array, label_vis_array = sample_label_images(config=config, region_dict=region_dict)
+
+                for im_idx in range(split_cfg.images_per_label):
+                    stem = _sample_stem(
+                        quadtree_idx=qt_idx,
+                        region_idx=rg_idx,
+                        label_idx=lb_idx,
+                        image_idx=im_idx,
+                    )
+
+                    save_quadtree_image(
+                        all_leaves=all_leaves,
+                        max_depth=config.quadtree_config.max_depth,
+                        filename=f"{split_cfg.dir}/quadtrees/{stem}.png",
+                    )
+                    save_region_growing_image(
+                        max_depth=config.quadtree_config.max_depth,
+                        region_dict=region_dict,
+                        filename=f"{split_cfg.dir}/regions/{stem}.png",
+                    )
+                    save_label_images(
+                        label_image=label_array,
+                        label_vis_image=label_vis_array,
+                        label_filename=f"{split_cfg.dir}/labels/{stem}.png",
+                        label_vis_filename=f"{split_cfg.dir}/labels/visualize/{stem}.png",
+                    )
+
+                    image_seed = _seed_with_offset(config.seed, generated_images)
+                    rgb = config.pixel_config.model.generate_rgb_from_labels(
+                        label_image=label_array,
+                        region_dict=region_dict,
+                        theta=config.pixel_config.param,
+                        width=2**config.quadtree_config.max_depth,
+                        height=2**config.quadtree_config.max_depth,
+                        seed=image_seed
+                    )
+
+                    Image.fromarray(rgb).save(f"{split_cfg.dir}/images/{stem}.png")
+                    generated_images += 1
+                    print(f"Generating: image {split_name} {stem} ({generated_images}/{total_images})")
+
     print("-"*20)
 
 
@@ -371,12 +422,8 @@ def main():
     ensure_split_dirs(config_gen.train.dir)
     ensure_split_dirs(config_gen.test.dir)
 
-    for i in range(config_gen.train.num):
-        generate_data(config=config_gen, itr_num=i,
-                      out_dir=config_gen.train.dir)
-    for i in range(config_gen.test.num):
-        generate_data(config=config_gen, itr_num=config_gen.train.num +
-                      i, out_dir=config_gen.test.dir)
+    generate_split_data(config=config_gen, split_cfg=config_gen.train, split_name="train")
+    generate_split_data(config=config_gen, split_cfg=config_gen.test, split_name="test")
 
 if __name__ == "__main__":
     main()

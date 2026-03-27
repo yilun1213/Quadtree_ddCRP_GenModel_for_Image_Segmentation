@@ -6,11 +6,13 @@ Bayes最適解を粗近似するギブスサンプリング手法
 
 import os
 import json
+import hashlib
 import numpy as np
 import time
 from PIL import Image
 from collections import defaultdict
 from config import config, Config
+import config as config_module
 from model.quadtree.node import Node
 from model.quadtree.depth_dependent_model import make_tree, label_ndarray
 import utils
@@ -34,6 +36,328 @@ def label_prior(region, label_param):
 
 def _safe_log(x: float) -> float:
     return float(np.log(max(float(x), LOG_EPS)))
+
+
+def _stable_hash_from_jsonable(data: dict) -> str:
+    packed = json.dumps(data, sort_keys=True, ensure_ascii=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(packed.encode("utf-8")).hexdigest()
+
+
+def _hash_image_array(image: np.ndarray) -> str:
+    h = hashlib.sha256()
+    h.update(str(image.shape).encode("ascii"))
+    h.update(str(image.dtype).encode("ascii"))
+    h.update(image.tobytes(order="C"))
+    return h.hexdigest()
+
+
+def _module_fingerprint(module_obj) -> dict | None:
+    if module_obj is None:
+        return None
+    fp = {
+        "name": getattr(module_obj, "__name__", str(module_obj)),
+    }
+    module_file = getattr(module_obj, "__file__", None)
+    if module_file and os.path.exists(module_file):
+        stat = os.stat(module_file)
+        fp["file"] = os.path.abspath(module_file).replace("\\", "/")
+        fp["mtime_ns"] = int(stat.st_mtime_ns)
+        fp["size"] = int(stat.st_size)
+    return fp
+
+
+def _callable_fingerprint(func_obj) -> dict | None:
+    if func_obj is None:
+        return None
+    fp = {
+        "module": getattr(func_obj, "__module__", None),
+        "qualname": getattr(func_obj, "__qualname__", getattr(func_obj, "__name__", str(func_obj))),
+    }
+    code_obj = getattr(func_obj, "__code__", None)
+    if code_obj is not None:
+        fp["firstlineno"] = int(getattr(code_obj, "co_firstlineno", -1))
+        fp["argcount"] = int(getattr(code_obj, "co_argcount", -1))
+    return fp
+
+
+def _build_runtime_signature(cfg: Config | None) -> dict:
+    if cfg is None:
+        return {"cfg": None}
+    affinity_params = getattr(cfg, "affinity_params", {})
+    return {
+        "label_model": _module_fingerprint(getattr(cfg, "label_model", None)),
+        "pixel_model": _module_fingerprint(getattr(cfg, "pixel_model", None)),
+        "quadtree_model": _module_fingerprint(getattr(cfg, "quadtree_model", None)),
+        "affinity_func": _callable_fingerprint(getattr(cfg, "affinity_func", None)),
+        "affinity_params_hash": _stable_hash_from_jsonable(affinity_params if isinstance(affinity_params, dict) else {"value": str(affinity_params)}),
+    }
+
+
+def _get_calc_log_dir(cfg: Config) -> str:
+    dataset_dir = getattr(config_module, "DATASET_DIR", None)
+    if dataset_dir:
+        return os.path.join(dataset_dir, ".calc_log")
+    # fallback: .../test_data/images -> dataset root
+    return os.path.join(os.path.dirname(os.path.dirname(cfg.test_image_dir)), ".calc_log")
+
+
+def _get_step1_cache_path(cfg: Config, image_stem: str | None, image_size: int) -> str:
+    stem = image_stem if image_stem else f"image_{image_size}"
+    filename = f"{stem}_logp_cache.npz"
+    return os.path.join(_get_calc_log_dir(cfg), filename)
+
+
+def _build_step1_cache_meta(
+    image: np.ndarray,
+    label_param: dict,
+    pixel_param: dict,
+    image_size: int,
+    num_nodes: int,
+    cfg: Config | None = None,
+) -> dict:
+    return {
+        "cache_version": 1,
+        "image_size": int(image_size),
+        "num_nodes": int(num_nodes),
+        "image_shape": [int(v) for v in image.shape],
+        "image_hash": _hash_image_array(image),
+        "label_param_hash": _stable_hash_from_jsonable(label_param),
+        "pixel_param_hash": _stable_hash_from_jsonable(pixel_param),
+        "runtime_signature_hash": _stable_hash_from_jsonable(_build_runtime_signature(cfg)),
+    }
+
+
+def _save_step1_logp_cache(cache_path: str, log_p_y_cache: dict, meta: dict) -> None:
+    keys = np.array(list(log_p_y_cache.keys()), dtype=np.int32)
+    values = np.array([float(log_p_y_cache[k]) for k in log_p_y_cache.keys()], dtype=np.float64)
+    os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+    np.savez_compressed(
+        cache_path,
+        node_keys=keys,
+        log_p_y=values,
+        meta_json=np.array(json.dumps(meta, sort_keys=True)),
+    )
+
+
+def _load_step1_logp_cache_if_valid(cache_path: str, expected_meta: dict) -> tuple[dict | None, str]:
+    if not os.path.exists(cache_path):
+        return None, "cache file not found"
+
+    try:
+        with np.load(cache_path, allow_pickle=False) as data:
+            node_keys = data["node_keys"]
+            log_p_y = data["log_p_y"]
+            meta_json = str(data["meta_json"])
+            cached_meta = json.loads(meta_json)
+    except Exception as e:
+        return None, f"failed to load cache ({type(e).__name__}: {e})"
+
+    required_fields = [
+        "cache_version",
+        "image_size",
+        "num_nodes",
+        "image_shape",
+        "image_hash",
+        "label_param_hash",
+        "pixel_param_hash",
+        "runtime_signature_hash",
+    ]
+    for field in required_fields:
+        if cached_meta.get(field) != expected_meta.get(field):
+            return None, f"metadata mismatch: {field}"
+
+    if node_keys.ndim != 2 or node_keys.shape[1] != 4:
+        return None, "invalid node_keys shape"
+    if log_p_y.ndim != 1 or node_keys.shape[0] != log_p_y.shape[0]:
+        return None, "invalid cache array lengths"
+
+    cache = {}
+    for idx in range(node_keys.shape[0]):
+        key = tuple(int(v) for v in node_keys[idx].tolist())
+        cache[key] = float(log_p_y[idx])
+
+    return cache, "ok"
+
+
+def _get_node_likelihood_cache_path(cfg: Config, image_stem: str | None, image_size: int) -> str:
+    stem = image_stem if image_stem else f"image_{image_size}"
+    filename = f"{stem}_node_likelihood_cache.npz"
+    return os.path.join(_get_calc_log_dir(cfg), filename)
+
+
+def _build_node_likelihood_cache_meta(
+    image: np.ndarray,
+    label_param: dict,
+    pixel_param: dict,
+    num_leaf_nodes: int,
+    num_labels: int,
+    cfg: Config | None = None,
+) -> dict:
+    return {
+        "cache_version": 1,
+        "num_leaf_nodes": int(num_leaf_nodes),
+        "num_labels": int(num_labels),
+        "image_shape": [int(v) for v in image.shape],
+        "image_hash": _hash_image_array(image),
+        "label_param_hash": _stable_hash_from_jsonable(label_param),
+        "pixel_param_hash": _stable_hash_from_jsonable(pixel_param),
+        "runtime_signature_hash": _stable_hash_from_jsonable(_build_runtime_signature(cfg)),
+    }
+
+
+def _save_node_likelihood_cache(
+    cache_path: str,
+    node_likelihood_cache: dict,
+    leaf_nodes: list,
+    num_labels: int,
+    meta: dict,
+) -> None:
+    key_to_idx = {
+        (n.upper_edge, n.left_edge, n.size, n.depth): i
+        for i, n in enumerate(leaf_nodes)
+    }
+    node_keys = np.array(
+        [[n.upper_edge, n.left_edge, n.size, n.depth] for n in leaf_nodes],
+        dtype=np.int32,
+    )
+    likelihoods = np.full((len(leaf_nodes), num_labels), -1e10, dtype=np.float64)
+    for node, label_dict in node_likelihood_cache.items():
+        key = (node.upper_edge, node.left_edge, node.size, node.depth)
+        idx = key_to_idx.get(key)
+        if idx is not None:
+            for label_idx, val in label_dict.items():
+                likelihoods[idx, int(label_idx)] = float(val)
+    os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+    np.savez_compressed(
+        cache_path,
+        node_keys=node_keys,
+        likelihoods=likelihoods,
+        meta_json=np.array(json.dumps(meta, sort_keys=True)),
+    )
+
+
+def _load_node_likelihood_cache_if_valid(
+    cache_path: str,
+    expected_meta: dict,
+    leaf_nodes: list,
+) -> tuple[dict | None, str]:
+    if not os.path.exists(cache_path):
+        return None, "cache file not found"
+    try:
+        with np.load(cache_path, allow_pickle=False) as data:
+            node_keys = data["node_keys"]
+            likelihoods = data["likelihoods"]
+            meta_json = str(data["meta_json"])
+            cached_meta = json.loads(meta_json)
+    except Exception as e:
+        return None, f"failed to load cache ({type(e).__name__}: {e})"
+
+    required_fields = [
+        "cache_version", "num_leaf_nodes", "num_labels",
+        "image_shape", "image_hash", "label_param_hash", "pixel_param_hash", "runtime_signature_hash",
+    ]
+    for field in required_fields:
+        if cached_meta.get(field) != expected_meta.get(field):
+            return None, f"metadata mismatch: {field}"
+
+    if node_keys.ndim != 2 or node_keys.shape[1] != 4:
+        return None, "invalid node_keys shape"
+    if likelihoods.ndim != 2:
+        return None, "invalid likelihoods shape"
+    if node_keys.shape[0] != len(leaf_nodes):
+        return None, f"leaf node count mismatch: expected {len(leaf_nodes)}, got {node_keys.shape[0]}"
+
+    num_labels = likelihoods.shape[1]
+    stored_key_to_idx = {
+        tuple(int(v) for v in node_keys[i].tolist()): i
+        for i in range(node_keys.shape[0])
+    }
+    cache = {}
+    for node in leaf_nodes:
+        key = (node.upper_edge, node.left_edge, node.size, node.depth)
+        idx = stored_key_to_idx.get(key)
+        if idx is None:
+            return None, f"node key not found in cache: {key}"
+        cache[node] = {l: float(likelihoods[idx, l]) for l in range(num_labels)}
+    return cache, "ok"
+
+
+def build_node_likelihood_cache(
+    leaf_nodes: list,
+    image: np.ndarray,
+    label_param: dict,
+    pixel_param: dict,
+    cfg: Config | None = None,
+    image_stem: str | None = None,
+) -> dict:
+    """各葉ノードの per-label 対数尤度キャッシュを構築する。
+    cfg.enable_logq_cache == True のとき .calc_log フォルダを読み書きする。"""
+    global PIXEL_LIKELIHOOD_WARN_COUNT
+    num_labels = label_param.get("label_num", 2)
+    image_size = int(image.shape[0])
+
+    use_cache = bool(cfg is not None and getattr(cfg, "enable_logq_cache", False))
+    cache_path = None
+    if use_cache and cfg is not None:
+        cache_path = _get_node_likelihood_cache_path(cfg, image_stem, image_size)
+        expected_meta = _build_node_likelihood_cache_meta(
+            image=image,
+            label_param=label_param,
+            pixel_param=pixel_param,
+            num_leaf_nodes=len(leaf_nodes),
+            num_labels=num_labels,
+            cfg=cfg,
+        )
+        loaded, reason = _load_node_likelihood_cache_if_valid(cache_path, expected_meta, leaf_nodes)
+        if loaded is not None:
+            print(f"  [cache] node_likelihood_cache hit: loaded {len(loaded)} nodes from {cache_path}")
+            return loaded
+        else:
+            print(f"  [cache] node_likelihood_cache miss: {reason}")
+
+    print(f"Pre-computing node likelihood cache for {len(leaf_nodes)} leaf nodes × {num_labels} labels...")
+    print(f"  (Total {len(leaf_nodes) * num_labels} likelihood computations)")
+    cache_start_time = time.time()
+    node_likelihood_cache: dict = {}
+
+    for node_idx, node in enumerate(leaf_nodes):
+        node_likelihood_cache[node] = {}
+        for label_idx in range(num_labels):
+            try:
+                log_likelihood = log_prob_Y_given_X((node,), label_idx, image, pixel_param)
+                node_likelihood_cache[node][label_idx] = log_likelihood
+            except Exception as e:
+                if PIXEL_LIKELIHOOD_WARN_COUNT < PIXEL_LIKELIHOOD_WARN_MAX:
+                    print(
+                        "[WARN] precompute log_prob_Y_given_X failed: "
+                        f"node=({node.upper_edge},{node.left_edge},size={node.size},depth={node.depth}) "
+                        f"label={label_idx} error={type(e).__name__}: {e}"
+                    )
+                elif PIXEL_LIKELIHOOD_WARN_COUNT == PIXEL_LIKELIHOOD_WARN_MAX:
+                    print("[WARN] Further precompute log_prob_Y_given_X errors suppressed...")
+                PIXEL_LIKELIHOOD_WARN_COUNT += 1
+                node_likelihood_cache[node][label_idx] = -1e10
+
+        if (node_idx + 1) % max(1, len(leaf_nodes) // 5) == 0:
+            elapsed = time.time() - cache_start_time
+            print(f"  - Cached {node_idx + 1}/{len(leaf_nodes)} nodes (elapsed: {elapsed:.2f}s)...")
+
+    cache_time = time.time() - cache_start_time
+    print(f"Node likelihood cache computed: {len(node_likelihood_cache)} nodes × {num_labels} labels (took {cache_time:.2f}s)")
+
+    if use_cache and cfg is not None and cache_path is not None:
+        expected_meta = _build_node_likelihood_cache_meta(
+            image=image,
+            label_param=label_param,
+            pixel_param=pixel_param,
+            num_leaf_nodes=len(leaf_nodes),
+            num_labels=num_labels,
+            cfg=cfg,
+        )
+        _save_node_likelihood_cache(cache_path, node_likelihood_cache, leaf_nodes, num_labels, expected_meta)
+        print(f"  [cache] node_likelihood_cache saved to {cache_path}")
+
+    return node_likelihood_cache
 
 
 def _logsumexp(log_values: np.ndarray) -> float:
@@ -407,7 +731,7 @@ def compute_g_given_Y(node, image, branch_probs, q_values):
     return min(max(g_given_y, 0.0), 1.0)
 
 
-def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param):
+def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param, cfg: Config | None = None, image_stem: str | None = None):
     """
     論文のアルゴリズムに基づき、事後確率最大四分木 \hat{T} を計算する
     
@@ -435,11 +759,34 @@ def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param):
     step1_start = time.time()
     print("  [Step 1/3] Computing log q values (v2 style)...")
     log_p_y_cache = {}
+
+    use_cache = bool(cfg is not None and getattr(cfg, "enable_logq_cache", False))
+    cache_path = None
+    cache_loaded = False
+    if use_cache and cfg is not None:
+        cache_path = _get_step1_cache_path(cfg, image_stem, root.size)
+        expected_meta = _build_step1_cache_meta(
+            image=image,
+            label_param=label_param,
+            pixel_param=pixel_param,
+            image_size=root.size,
+            num_nodes=total_nodes,
+            cfg=cfg,
+        )
+        loaded_cache, reason = _load_step1_logp_cache_if_valid(cache_path, expected_meta)
+        if loaded_cache is not None:
+            log_p_y_cache = loaded_cache
+            cache_loaded = True
+            print(f"    - [cache] hit: loaded {len(log_p_y_cache)} node log p(Y_s) values from {cache_path}")
+        else:
+            print(f"    - [cache] miss: {reason}")
+
     counter = [0]
 
     def calc_logq(node):
         key = _node_key(node)
-        log_p_y_cache[key] = _compute_log_p_Y_given_node(node, image, label_param, pixel_param)
+        if key not in log_p_y_cache:
+            log_p_y_cache[key] = _compute_log_p_Y_given_node(node, image, label_param, pixel_param)
 
         if node.is_leaf:
             node.logq_Ys = log_p_y_cache[key]
@@ -472,6 +819,22 @@ def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param):
             print(f"    - Computed logq for {counter[0]}/{total_nodes} nodes...")
 
     calc_logq(root)
+
+    if use_cache and cfg is not None and cache_path is not None:
+        # キャッシュを読み込んでいなければ保存する（不整合時は上書き）
+        if len(log_p_y_cache) == total_nodes:
+            expected_meta = _build_step1_cache_meta(
+                image=image,
+                label_param=label_param,
+                pixel_param=pixel_param,
+                image_size=root.size,
+                num_nodes=total_nodes,
+                cfg=cfg,
+            )
+            if not cache_loaded:
+                _save_step1_logp_cache(cache_path, log_p_y_cache, expected_meta)
+                print(f"    - [cache] saved Step1 cache to {cache_path}")
+
     step1_time = time.time() - step1_start
     print(f"    ✓ Step 1 completed: {len(log_p_y_cache)} nodes (took {step1_time:.2f}s)")
 
@@ -495,16 +858,17 @@ def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param):
     def determine_map_tree(node):
         """
         論文のψ再帰に基づき post-order でMAP木フラグを決定する。
-        ψ(s) = max{ (1-g_{s|Y}) * leaf_term,  g_{s|Y} * Π_{s'∈Ch(s)} ψ(s') }
-        f_s = 1 iff (1-g_{s|Y}) * leaf_term < g_{s|Y} * Π ψ(s')
+        ψ(s) = max{ 1-g_{s|Y},  g_{s|Y} * Π_{s'∈Ch(s)} ψ(s') }
+        f_s = 1 iff 1-g_{s|Y} < g_{s|Y} * Π ψ(s')
         ここで g_{s|Y} = g_s * Π q(Y_{ch}) / q(Y_s)
         """
         key = _node_key(node)
-        log_q_leaf_y = log_p_y_cache[key]  # = log((1/|X|) Σ_x Π p(y|x))
+        log_q_leaf_y = log_p_y_cache[key]  # g_{s|Y} 計算のために利用
 
         if node.is_leaf:
             node.is_leaf_map = True
-            node.log_psi = log_q_leaf_y  # 最大深度では葉のみ
+            # 最大深度では分割不可なので ψ=1（log ψ = 0）
+            node.log_psi = 0.0
             counter[0] += 1
             if counter[0] % progress_step == 0 or counter[0] == total_nodes:
                 print(f"    - Determined MAP flag for {counter[0]}/{total_nodes} nodes...")
@@ -542,15 +906,15 @@ def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param):
             + node.lr_node.log_psi
         )
 
-        # ψ(s) = max{ (1-g_{s|Y})*leaf_term, g_{s|Y}*Π ψ(ch) } を比較
+        # ψ(s) = max{ 1-g_{s|Y}, g_{s|Y}*Π ψ(ch) } を比較
         if g_given_y <= 0.0:
-            log_psi_leaf = log_q_leaf_y
+            log_psi_leaf = 0.0
             log_psi_split = -np.inf
         elif g_given_y >= 1.0:
             log_psi_leaf = -np.inf
             log_psi_split = log_psi_children
         else:
-            log_psi_leaf = _safe_log(1.0 - g_given_y) + log_q_leaf_y
+            log_psi_leaf = _safe_log(1.0 - g_given_y)
             log_psi_split = _safe_log(g_given_y) + log_psi_children
 
         if log_psi_leaf >= log_psi_split:
@@ -721,7 +1085,7 @@ def construct_map_tree(root, flags):
     return all_nodes, leaf_nodes, internal_nodes, node_dict
 
 
-def create_map_quadtree(max_depth, image, branch_probs, label_param, pixel_param):
+def create_map_quadtree(max_depth, image, branch_probs, label_param, pixel_param, cfg: Config | None = None, image_stem: str | None = None):
     """
     論文のアルゴリズムに基づき、事後確率最大四分木を構築する
     
@@ -745,7 +1109,15 @@ def create_map_quadtree(max_depth, image, branch_probs, label_param, pixel_param
     
     # Step 2: 事後確率最大四分木のフラグを計算
     print(f"  Computing MAP quadtree flags (this may take a while)...")
-    flags = compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param)
+    flags = compute_map_tree_flags(
+        root,
+        image,
+        branch_probs,
+        label_param,
+        pixel_param,
+        cfg=cfg,
+        image_stem=image_stem,
+    )
     
     # Step 3: フラグに基づいて事後確率最大四分木を構築
     print(f"  Constructing MAP quadtree...")
@@ -899,37 +1271,30 @@ def get_regions_from_connections(connections):
     return regions
 
 
-def compute_affinity(leaf1, leaf2, adjacency_dict, cfg: Config):
+def compute_log_affinity(leaf1, leaf2, adjacency_dict, cfg: Config):
     """
-    2つの葉ノード間の親和度を計算
-    f(s, s') = exp(β * B(s, s') + η * (depth(s) - depth(s')))
-    
-    Args:
-        leaf1, leaf2: Node
-        adjacency_dict: 隣接辞書
-        cfg: Config
+    2つの葉ノード間の対数親和度を計算
+    log f(s, s') = β * B(s, s') + η * (depth(s) - depth(s'))
     
     Returns:
-        float: 親和度値
+        float: 対数親和度値（隣接していない場合は -inf）
     """
-    # 既定では config で指定した親和度関数を使用
     if cfg.affinity_func is None:
-        return 0.0
+        return -np.inf
 
     try:
-        affinity = cfg.affinity_func(
+        log_affinity = cfg.affinity_func(
             leaf1,
             leaf2,
             adjacency_dict,
             **cfg.affinity_params,
         )
     except TypeError:
-        # 引数を受け取らない関数定義にも互換対応
-        affinity = cfg.affinity_func(leaf1, leaf2, adjacency_dict)
+        log_affinity = cfg.affinity_func(leaf1, leaf2, adjacency_dict)
 
-    if not np.isfinite(affinity) or affinity <= 0:
-        return 0.0
-    return float(affinity)
+    if np.isnan(log_affinity):
+        return -np.inf
+    return float(log_affinity)
 
 
 def sample_connection(leaf_node, connections, leaf_nodes, adjacency_dict, 
@@ -967,8 +1332,8 @@ def sample_connection(leaf_node, connections, leaf_nodes, adjacency_dict,
         r_cand_base = node_to_region_base.get(candidate, [candidate])
         
         # 親和度
-        affinity = compute_affinity(leaf_node, candidate, adjacency_dict, cfg)
-        prior_prob = _safe_log(alpha) if candidate == leaf_node else _safe_log(affinity)
+        log_affinity = compute_log_affinity(leaf_node, candidate, adjacency_dict, cfg)
+        prior_prob = _safe_log(alpha) if candidate == leaf_node else log_affinity
         
         # 尤度比 Γ(Y, R) の計算
         if id(r_leaf_base) == id(r_cand_base):
@@ -1104,7 +1469,7 @@ def estimate_label_gibbs_sampling(
     print(f"Computing MAP quadtree with max_depth={max_depth}...")
     quadtree_start = time.time()
     root, all_nodes, leaf_nodes, internal_nodes, node_dict, adjacency_dict = create_map_quadtree(
-        max_depth, image, branch_probs, label_param, pixel_param
+        max_depth, image, branch_probs, label_param, pixel_param, cfg=cfg, image_stem=image_stem
     )
     quadtree_time = time.time() - quadtree_start
     
@@ -1118,40 +1483,11 @@ def estimate_label_gibbs_sampling(
         print(f"  ✓ Saved MAP quadtree image to {quadtree_output_path}")
     
     # ノードごとのピクセル対数尤度をキャッシュ化（サンプリング前に一度だけ計算）
-    num_labels = label_param.get("label_num", 2)
-    print(f"\nPre-computing node likelihood cache for {len(leaf_nodes)} leaf nodes × {num_labels} labels...")
-    print(f"  (Total {len(leaf_nodes) * num_labels} likelihood computations)")
-    cache_start_time = time.time()
-    node_likelihood_cache = {}
-    
-    for node_idx, node in enumerate(leaf_nodes):
-        node_likelihood_cache[node] = {}
-        for label_idx in range(num_labels):
-            try:
-                # 各ノードについて log_prob_Y_given_X を計算し、キャッシュに保存
-                log_likelihood = log_prob_Y_given_X((node,), label_idx, image, pixel_param)
-                node_likelihood_cache[node][label_idx] = log_likelihood
-            except Exception as e:
-                # エラーが発生した場合は非常に小さい値を設定
-                if PIXEL_LIKELIHOOD_WARN_COUNT < PIXEL_LIKELIHOOD_WARN_MAX:
-                    print(
-                        "[WARN] precompute log_prob_Y_given_X failed: "
-                        f"node=({node.upper_edge},{node.left_edge},size={node.size},depth={node.depth}) "
-                        f"label={label_idx} error={type(e).__name__}: {e}"
-                    )
-                elif PIXEL_LIKELIHOOD_WARN_COUNT == PIXEL_LIKELIHOOD_WARN_MAX:
-                    print("[WARN] Further precompute log_prob_Y_given_X errors suppressed...")
-                PIXEL_LIKELIHOOD_WARN_COUNT += 1
-                node_likelihood_cache[node][label_idx] = -1e10
-        
-        # 進捗表示（20%刻み）
-        if (node_idx + 1) % max(1, len(leaf_nodes) // 5) == 0:
-            elapsed = time.time() - cache_start_time
-            print(f"  - Cached {node_idx + 1}/{len(leaf_nodes)} nodes (elapsed: {elapsed:.2f}s)...")
-    
-    cache_time = time.time() - cache_start_time
-    print(f"Node likelihood cache computed: {len(node_likelihood_cache)} nodes × {num_labels} labels (took {cache_time:.2f}s)")
-    
+    print()
+    node_likelihood_cache = build_node_likelihood_cache(
+        leaf_nodes, image, label_param, pixel_param, cfg=cfg, image_stem=image_stem
+    )
+
     # 初期化
     print(f"\nInitializing Gibbs sampling...")
     connections = initialize_connections(leaf_nodes)
@@ -1360,7 +1696,7 @@ def estimate_segmentation(image_path, cfg: Config):
     X_est = estimate_label_gibbs_sampling(
         image,
         cfg,
-        num_iterations=20,
+        num_iterations=cfg.gibbs_num_iterations,
         burn_in=50,
         region_output_dir=region_output_dir,
         quadtree_output_path=quadtree_output_path,

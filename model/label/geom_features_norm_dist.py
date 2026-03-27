@@ -162,6 +162,7 @@ def param_est(
     label_num: int,
     image_size: int = 128,
     feature_names: list[str] | None = None,
+    min_region_area: int = 32,
 ):
     
     # --- ユーザー提供のコード開始 ---
@@ -196,6 +197,9 @@ def param_est(
     
     selected_features = list(feature_names) if feature_names else list(DEFAULT_FEATURE_NAMES)
 
+    connectivity_8 = ndimage.generate_binary_structure(2, 2)
+    filtered_small_regions = 0
+
     for lbl_img in label_data:
         # 画像内のユニークなラベル（0:背景 は除くことが多いが、今回は含める）
         labels_in_img = np.unique(lbl_img)
@@ -205,8 +209,8 @@ def param_est(
             mask = (lbl_img == x)
             
             # 連結成分（領域 R）を検出
-            # neighbourhood=1 (4-近傍) or 2 (8-近傍)
-            labeled_mask, num_regions = ndimage.label(mask)
+            # 8-近傍で連結判定（斜め接触も同一領域とみなす）
+            labeled_mask, num_regions = ndimage.label(mask, structure=connectivity_8)
             
             if num_regions == 0:
                 continue
@@ -214,6 +218,11 @@ def param_est(
             # 検出された各領域 r について特徴量を抽出
             for r in range(1, num_regions + 1):
                 region_mask = (labeled_mask == r)
+
+                # 面積が小さすぎる連結成分はノイズとして除外
+                if int(np.count_nonzero(region_mask)) < int(min_region_area):
+                    filtered_small_regions += 1
+                    continue
                 
                 # φ(r) を計算（論文 2.5.1節の幾何学的特徴量）
                 # 8次元ベクトル: [log(Area), log(Prm), Cir, Asp, Rect, Sol, CentI, CentJ]
@@ -226,6 +235,9 @@ def param_est(
                 # (x_r, φ(r)) のペアを保存 (None でない場合)
                 if phi_r is not None:
                     all_training_data.append((x, phi_r))
+
+    print(f"  - 最小面積しきい値: {min_region_area} px")
+    print(f"  - 小領域除外数: {filtered_small_regions}")
 
     if not all_training_data:
         print("エラー: 有効な訓練データ（領域）が1つも見つかりません。", file=sys.stderr)

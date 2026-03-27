@@ -97,7 +97,8 @@ def _extract_training_data(
     label_set: list[int],
     image_size: int,
     feature_names: list[str],
-) -> tuple[np.ndarray, np.ndarray]:
+    min_region_area: int,
+) -> tuple[np.ndarray, np.ndarray, int]:
     """
     Build training pairs (y_r, phi(r)) from connected regions in label images.
 
@@ -110,6 +111,8 @@ def _extract_training_data(
 
     x_list: list[np.ndarray] = []
     y_list: list[int] = []
+    filtered_small_regions = 0
+    connectivity_8 = ndimage.generate_binary_structure(2, 2)
 
     for lbl_img in label_images:
         for label in np.unique(lbl_img):
@@ -118,12 +121,15 @@ def _extract_training_data(
                 continue
 
             mask = lbl_img == label
-            labeled_mask, num_regions = ndimage.label(mask)
+            labeled_mask, num_regions = ndimage.label(mask, structure=connectivity_8)
             if num_regions == 0:
                 continue
 
             for rid in range(1, num_regions + 1):
                 region_mask = labeled_mask == rid
+                if int(np.count_nonzero(region_mask)) < int(min_region_area):
+                    filtered_small_regions += 1
+                    continue
                 phi = _region_to_feature(
                     region_mask,
                     image_size=image_size,
@@ -135,11 +141,15 @@ def _extract_training_data(
                 y_list.append(label_to_index[label_int])
 
     if not x_list:
-        return np.zeros((0, len(feature_names)), dtype=float), np.zeros((0,), dtype=int)
+        return (
+            np.zeros((0, len(feature_names)), dtype=float),
+            np.zeros((0,), dtype=int),
+            filtered_small_regions,
+        )
 
     x_mat = np.asarray(x_list, dtype=float)
     y_vec = np.asarray(y_list, dtype=int)
-    return x_mat, y_vec
+    return x_mat, y_vec, filtered_small_regions
 
 
 def _fit_multinomial_logistic(
@@ -210,6 +220,7 @@ def param_est(
     label_num: int,
     image_size: int = 128,
     feature_names: list[str] | None = None,
+    min_region_area: int = 32,
 ) -> dict[str, Any]:
     """
     Estimate label-model parameters from training labels using logistic regression.
@@ -236,12 +247,16 @@ def param_est(
     selected_features = list(feature_names) if feature_names else list(DEFAULT_FEATURE_NAMES)
 
     print("Step 1: extracting region-level geometric features for logistic training...")
-    x_mat, y_vec = _extract_training_data(
+    x_mat, y_vec, filtered_small_regions = _extract_training_data(
         label_images,
         label_set,
         image_size=image_size,
         feature_names=selected_features,
+        min_region_area=min_region_area,
     )
+
+    print(f"  - minimum region area threshold: {min_region_area} px")
+    print(f"  - filtered small regions: {filtered_small_regions}")
 
     if x_mat.shape[0] == 0:
         print("Error: no valid training regions found.", file=sys.stderr)

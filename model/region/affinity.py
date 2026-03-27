@@ -10,42 +10,25 @@ import numpy as np
 from model.quadtree.node import Node
 
 
-def affinity_boundary_and_depth(leaf1: Node, leaf2: Node, adjacency_dict: dict, beta: float = 1.0, eta: float = 0.5) -> float:
+def log_affinity_boundary_and_depth(leaf1: Node, leaf2: Node, adjacency_dict: dict, beta: float = 1.0, eta: float = 0.5) -> float:
     """
-    論文 2.4 節の例に基づく親和度関数。
+    論文 2.4 節の例に基づく対数親和度関数。
     
-    隣接する葉ノード s, s' 間の共有境界線の長さ B(s, s') とそれぞれの深さ depth(s), depth(s') に基づいて
-    親和度を計算する。
-    
-    f(s, s') = exp(β * B(s, s') + η * (depth(s) - depth(s')))
-    
-    Args:
-        leaf1 (Node): 第1の葉ノード
-        leaf2 (Node): 第2の葉ノード
-        adjacency_dict (dict): ノード間の隣接関係を格納した辞書（キー: Node、値: 隣接ノードのリスト）
-        beta (float): 共有境界の長さに応じた滑らかさのパラメータ（デフォルト: 1.0）
-        eta (float): ノードサイズの階層性を制御するパラメータ（デフォルト: 0.5）
+    log f(s, s') = β * B(s, s') + η * (depth(s) - depth(s'))
     
     Returns:
-        float: 親和度（非負の値）親和度関数の値、隣接していない場合は0
+        float: 対数親和度。隣接していない場合は -inf
     """
-    # leaf1 と leaf2 が隣接しているかチェック
     if leaf2 not in adjacency_dict.get(leaf1, []):
-        return 0.0
+        return -np.inf
     
-    # 共有境界線の長さ B(s, s') を計算
     boundary_length = _compute_shared_boundary_length(leaf1, leaf2)
-    
-    # 深さの差を計算
     depth_diff = leaf1.depth - leaf2.depth
     
-    # 親和度を計算
-    affinity = np.exp(beta * boundary_length + eta * depth_diff)
-    
-    return float(affinity)
+    return float(beta * boundary_length + eta * depth_diff)
 
 
-def affinity_boundary_depth_and_large_pair(
+def log_affinity_boundary_depth_and_large_pair(
     leaf1: Node,
     leaf2: Node,
     adjacency_dict: dict,
@@ -54,63 +37,40 @@ def affinity_boundary_depth_and_large_pair(
     gamma: float = 0.0,
 ) -> float:
     """
-    共有境界長 + 深さ差 + 「大ノード同士ボーナス」に基づく親和度関数。
+    共有境界長 + 深さ差 + 「大ノード同士ボーナス」に基づく対数親和度関数。
 
-    f(s, s') = exp( beta * B(s, s')
-                    + eta * (depth(s) - depth(s'))
-                    + gamma * log2(min(size(s), size(s'))) )
-
-    - depth 差が 0 でも、両者が大きいほど（min size が大きいほど）親和度が上がる。
-    - min(size) を使うことで「両方が大きい」場合のみ強く優遇される。
-
-    Args:
-        leaf1 (Node): 第1の葉ノード
-        leaf2 (Node): 第2の葉ノード
-        adjacency_dict (dict): ノード間の隣接関係
-        beta (float): 共有境界長の重み
-        eta (float): 深さ差の重み
-        gamma (float): 大ノード同士ボーナスの重み
+    log f(s, s') = beta * B(s, s') + eta * (depth(s) - depth(s')) + gamma * log2(min(size(s), size(s')))
 
     Returns:
-        float: 親和度（隣接していない場合は0）
+        float: 対数親和度。隣接していない場合は -inf
     """
     if leaf2 not in adjacency_dict.get(leaf1, []):
-        return 0.0
+        return -np.inf
 
     boundary_length = _compute_shared_boundary_length(leaf1, leaf2)
     depth_diff = leaf1.depth - leaf2.depth
     large_pair_term = _large_pair_score(leaf1, leaf2)
 
-    affinity = np.exp(beta * boundary_length + eta * depth_diff + gamma * large_pair_term)
-    return float(affinity)
+    return float(beta * boundary_length + eta * depth_diff + gamma * large_pair_term)
 
 
-def affinity_boundary_only(leaf1: Node, leaf2: Node, adjacency_dict: dict, beta: float = 1.0) -> float:
+def log_affinity_boundary_only(leaf1: Node, leaf2: Node, adjacency_dict: dict, beta: float = 1.0) -> float:
     """
-    共有境界線の長さのみに基づく親和度関数（シンプル版）。
+    共有境界線の長さのみに基づく対数親和度関数（シンプル版）。
     
-    f(s, s') = exp(β * B(s, s'))
-    
-    Args:
-        leaf1 (Node): 第1の葉ノード
-        leaf2 (Node): 第2の葉ノード
-        adjacency_dict (dict): ノード間の隣接関係を格納した辞書
-        beta (float): パラメータ（デフォルト: 1.0）
+    log f(s, s') = β * B(s, s')
     
     Returns:
-        float: 親和度
+        float: 対数親和度。隣接していない場合は -inf
     """
-    # leaf1 と leaf2 が隣接しているかチェック
     if leaf2 not in adjacency_dict.get(leaf1, []):
-        return 0.0
+        return -np.inf
     
     boundary_length = _compute_shared_boundary_length(leaf1, leaf2)
-    affinity = np.exp(beta * boundary_length)
-    
-    return float(affinity)
+    return float(beta * boundary_length)
 
 
-def affinity_target_shallow_exp(
+def log_affinity_target_shallow_exp(
     leaf1: Node,
     leaf2: Node,
     adjacency_dict: dict,
@@ -118,48 +78,32 @@ def affinity_target_shallow_exp(
     max_depth: int = 8,
 ) -> float:
     """
-    リンク先ノードの深さだけに指数依存するシンプルな親和度関数。
+    リンク先ノードの深さだけに依存するシンプルな対数親和度関数。
 
-    f(s, s') = exp(kappa * (max_depth - depth(s')))
-
-    - depth(s') が小さい（= ノードが大きい）ほど親和度が高い。
-    - max_depth を基準化に使い、親和度の絶対値を確保して alpha に負けにくくする。
-    - まずは構造を単純化するため、共有境界長や深さ差項は使わない。
-
-    Args:
-        leaf1 (Node): 現在ノード s（未使用）
-        leaf2 (Node): リンク先ノード s'
-        adjacency_dict (dict): ノード間の隣接関係
-        kappa (float): 深さ優遇の強さ（大きいほど浅いノードを強く優遇）
-        max_depth (int): 四分木の最大深さ
+    log f(s, s') = kappa * (max_depth - depth(s'))
 
     Returns:
-        float: 親和度（隣接していない場合は0）
+        float: 対数親和度。隣接していない場合は -inf
     """
     if leaf2 not in adjacency_dict.get(leaf1, []):
-        return 0.0
+        return -np.inf
 
-    return float(np.exp(kappa * (max_depth - leaf2.depth)))
+    return float(kappa * (max_depth - leaf2.depth))
 
 
-def affinity_constant(leaf1: Node, leaf2: Node, adjacency_dict: dict) -> float:
+def log_affinity_constant(leaf1: Node, leaf2: Node, adjacency_dict: dict) -> float:
     """
-    一定の親和度を返す関数（テスト用）。
+    一定の対数親和度を返す関数（テスト用）。
     
-    隣接しているすべてのノード対に対して同じ親和度を返す。
-    
-    Args:
-        leaf1 (Node): 第1の葉ノード
-        leaf2 (Node): 第2の葉ノード
-        adjacency_dict (dict): ノード間の隣接関係を格納した辞書
+    隣接しているすべてのノード対に対して log f = 0 (f = 1) を返す。
     
     Returns:
-        float: 親和度（隣接している場合は1.0、そうでない場合は0.0）
+        float: 対数親和度（隣接している場合は0.0、そうでない場合は -inf）
     """
     if leaf2 not in adjacency_dict.get(leaf1, []):
-        return 0.0
+        return -np.inf
     
-    return 1.0
+    return 0.0
 
 
 # ============================================================================

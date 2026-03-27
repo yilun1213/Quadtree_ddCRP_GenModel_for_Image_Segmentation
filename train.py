@@ -98,6 +98,7 @@ def train(config: Config):
         label_num=label_num,
         image_size=image_size,  # 自動検出した画像サイズを渡す
         feature_names=config.label_feature_names,
+        min_region_area=config.label_min_region_area,
     )
     # 既存のlabel_infoに推定結果をマージ
     label_info.update(estimated_label_params)
