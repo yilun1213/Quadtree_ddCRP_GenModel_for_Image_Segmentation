@@ -327,9 +327,203 @@
             - 周の長さ
 
             - 円形度
+
+- 考察
     
 
 ### 1.3 ラベルの事前分布
 
+今回は，面積，周の長さ，円形度の3つの幾何学的特徴量から，統合領域$r\in R(\bm{c})$それぞれに対して独立にラベルが付与されるモデルを想定している．
+
+$$p(X\mid R(\bm{c}))=\prod_{r\in R(\bm{c})}p(x_r).$$
+
+$$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\text{Area}(r), \text{Perimeter}(r), \text{Circularity}(r))$$
+
+#### 1.3.1 幾何学的特徴量をもとに正規分布の確率の重みからラベルが発生するモデル
+
+- $p(x_r)$を以下のように仮定する．
+
+    $$p(\phi_i(r)\mid x_r=x) =\mathcal{N} \left(\phi_i(r);m_i^{(x)},\left(\sigma_i^{(x)}\right)^2\right)$$
+    $$p\left(\boldsymbol{\phi}(r)\mid x_r=x\right) =
+    \prod_{i=1}^{|\bm{\phi}|}
+    p(\phi_i(r)\mid x_r=x)$$
+    $$p(x_r=x) = 
+    \frac{
+    p\left(\boldsymbol{\phi}(r)\mid x_r=x\right)
+    }{
+    \sum\limits_{x'\in\mathcal{X}}
+    p\left(\boldsymbol{\phi}(r)\mid x_r=x'\right)
+    }$$
+
+- 統合領域をもとにラベルを発生させ，各ラベルごとの特徴に沿うようにラベルが発生しているかを調査する．
+
+    (exp 1.3.1.1) 
+
+    exp. x.x.xにおいて，$\alpha = \text{xxx}, \beta=\text{xxx}, \eta=\text{xxx}$で生成された統合領域に対して，以下のパラメータを設定してラベルを発生させる．
+
+    | | $x=0$ | $x=1$ | $x=2$ |
+    |---|---:|---:|---:|
+    | Area: $(m_1^{(x)}, \sigma_1^{(x)})$ |  |  |   |
+    | Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ |  |  |   |
+    | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ |  |  |   |
+
+    発生させたラベル画像は以下の通り．
+
+
+#### 1.3.2 幾何学的特徴量をもとにロジスティック回帰モデルでラベルを発生させるモデル
+
+- $p(x_r)$を以下のように仮定する．
+
+    $$
+    p(x_r = x;\bm{\omega}) =\frac{\exp \left( {\bm{\omega}^{(x)}}^{\top} \bm{\phi}(r) \right)}{\sum_{x'\in X} \exp \left( {\bm{\omega}^{(x')}}^{\top} \bm{\phi}(r) \right)}
+    $$
+
+
+- 統合領域をもとにラベルを発生させ，各ラベルごとの特徴に沿うようにラベルが発生しているかを調査する．
+
+    (exp 1.3.2.1) 
+
+    exp. x.x.xにおいて，$\alpha = \text{xxx}, \beta=\text{xxx}, \eta=\text{xxx}$で生成された統合領域に対して，以下のパラメータを設定してラベルを発生させる．
+
+    | | $x=0$ | $x=1$ | $x=2$ |
+    |---|---:|---:|---:|
+    | bias: $\omega_0^{(x)}$ |  |  |   |
+    | Area: $\omega_1^{(x)}$ |  |  |   |
+    | Perimeter: $\omega_2^{(x)}$ |  |  |   |
+    | CIrcularity: $\omega_3^{(x)}$ |  |  |   |
+
+    発生させたラベル画像は以下の通り．
+
+
+- 考察
+
+
 
 ### 1.4 ピクセル値の尤度関数
+
+ピクセル値の尤度関数は以下の通り，各領域内でラベルごとにパラメータが異なる確率関数から生成されるモデルとして仮定している．
+
+$$
+p(Y_r\mid x_{r};\bm{\theta}) = p(Y_r;\bm{\theta}_{x_{r}}).
+$$
+
+#### 1.4.1 色とノイズの発生のモデル化
+
+- $p(Y_r;\bm{\theta}_{x_{r}})$ を以下のように設定する．
+
+    $$
+       p(Y_r\mid x_r;\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)};\boldsymbol{\mu}_{x_r},  \Sigma_{x_r}\bigr) 
+    $$
+    $$
+   y_{(i,j)} \sim N^3(\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})
+    $$
+
+- 統合領域およびラベル画像をもとに，ピクセル値を生成させる．
+
+    (exp 1.4.1.1)
+    | $(\bm{\mu}_x$, $\Sigma_x)$ | パターン1 | パターン2 |
+    |---|---:|---:|
+    | $x=0$ |  |  |
+    | $x=1$ |  |  |
+    | $x=2$ |  |  |
+
+    発生させた画像は以下の通り．
+
+#### 1.4.2 色とテクスチャとノイズの発生をモデル化
+
+- $p(Y_r;\bm{\theta}_{x_{r}})$ を以下のように設定する．
+
+    $$
+       p(Y_r\mid x_r;\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)};\boldsymbol{\mu}_{x_r},  \bm{A}^{(x_r)}, \Sigma_{x_r}\bigr) 
+    $$
+    $$
+   y_{(i,j)} \sim N^3(\boldsymbol{\mu}_{x_r} + \sum_{(\Delta i, \Delta j) \in \{(\Delta i', \Delta j')\in \Omega| (i+\Delta i',j+\Delta j')\in r \}}  A_{(\Delta i,\Delta j)}^{(x_r)} (y_{(i+\Delta i,j+\Delta j)} - \boldsymbol{\mu}_{x_r}),  \Sigma_{x_r})
+    $$
+
+-   統合領域およびラベル画像をもとに，ピクセル値を生成させる．
+
+    (exp 1.4.2.1)
+
+    | $(\bm{\mu}_x, \bm{A}^{(x)},\Sigma_x)$ | パターン1 | パターン2 |
+    |---|---:|---:|
+    | $x=0$ |  |  |
+    | $x=1$ |  |  |
+    | $x=2$ |  |  |
+    
+    発生させた画像は以下の通り．
+
+- 考察
+
+
+## 2. 各種パラメータの推定結果の正確性と性質を精査することを目的とした実験
+
+### 2.1 発生させた人工データから四分木の事前分布のパラメータを推定
+
+統合領域$R(\bm{c})$，ラベル$X$, ピクセル値$Y$を発生させるときのパラメータは以下のように設定．
+
+- 統合領域の事前分布とパラメータ
+    - 事前分布の確率関数
+
+        $$
+        p(c_s=s'\mid T;\alpha,\beta,\eta)\propto
+        \begin{cases}
+        \dfrac{f(s,s')}{\alpha+\sum_{s''\in \mathcal{L}(T)\setminus\{s\}}f(s,s'')} & (s\neq s')\\
+        \dfrac{\alpha}{\alpha+\sum_{s''\in \mathcal{L}(T)\setminus\{s\}}f(s,s'')} & (s=s')
+        \end{cases}
+        $$
+
+        $$
+        f(s,s')=
+        \begin{cases}
+        \exp\left(\beta B(s,s')+\eta(\mathrm{depth}(s)-\mathrm{depth}(s'))\right) & (\text{$s$と$s'$が隣接している})\\
+        0 & (\text{$s$と$s'$が隣接していない})
+        \end{cases}
+        $$
+    - 設定したパラメータ
+        - $\alpha = \text{xxx}$
+        - $\beta=\text{xxx}$
+        - $\eta=\text{xxx}$
+
+- ラベルの事前分布とパラメータ
+
+    - 幾何学的特徴量の正規確率に基づくラベルの発生モデル
+
+        $$p(\phi_i(r)\mid x_r=x) =\mathcal{N} \left(\phi_i(r);m_i^{(x)},\left(\sigma_i^{(x)}\right)^2\right)$$
+        $$p\left(\boldsymbol{\phi}(r)\mid x_r=x\right) =
+        \prod_{i=1}^{|\bm{\phi}|}
+        p(\phi_i(r)\mid x_r=x)$$
+        $$p(x_r=x) = 
+        \frac{
+        p\left(\boldsymbol{\phi}(r)\mid x_r=x\right)
+        }{
+        \sum\limits_{x'\in\mathcal{X}}
+        p\left(\boldsymbol{\phi}(r)\mid x_r=x'\right)
+        }$$
+
+    - 設定したパラメータ
+
+        | | $x=0$ | $x=1$ | $x=2$ |
+        |---|---:|---:|---:|
+        | Area: $(m_1^{(x)}, \sigma_1^{(x)})$ |  |  |   |
+        | Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ |  |  |   |
+        | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ |  |  |   |
+
+- ピクセル値の尤度関数のパラメータ
+
+    - ピクセル値の尤度関数
+        $$
+           p(Y_r\mid x_r;\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)};\boldsymbol{\mu}_{x_r},  \Sigma_{x_r}\bigr) 
+        $$
+        $$
+            y_{(i,j)} \sim N^3(\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})
+        $$
+
+    - 設定したパラメータ
+
+        |  | $\bm{\mu}_x$ | $\Sigma_x$ |
+        |---|---:|---:|
+        | $x=0$ |  |  |
+        | $x=1$ |  |  |
+        | $x=2$ |  |  |
+
+    
