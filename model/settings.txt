@@ -1,9 +1,0 @@
-region
-merge_prob_func
-    <input>
-    base_merge_prob: int
-    leaf: Node class object
-    adj: Node class object
-    region: set of Node class objecgt
-    <output>
-    probability: float (0~1)
