@@ -125,225 +125,433 @@
 
     - 円形度
 
-    (exp. 1.2.1)
+    ### [exp. 1.2.1]
 
     exp. 1.1.1で生成された以下の四分木を対象に統合領域を生成する．
 
-    - $\alpha = 1.0\times 10^{-8}$
+    ![exp1.2.1_quadtree](./exp.1.2.1/outputs/quadtree.png)
 
-        - 生成された統合領域
+    - 生成された統合領域（各セルは代表例として region_000.png を掲載）
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        <table>
+          <tr>
+            <th>$\alpha = 1.0\times 10^{-8}$</th>
+            <th>$\alpha = 1.0\times 10^{-4}$</th>
+            <th>$\alpha = 1.0$</th>
+          </tr>
+          <tr>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
+    - 生成された統合領域の幾何学的特徴量の分布
 
-            - 周の長さ
+        - 面積
 
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.1_area_alpha1e-8](./exp.1.2.1/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.1_area_alpha1e-4](./exp.1.2.1/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.1_area_alpha1](./exp.1.2.1/outputs/feature_dist_area_alpha1.00e+00.png) |
 
-    - $\alpha = 1.0\times 10^{-4}$
+        - 周の長さ
 
-        - 生成された統合領域
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.1_perimeter_alpha1e-8](./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.1_perimeter_alpha1e-4](./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.1_perimeter_alpha1](./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        - 円形度
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
-
-    - $\alpha = 1.0$
-
-        - 生成された統合領域
-
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
-
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.1_circularity_alpha1e-8](./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.1_circularity_alpha1e-4](./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.1_circularity_alpha1](./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e+00.png) |
 
     (exp. 1.2.2)
 
     exp. 1.1.2で生成された以下の四分木を対象に統合領域を生成する．
 
-    - $\alpha = 1.0\times 10^{-8}$
+    ![exp1.2.2_quadtree](./exp.1.2.2/outputs/quadtree.png)
 
-        - 生成された統合領域
+    - 生成された統合領域（各セルは代表例として region_000.png を掲載）
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        <table>
+          <tr>
+            <th>$\alpha = 1.0\times 10^{-8}$</th>
+            <th>$\alpha = 1.0\times 10^{-4}$</th>
+            <th>$\alpha = 1.0$</th>
+          </tr>
+          <tr>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
+    - 生成された統合領域の幾何学的特徴量の分布
 
-            - 周の長さ
+        - 面積
 
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.2_area_alpha1e-8](./exp.1.2.2/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.2_area_alpha1e-4](./exp.1.2.2/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.2_area_alpha1](./exp.1.2.2/outputs/feature_dist_area_alpha1.00e+00.png) |
 
-    - $\alpha = 1.0\times 10^{-4}$
+        - 周の長さ
 
-        - 生成された統合領域
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.2_perimeter_alpha1e-8](./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.2_perimeter_alpha1e-4](./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.2_perimeter_alpha1](./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        - 円形度
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
-
-    - $\alpha = 1.0$
-
-        - 生成された統合領域
-
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
-
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.2_circularity_alpha1e-8](./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.2_circularity_alpha1e-4](./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.2_circularity_alpha1](./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e+00.png) |
 
     (exp. 1.2.3)
 
     exp. 1.1.3で生成された以下の四分木を対象に統合領域を生成する．
 
-    - $\alpha = 1.0\times 10^{-8}$
+    ![exp1.2.3_quadtree](./exp.1.2.3/outputs/quadtree.png)
 
-        - 生成された統合領域
+    - 生成された統合領域（各セルは代表例として region_000.png を掲載）
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        <table>
+          <tr>
+            <th>$\alpha = 1.0\times 10^{-8}$</th>
+            <th>$\alpha = 1.0\times 10^{-4}$</th>
+            <th>$\alpha = 1.0$</th>
+          </tr>
+          <tr>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
+    - 生成された統合領域の幾何学的特徴量の分布
 
-            - 周の長さ
+        - 面積
 
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.3_area_alpha1e-8](./exp.1.2.3/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.3_area_alpha1e-4](./exp.1.2.3/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.3_area_alpha1](./exp.1.2.3/outputs/feature_dist_area_alpha1.00e+00.png) |
 
-    - $\alpha = 1.0\times 10^{-4}$
+        - 周の長さ
 
-        - 生成された統合領域
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.3_perimeter_alpha1e-8](./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.3_perimeter_alpha1e-4](./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.3_perimeter_alpha1](./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        - 円形度
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
-
-    - $\alpha = 1.0$
-
-        - 生成された統合領域
-
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
-
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.3_circularity_alpha1e-8](./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.3_circularity_alpha1e-4](./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.3_circularity_alpha1](./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e+00.png) |
 
     (exp. 1.2.4)
 
     exp. 1.1.4で生成された以下の四分木を対象に統合領域を生成する．
 
-    - $\alpha = 1.0\times 10^{-8}$
+    ![exp1.2.4_quadtree](./exp.1.2.4/outputs/quadtree.png)
 
-        - 生成された統合領域
+    - 生成された統合領域（各セルは代表例として region_000.png を掲載）
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        <table>
+          <tr>
+            <th>$\alpha = 1.0\times 10^{-8}$</th>
+            <th>$\alpha = 1.0\times 10^{-4}$</th>
+            <th>$\alpha = 1.0$</th>
+          </tr>
+          <tr>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr>
+                  <th>$\beta=0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=8.0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+                <tr>
+                  <th>$\beta=30.0$</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
+    - 生成された統合領域の幾何学的特徴量の分布
 
-            - 周の長さ
+        - 面積
 
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.4_area_alpha1e-8](./exp.1.2.4/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.4_area_alpha1e-4](./exp.1.2.4/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.4_area_alpha1](./exp.1.2.4/outputs/feature_dist_area_alpha1.00e+00.png) |
 
-    - $\alpha = 1.0\times 10^{-4}$
+        - 周の長さ
 
-        - 生成された統合領域
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.4_perimeter_alpha1e-8](./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.4_perimeter_alpha1e-4](./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.4_perimeter_alpha1](./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
 
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
+        - 円形度
 
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
-
-    - $\alpha = 1.0$
-
-        - 生成された統合領域
-
-            | | $\eta=0$ | $\eta=8.0$ | $\eta=30.0$ |
-            |---|---:|---:|---:|
-            | $\beta=0$ |  |  |   |
-            | $\beta=8.0$ |  |  |   |
-            | $\beta=30.0$ |  |  |   |
-
-        - 生成された統合領域の幾何学的特徴量の分布
-            - 面積
-
-            - 周の長さ
-
-            - 円形度
+            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
+            |---:|---:|---:|
+            | ![exp1.2.4_circularity_alpha1e-8](./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.4_circularity_alpha1e-4](./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.4_circularity_alpha1](./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e+00.png) |
 
 - 考察
     
@@ -376,7 +584,9 @@ $$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\text{Area}(r), \text{Peri
 
     (exp 1.3.1.1) 
 
-    exp. x.x.xにおいて，$\alpha = \text{xxx}, \beta=\text{xxx}, \eta=\text{xxx}$で生成された統合領域に対して，以下のパラメータを設定してラベルを発生させる．
+    exp.1.2.3において，$\alpha = 1.0\times10^{-4}, \beta=8.0, \eta=8.0$で生成された以下の統合領域に対して，以下のパラメータを設定してラベルを発生させる．
+
+    ![1.3.1.1-1](./exp.1.3.1.1/region_000.png)
 
     | | $x=0$ | $x=1$ | $x=2$ |
     |---|---:|---:|---:|
@@ -625,3 +835,60 @@ $$
     $$
     p(T;\mathbf{g})=\prod_{s\in \mathcal{L}(T)}(1-g_s)\prod_{s'\in \mathcal{I}(T)}g_{s'}
     $$
+
+    | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+
+- 統合領域は以下の事前分布をもとに発生させる．
+
+    $$
+    p(c_s=s'\mid T;\alpha,\beta,\eta)\propto
+    \begin{cases}
+    \dfrac{f(s,s')}{\alpha+\sum_{s''\in \mathcal{L}(T)\setminus\{s\}}f(s,s'')} & (s\neq s')\\
+    \dfrac{\alpha}{\alpha+\sum_{s''\in \mathcal{L}(T)\setminus\{s\}}f(s,s'')} & (s=s')
+    \end{cases}
+    $$
+
+    $$
+    f(s,s')=
+    \begin{cases}
+    \exp\left(\beta B(s,s')+\eta(\mathrm{depth}(s)-\mathrm{depth}(s'))\right) & (\text{$s$と$s'$が隣接している})\\
+    0 & (\text{$s$と$s'$が隣接していない})
+    \end{cases}
+    $$
+
+    設定したパラメータ
+
+    - $\alpha = \text{xxx}$
+    - $\beta=\text{xxx}$
+    - $\eta=\text{xxx}$
+
+- ピクセル値は以下の尤度関数に従って生成する．
+
+    $$
+        p(Y_r\mid x_r;\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)};\boldsymbol{\mu}_{x_r},  \Sigma_{x_r}\bigr) 
+    $$
+    $$
+        y_{(i,j)} \sim N^3(\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})
+    $$
+
+    設定したパラメータ
+
+    |  | $\bm{\mu}_x$ | $\Sigma_x$ |
+    |---|---:|---:|
+    | $x=0$ |  |  |
+    | $x=1$ |  |  |
+    | $x=2$ |  |  |
+
+#### 2.1.1 幾何学的特徴量の分布が正規分布に従うことを仮定したときのモデルのパラメータ推定
+
+
+
+
+
+
+
+
+
+
+
+
