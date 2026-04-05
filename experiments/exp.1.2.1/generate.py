@@ -42,6 +42,7 @@ sys.path.insert(0, ROOT_DIR)
 from model.quadtree.depth_dependent_model import QuadTree
 from model.quadtree.node import Node
 from model.region.affinity import log_affinity_boundary_and_depth
+from model.label.geom_features import compute_geom_features
 
 # ── 実験定数 ──────────────────────────────────────────────────
 SEED        = 42
@@ -49,7 +50,7 @@ MAX_DEPTH   = 7
 BRANCH_PROBS = [0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.0]   # exp.1.1.1
 IMAGE_SIZE  = 2 ** MAX_DEPTH   # 128
 
-N_REGIONS_PER_PARAM = 10
+N_REGIONS_PER_PARAM = 50
 
 ALPHA_VALUES: list[float] = [1e-8, 1e-4, 1.0]
 BETA_VALUES:  list[float] = [0.0, 8.0, 30.0]
@@ -230,40 +231,26 @@ def compute_all_region_geometrics(
     image_size: int,
 ) -> list[dict]:
     """
-    全領域の面積・周の長さ・円形度を numpy で一括計算する．
+    全領域の幾何学特徴量を算出する．
 
-    周の長さ: 4近傍が自領域外（境界外含む）のエッジ数の合計．
-    円形度:   4π × 面積 / 周の長さ²   （円 = 1，不規則形状 < 1）
+    model/label/geom_features_norm_dist.py と同じ定義に合わせるため，
+    compute_geom_features(..., feature_names=["log_area", "log_perimeter", "circularity"])
+    を利用して，対数面積・対数周長・円形度を返す．
     """
-    if not region_dict:
-        return []
-
-    max_rid = max(region_dict.keys())
-    mask = np.zeros((image_size, image_size), dtype=np.int32)
-    for rid, pixels in region_dict.items():
-        arr = np.array(list(pixels), dtype=np.int32)
-        mask[arr[:, 0], arr[:, 1]] = rid
-
-    # 面積
-    areas = np.bincount(mask.ravel(), minlength=max_rid + 1)
-
-    # 周の長さ: padding=0（背景）は領域 ID と一致しないので境界として扱われる
-    padded = np.pad(mask, 1, mode="constant", constant_values=0)
-    same_neighbors = (
-        (mask == padded[:-2, 1:-1]).astype(np.int32)   # 上
-        + (mask == padded[2:,  1:-1]).astype(np.int32)  # 下
-        + (mask == padded[1:-1, :-2]).astype(np.int32)  # 左
-        + (mask == padded[1:-1, 2:] ).astype(np.int32)  # 右
-    )
-    exposed = (4 - same_neighbors) * (mask > 0).astype(np.int32)
-    perimeters = np.bincount(mask.ravel(), weights=exposed.ravel(), minlength=max_rid + 1)
-
     features: list[dict] = []
     for rid in region_dict.keys():
-        area      = int(areas[rid])
-        perimeter = int(perimeters[rid])
-        circ = (4.0 * np.pi * area / perimeter ** 2) if perimeter > 0 else 1.0
-        features.append({"area": area, "perimeter": perimeter, "circularity": float(circ)})
+        phi = compute_geom_features(
+            region=region_dict[rid],
+            image_size=image_size,
+            feature_names=["log_area", "log_perimeter", "circularity"],
+        )
+        features.append(
+            {
+                "log_area": float(phi[0]),
+                "log_perimeter": float(phi[1]),
+                "circularity": float(phi[2]),
+            }
+        )
     return features
 
 
@@ -303,12 +290,12 @@ def plot_distributions_for_alpha(
     alpha_key   = f"{alpha:.2e}"
 
     cfg = [
-        ("area", "Area [px]", False),
-        ("perimeter", "Perimeter [px]", False),
-        ("circularity", "Circularity", False),
+        ("log_area", "log(Area)", False, "area"),
+        ("log_perimeter", "log(Perimeter)", False, "perimeter"),
+        ("circularity", "Circularity", False, "circularity"),
     ]
 
-    for feat_key, feat_label, use_log in cfg:
+    for feat_key, feat_label, use_log, out_key in cfg:
         fig, axes = plt.subplots(3, 3, figsize=(14, 11))
         fig.suptitle(
             f"Distribution of {feat_label} ({alpha_label})",
@@ -369,7 +356,7 @@ def plot_distributions_for_alpha(
                 ax.tick_params(labelsize=6)
 
         plt.tight_layout(rect=[0, 0, 1, 0.97])
-        out_path = os.path.join(output_dir, f"feature_dist_{feat_key}_alpha{alpha_key}.png")
+        out_path = os.path.join(output_dir, f"feature_dist_{out_key}_alpha{alpha_key}.png")
         plt.savefig(out_path, dpi=150, bbox_inches="tight")
         plt.close(fig)
         print(f"  Saved: {out_path}")

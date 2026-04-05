@@ -1,0 +1,128 @@
+[
+  {
+    "region_index": 0,
+    "area_pixels": 6648,
+    "features": {
+      "log_area": 8.802221746402456,
+      "log_perimeter": 6.037870919922137,
+      "circularity": 0.4781325510190917
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 1,
+    "area_pixels": 37,
+    "features": {
+      "log_area": 3.6375861597263857,
+      "log_perimeter": 3.4339872044851463,
+      "circularity": 0.5166174585903216
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 2,
+    "area_pixels": 105,
+    "features": {
+      "log_area": 4.663439094112067,
+      "log_perimeter": 3.9318256327243257,
+      "circularity": 0.5277875658030853
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 3,
+    "area_pixels": 574,
+    "features": {
+      "log_area": 6.354370040797351,
+      "log_perimeter": 4.919980925828125,
+      "circularity": 0.38998144099492676
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 4,
+    "area_pixels": 539,
+    "features": {
+      "log_area": 6.29156913955832,
+      "log_perimeter": 4.919980925828125,
+      "circularity": 0.3662020848366995
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 5,
+    "area_pixels": 1842,
+    "features": {
+      "log_area": 7.519149957669823,
+      "log_perimeter": 5.389071729816501,
+      "circularity": 0.48706452890433455
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 6,
+    "area_pixels": 1545,
+    "features": {
+      "log_area": 7.343426229147367,
+      "log_perimeter": 5.484796933490655,
+      "circularity": 0.3370667117914049
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 7,
+    "area_pixels": 40,
+    "features": {
+      "log_area": 3.713572066704308,
+      "log_perimeter": 3.367295829986474,
+      "circularity": 0.641141357875468
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  {
+    "region_index": 8,
+    "area_pixels": 5054,
+    "features": {
+      "log_area": 8.528133131454572,
+      "log_perimeter": 6.056784013228625,
+      "circularity": 0.3499660400547249
+    },
+    "label_priors": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  }
+]

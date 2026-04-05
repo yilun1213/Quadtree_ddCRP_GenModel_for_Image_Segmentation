@@ -1,4 +1,4 @@
-# ISITA2026に向けた実験報告
+﻿# ISITA2026に向けた実験報告
 
 この資料はISITA2026投稿に向けた実験結果または今後実験をする予定の事項を報告するものである．
 
@@ -135,77 +135,77 @@
 
         <table>
           <tr>
-            <th>$\alpha = 1.0\times 10^{-8}$</th>
-            <th>$\alpha = 1.0\times 10^{-4}$</th>
-            <th>$\alpha = 1.0$</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0</th>
           </tr>
           <tr>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-              </table>
-            </td>
-            <td>
-              <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
-                <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
+                <tr>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -216,23 +216,38 @@
 
         - 面積
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.1_area_alpha1e-8](./exp.1.2.1/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.1_area_alpha1e-4](./exp.1.2.1/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.1_area_alpha1](./exp.1.2.1/outputs/feature_dist_area_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_area_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_area_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_area_alpha1.00e+00.png">
 
         - 周の長さ
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.1_perimeter_alpha1e-8](./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.1_perimeter_alpha1e-4](./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.1_perimeter_alpha1](./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_perimeter_alpha1.00e+00.png">
 
         - 円形度
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.1_circularity_alpha1e-8](./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.1_circularity_alpha1e-4](./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.1_circularity_alpha1](./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e-08.png">
 
-    (exp. 1.2.2)
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.1/outputs/feature_dist_circularity_alpha1.00e+00.png">
+
+    ### [exp. 1.2.2]
 
     exp. 1.1.2で生成された以下の四分木を対象に統合領域を生成する．
 
@@ -242,77 +257,77 @@
 
         <table>
           <tr>
-            <th>$\alpha = 1.0\times 10^{-8}$</th>
-            <th>$\alpha = 1.0\times 10^{-4}$</th>
-            <th>$\alpha = 1.0$</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0</th>
           </tr>
           <tr>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-              </table>
-            </td>
-            <td>
-              <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
-                <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
+                <tr>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -323,23 +338,38 @@
 
         - 面積
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.2_area_alpha1e-8](./exp.1.2.2/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.2_area_alpha1e-4](./exp.1.2.2/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.2_area_alpha1](./exp.1.2.2/outputs/feature_dist_area_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_area_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_area_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_area_alpha1.00e+00.png">
 
         - 周の長さ
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.2_perimeter_alpha1e-8](./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.2_perimeter_alpha1e-4](./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.2_perimeter_alpha1](./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_perimeter_alpha1.00e+00.png">
 
         - 円形度
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.2_circularity_alpha1e-8](./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.2_circularity_alpha1e-4](./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.2_circularity_alpha1](./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e-08.png">
 
-    (exp. 1.2.3)
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.2/outputs/feature_dist_circularity_alpha1.00e+00.png">
+
+    ### [exp. 1.2.3]
 
     exp. 1.1.3で生成された以下の四分木を対象に統合領域を生成する．
 
@@ -349,77 +379,77 @@
 
         <table>
           <tr>
-            <th>$\alpha = 1.0\times 10^{-8}$</th>
-            <th>$\alpha = 1.0\times 10^{-4}$</th>
-            <th>$\alpha = 1.0$</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0</th>
           </tr>
           <tr>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-              </table>
-            </td>
-            <td>
-              <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
-                <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
+                <tr>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -430,23 +460,38 @@
 
         - 面積
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.3_area_alpha1e-8](./exp.1.2.3/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.3_area_alpha1e-4](./exp.1.2.3/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.3_area_alpha1](./exp.1.2.3/outputs/feature_dist_area_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_area_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_area_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_area_alpha1.00e+00.png">
 
         - 周の長さ
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.3_perimeter_alpha1e-8](./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.3_perimeter_alpha1e-4](./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.3_perimeter_alpha1](./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_perimeter_alpha1.00e+00.png">
 
         - 円形度
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.3_circularity_alpha1e-8](./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.3_circularity_alpha1e-4](./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.3_circularity_alpha1](./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e-08.png">
 
-    (exp. 1.2.4)
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.3/outputs/feature_dist_circularity_alpha1.00e+00.png">
+
+    ### [exp. 1.2.4]
 
     exp. 1.1.4で生成された以下の四分木を対象に統合領域を生成する．
 
@@ -456,77 +501,77 @@
 
         <table>
           <tr>
-            <th>$\alpha = 1.0\times 10^{-8}$</th>
-            <th>$\alpha = 1.0\times 10^{-4}$</th>
-            <th>$\alpha = 1.0$</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0</th>
           </tr>
           <tr>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-              </table>
-            </td>
-            <td>
-              <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
-                <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120"></td>
-                </tr>
-                <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
             <td>
               <table>
-                <tr><th></th><th>$\eta=0$</th><th>$\eta=8.0$</th><th>$\eta=30.0$</th></tr>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
-                  <th>$\beta=0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=8.0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
-                  <th>$\beta=30.0$</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120"></td>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-04_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
+                <tr>
+                  <th>&beta; = 0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 8.0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                </tr>
+                <tr>
+                  <th>&beta; = 30.0</th>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -537,21 +582,36 @@
 
         - 面積
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.4_area_alpha1e-8](./exp.1.2.4/outputs/feature_dist_area_alpha1.00e-08.png) | ![exp1.2.4_area_alpha1e-4](./exp.1.2.4/outputs/feature_dist_area_alpha1.00e-04.png) | ![exp1.2.4_area_alpha1](./exp.1.2.4/outputs/feature_dist_area_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_area_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_area_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_area_alpha1.00e+00.png">
 
         - 周の長さ
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.4_perimeter_alpha1e-8](./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e-08.png) | ![exp1.2.4_perimeter_alpha1e-4](./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e-04.png) | ![exp1.2.4_perimeter_alpha1](./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_perimeter_alpha1.00e+00.png">
 
         - 円形度
 
-            | $\alpha = 1.0\times 10^{-8}$ | $\alpha = 1.0\times 10^{-4}$ | $\alpha = 1.0$ |
-            |---:|---:|---:|
-            | ![exp1.2.4_circularity_alpha1e-8](./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e-08.png) | ![exp1.2.4_circularity_alpha1e-4](./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e-04.png) | ![exp1.2.4_circularity_alpha1](./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e+00.png) |
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-8</sup></strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e-08.png">
+
+          <p><strong>&alpha; = 1.0 &times; 10<sup>-4</sup></strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e-04.png">
+
+          <p><strong>&alpha; = 1.0</strong></p>
+          <img src="./exp.1.2.4/outputs/feature_dist_circularity_alpha1.00e+00.png">
 
 - 考察
     
@@ -582,7 +642,7 @@ $$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\text{Area}(r), \text{Peri
 
 - 統合領域をもとにラベルを発生させ，各ラベルごとの特徴に沿うようにラベルが発生しているかを調査する．
 
-    (exp 1.3.1.1) 
+    ### [exp 1.3.1.1]
 
     exp.1.2.3において，$\alpha = 1.0\times10^{-4}, \beta=8.0, \eta=8.0$で生成された以下の統合領域に対して，以下のパラメータを設定してラベルを発生させる．
 
@@ -590,9 +650,9 @@ $$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\text{Area}(r), \text{Peri
 
     | | $x=0$ | $x=1$ | $x=2$ |
     |---|---:|---:|---:|
-    | Area: $(m_1^{(x)}, \sigma_1^{(x)})$ |  |  |   |
-    | Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ |  |  |   |
-    | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ |  |  |   |
+    | Area: $(m_1^{(x)}, \sigma_1^{(x)})$ | $(34.0, 30.0)$ | $(1000,500)$ | $(3000,1000)$  |
+    | Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ | $(10, 20)$ | $(100, 30)$ | $(250, 100)$ |
+    | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ | $(0.4, 0.1)$ | $(0.6, 0.1)$ | $(0.7, 0.1)$ |
 
     発生させたラベル画像は以下の通り．
 
@@ -880,6 +940,8 @@ $$
     | $x=2$ |  |  |
 
 #### 2.1.1 幾何学的特徴量の分布が正規分布に従うことを仮定したときのモデルのパラメータ推定
+
+
 
 
 
