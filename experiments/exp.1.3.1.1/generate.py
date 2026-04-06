@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -21,6 +21,8 @@ OUTPUT_DIR = Path(__file__).with_name("outputs")
 LABEL_OUTPUT_DIR = OUTPUT_DIR / "labels"
 VIS_OUTPUT_DIR = LABEL_OUTPUT_DIR / "visualize"
 REPORT_JSON_PATH = OUTPUT_DIR / "region_label_priors.json"
+REGION_INDEX_IMAGE_PATH = OUTPUT_DIR / "region_with_indices.png"
+FEATURE_TABLE_PATH = OUTPUT_DIR / "region_feature_normal_prob_table.txt"
 NUM_SAMPLES = 5
 
 
@@ -29,15 +31,16 @@ LABEL_PARAM = {
     "label_set": [0, 1, 2],
     "label_value_set": [0, 128, 255],
     "means": [
-        [9.535675761814312, 7.3526835069212915, 0.0775996551652279],
-        [7.602403420240487, 6.90715679601541, 0.026084000913409226],
-        [9.519315318835302, 7.591270702553376, 0.043750937130338],
+        [4.0, 3.5, 0.45],
+        [6.5, 5.0, 0.5],
+        [9.0, 6.0, 0.7],
     ],
     "stds": [
-        [1.7255673479777514, 1.053401067765219, 0.025070832863695793],
-        [0.06332031250252408, 0.1463038346144442, 0.006885707845728361],
-        [0.0017857046518637441, 0.03231548185822331, 0.002834923945423524],
+        [1.0, 0.5, 0.2],
+        [1.5, 0.5, 0.1],
+        [1.0, 0.5, 0.1],
     ],
+    # Area/Perimeter are handled in log space (log_area, log_perimeter).
     "feature_names": ["log_area", "log_perimeter", "circularity"],
 }
 
@@ -101,6 +104,7 @@ def analyze_regions(
         region_stats.append(
             {
                 "region_index": region_index,
+                "region_no": region_index + 1,
                 "region": region,
                 "area_pixels": len(region),
                 "features": features,
@@ -140,6 +144,7 @@ def save_region_analysis(region_stats: list[dict[str, object]], path: Path) -> N
         serializable_stats.append(
             {
                 "region_index": int(stat["region_index"]),
+                "region_no": int(stat["region_no"]),
                 "area_pixels": int(stat["area_pixels"]),
                 "features": {
                     feature_name: float(feature_value)
@@ -156,6 +161,101 @@ def save_region_analysis(region_stats: list[dict[str, object]], path: Path) -> N
         json.dumps(serializable_stats, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+
+
+def _normal_pdf_1d(x: float, mean: float, std: float) -> float:
+    std_safe = max(float(std), 1e-12)
+    coef = 1.0 / np.sqrt(2.0 * np.pi * std_safe * std_safe)
+    exponent = -0.5 * ((float(x) - float(mean)) / std_safe) ** 2
+    return float(coef * np.exp(exponent))
+
+
+def save_region_index_overlay(
+    region_image: np.ndarray,
+    region_stats: list[dict[str, object]],
+    path: Path,
+) -> None:
+    pil_image = Image.fromarray(region_image.astype(np.uint8))
+    if pil_image.mode != "RGB":
+        pil_image = pil_image.convert("RGB")
+
+    draw = ImageDraw.Draw(pil_image)
+    font = ImageFont.load_default()
+
+    for stat in region_stats:
+        region_no = int(stat["region_no"])
+        region = stat["region"]
+        points = np.asarray(list(region), dtype=float)
+        center_i = float(points[:, 0].mean())
+        center_j = float(points[:, 1].mean())
+
+        text = str(region_no)
+        left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+        text_w = right - left
+        text_h = bottom - top
+        text_pos = (center_j - text_w / 2.0, center_i - text_h / 2.0)
+
+        draw.text(
+            text_pos,
+            text,
+            fill=(255, 255, 255),
+            font=font,
+            stroke_width=2,
+            stroke_fill=(0, 0, 0),
+        )
+
+    pil_image.save(path)
+
+
+def save_region_feature_normal_prob_table(
+    region_stats: list[dict[str, object]],
+    path: Path,
+) -> None:
+    feature_names = list(LABEL_PARAM["feature_names"])
+    label_set = [int(label) for label in LABEL_PARAM["label_set"]]
+    means = np.asarray(LABEL_PARAM["means"], dtype=float)
+    stds = np.asarray(LABEL_PARAM["stds"], dtype=float)
+
+    header_cols = ["region_no"]
+    for feature_name in feature_names:
+        header_cols.append(feature_name)
+        for label in label_set:
+            header_cols.append(f"N({feature_name}|x={label})")
+    for label in label_set:
+        header_cols.append(f"p(label={label})")
+
+    lines = []
+    lines.append("Region index mapping and feature/normal-probability table")
+    lines.append("- region_no is the index drawn on region_with_indices.png")
+    lines.append("- log_area/log_perimeter are used for Gaussian probability computation")
+    lines.append("")
+    lines.append("| " + " | ".join(header_cols) + " |")
+    lines.append("|" + "|".join(["---"] * len(header_cols)) + "|")
+
+    for stat in region_stats:
+        region_no = int(stat["region_no"])
+        features = np.asarray(stat["features"], dtype=float)
+        priors = np.asarray(stat["label_priors"], dtype=float)
+
+        row = [str(region_no)]
+        for feature_idx, feature_name in enumerate(feature_names):
+            _ = feature_name
+            feature_value = float(features[feature_idx])
+            row.append(f"{feature_value:.6f}")
+            for label_idx, _label in enumerate(label_set):
+                prob = _normal_pdf_1d(
+                    x=feature_value,
+                    mean=float(means[label_idx, feature_idx]),
+                    std=float(stds[label_idx, feature_idx]),
+                )
+                row.append(f"{prob:.6e}")
+
+        for prob in priors:
+            row.append(f"{float(prob):.6e}")
+
+        lines.append("| " + " | ".join(row) + " |")
+
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def sample_label_image(
@@ -215,7 +315,11 @@ def main() -> None:
     region_stats = analyze_regions(regions=regions, image_size=image_size)
     print_region_analysis(region_stats)
     save_region_analysis(region_stats, REPORT_JSON_PATH)
+    save_region_index_overlay(region_image=region_image, region_stats=region_stats, path=REGION_INDEX_IMAGE_PATH)
+    save_region_feature_normal_prob_table(region_stats=region_stats, path=FEATURE_TABLE_PATH)
     print(f"Saved region analysis to {REPORT_JSON_PATH.name}")
+    print(f"Saved indexed region image to {REGION_INDEX_IMAGE_PATH.name}")
+    print(f"Saved region feature/normal-probability table to {FEATURE_TABLE_PATH.name}")
 
     for sample_index in range(NUM_SAMPLES):
         rng = np.random.default_rng(sample_index)

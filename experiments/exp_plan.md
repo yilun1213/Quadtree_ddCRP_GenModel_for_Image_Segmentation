@@ -135,9 +135,9 @@
 
         <table>
           <tr>
-            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
-            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
             <th>&alpha; = 1.0</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
           </tr>
           <tr>
             <td>
@@ -145,21 +145,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -191,21 +191,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.1/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.1/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -257,9 +257,9 @@
 
         <table>
           <tr>
-            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
-            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
             <th>&alpha; = 1.0</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
           </tr>
           <tr>
             <td>
@@ -267,21 +267,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -313,21 +313,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.2/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.2/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -379,9 +379,9 @@
 
         <table>
           <tr>
-            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
-            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
             <th>&alpha; = 1.0</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
           </tr>
           <tr>
             <td>
@@ -389,21 +389,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -435,21 +435,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.3/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.3/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -501,9 +501,9 @@
 
         <table>
           <tr>
-            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
-            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
             <th>&alpha; = 1.0</th>
+            <th>&alpha; = 1.0 &times; 10<sup>-4</sup></th>
+            <th>&alpha; = 1.0 &times; 10<sup>-8</sup></th>
           </tr>
           <tr>
             <td>
@@ -511,21 +511,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -557,21 +557,21 @@
                 <tr><th></th><th>&eta; = 0</th><th>&eta; = 8.0</th><th>&eta; = 30.0</th></tr>
                 <tr>
                   <th>&beta; = 0</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta0.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 8.0</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta8.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
                 <tr>
                   <th>&beta; = 30.0</th>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
-                  <td><img src="./exp.1.2.4/outputs/alpha1.00e+00_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta0.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta8.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+                  <td><img src="./exp.1.2.4/outputs/alpha1.00e-08_beta30.0_eta30.0/region_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
                 </tr>
               </table>
             </td>
@@ -622,22 +622,22 @@
 
 $$p(X\mid R(\bm{c}))=\prod_{r\in R(\bm{c})}p(x_r).$$
 
-$$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\text{Area}(r), \text{Perimeter}(r), \text{Circularity}(r))$$
+$$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\log(\text{Area}(r)), \log(\text{Perimeter}(r)), \text{Circularity}(r))$$
 
 #### 1.3.1 幾何学的特徴量をもとに正規分布の確率の重みからラベルが発生するモデル
 
 - $p(x_r)$を以下のように仮定する．
 
-    $$p(\phi_i(r)\mid x_r=x) =\mathcal{N} \left(\phi_i(r);m_i^{(x)},\left(\sigma_i^{(x)}\right)^2\right)$$
-    $$p\left(\boldsymbol{\phi}(r)\mid x_r=x\right) =
+    $$z(\phi_i(r)\mid x_r=x) =\mathcal{N} \left(\phi_i(r);m_i^{(x)},\left(\sigma_i^{(x)}\right)^2\right)$$
+    $$z\left(\boldsymbol{\phi}(r)\mid x_r=x\right) =
     \prod_{i=1}^{|\bm{\phi}|}
-    p(\phi_i(r)\mid x_r=x)$$
+    z(\phi_i(r)\mid x_r=x)$$
     $$p(x_r=x) = 
     \frac{
-    p\left(\boldsymbol{\phi}(r)\mid x_r=x\right)
+    z\left(\boldsymbol{\phi}(r)\mid x_r=x\right)
     }{
     \sum\limits_{x'\in\mathcal{X}}
-    p\left(\boldsymbol{\phi}(r)\mid x_r=x'\right)
+    z\left(\boldsymbol{\phi}(r)\mid x_r=x'\right)
     }$$
 
 - 統合領域をもとにラベルを発生させ，各ラベルごとの特徴に沿うようにラベルが発生しているかを調査する．
@@ -646,15 +646,47 @@ $$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\text{Area}(r), \text{Peri
 
     exp.1.2.3において，$\alpha = 1.0\times10^{-4}, \beta=8.0, \eta=8.0$で生成された以下の統合領域に対して，以下のパラメータを設定してラベルを発生させる．
 
-    ![1.3.1.1-1](./exp.1.3.1.1/region_000.png)
+    ![1.3.1.1-1](./exp.1.3.1.1/region_000.png)　![1.3.1.1-region-indexed](./exp.1.3.1.1/outputs/region_with_indices.png)
 
     | | $x=0$ | $x=1$ | $x=2$ |
     |---|---:|---:|---:|
-    | Area: $(m_1^{(x)}, \sigma_1^{(x)})$ | $(34.0, 30.0)$ | $(1000,500)$ | $(3000,1000)$  |
-    | Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ | $(10, 20)$ | $(100, 30)$ | $(250, 100)$ |
-    | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ | $(0.4, 0.1)$ | $(0.6, 0.1)$ | $(0.7, 0.1)$ |
+    | log Area: $(m_1^{(x)}, \sigma_1^{(x)})$ | $(4.0, 1.0)$ | $(6.5,1.5)$ | $(9.0, 1.0)$  |
+    | log Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ | $(3.5, 0.5)$ | $(5, 0.5)$ | $(6, 0.5)$ |
+    | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ | $(0.45, 0.2)$ | $(0.5, 0.1)$ | $(0.7, 0.1)$ |
 
     発生させたラベル画像は以下の通り．
+
+    - 領域番号ごとの特徴量と対応する事前確率
+
+      | | region 1 | region 2 | region 3 | region 4 | region 5 | region 6 | region 7 | region 8 |
+      |---|---|---|---|---|---|---|---|---|
+      | $\phi_1$: log_area | 1.39 | 8.88 | 3.50 | 4.44 | 7.36 | 8.83 | 6.35 | 4.29 |
+      | $z(\phi_1\|x_r=0)$ | 0.01 | 0.00 | 0.35 | 0.36 | 0.00 | 0.00 | 0.03 | 0.38 |
+      | $z(\phi_1\|x_r=1)$ | 0.00 | 0.08 | 0.04 | 0.10 | 0.23 | 0.08 | 0.26 | 0.09 |
+      | $z(\phi_1\|x_r=2)$ | 0.00 | 0.40 | 0.00 | 0.00 | 0.10 | 0.39 | 0.01 | 0.00 |
+      | $\phi_2$: log_perimeter | 2.20 | 6.18 | 3.22 | 3.71 | 5.32 | 6.08 | 4.84 | 3.76 |
+      | $z(\phi_2\|x_r=0)$ | 0.03 | 0.00 | 0.68 | 0.73 | 0.00 | 0.00 | 0.02 | 0.70 |
+      | $z(\phi_2\|x_r=1)$ | 0.00 | 0.05 | 0.00 | 0.03 | 0.65 | 0.08 | 0.76 | 0.04 |
+      | $z(\phi_2\|x_r=2)$ | 0.00 | 0.75 | 0.00 | 0.00 | 0.32 | 0.79 | 0.06 | 0.00 |
+      | $\phi_3$: circularity | 0.59 | 0.39 | 0.70 | 0.66 | 0.47 | 0.45 | 0.45 | 0.51 |
+      | $z(\phi_3\|x_r=0)$ | 1.57 | 1.92 | 0.92 | 1.15 | 1.98 | 1.99 | 1.99 | 1.90 |
+      | $z(\phi_3\|x_r=1)$ | 2.68 | 2.26 | 0.56 | 1.11 | 3.85 | 3.57 | 3.53 | 3.96 |
+      | $z(\phi_3\|x_r=2)$ | 2.16 | 0.04 | 3.99 | 3.68 | 0.30 | 0.19 | 0.18 | 0.69 |
+      | $p(x_r=0)$ | 1.00 | 0.00 | 1.00 | 0.99 | 0.00 | 0.00 | 0.00 | 0.97 |
+      | $p(x_r=1)$ | 0.00 | 0.44 | 0.00 | 0.01 | 0.98 | 0.27 | 1.00 | 0.03 |
+      | $p(x_r=2)$ | 0.00 | 0.56 | 0.00 | 0.00 | 0.02 | 0.73 | 0.00 | 0.00 |
+
+    - 生成したラベル画像
+
+      - $x=0$: 黒（0）
+      - $x=1$: 灰色（128）
+      - $x=2$: 白（255）
+
+      ![1.3.1.1-label-vis-000](./exp.1.3.1.1/outputs/labels/visualize/label_000.png)
+      ![1.3.1.1-label-vis-001](./exp.1.3.1.1/outputs/labels/visualize/label_001.png)
+      ![1.3.1.1-label-vis-002](./exp.1.3.1.1/outputs/labels/visualize/label_002.png)
+      ![1.3.1.1-label-vis-003](./exp.1.3.1.1/outputs/labels/visualize/label_003.png)
+      ![1.3.1.1-label-vis-004](./exp.1.3.1.1/outputs/labels/visualize/label_004.png)
 
 
 #### 1.3.2 幾何学的特徴量をもとにロジスティック回帰モデルでラベルを発生させるモデル
@@ -668,18 +700,46 @@ $$\bm{\phi}(r) = (\phi_1(r), \phi_2(r), \phi_3(r)) = (\text{Area}(r), \text{Peri
 
 - 統合領域をもとにラベルを発生させ，各ラベルごとの特徴に沿うようにラベルが発生しているかを調査する．
 
-    (exp 1.3.2.1) 
+    ### [exp 1.3.2.1]
 
-    exp. x.x.xにおいて，$\alpha = \text{xxx}, \beta=\text{xxx}, \eta=\text{xxx}$で生成された統合領域に対して，以下のパラメータを設定してラベルを発生させる．
+    exp.1.2.3において，$\alpha = 1.0\times10^{-4}, \beta=8.0, \eta=8.0$で生成された以下の統合領域に対して，以下のパラメータを設定してラベルを発生させる．
+
+    ![1.3.2.1-1](./exp.1.3.2.1/region_000.png)　![1.3.2.1-region-indexed](./exp.1.3.2.1/outputs/region_with_indices.png)
 
     | | $x=0$ | $x=1$ | $x=2$ |
     |---|---:|---:|---:|
-    | bias: $\omega_0^{(x)}$ |  |  |   |
-    | Area: $\omega_1^{(x)}$ |  |  |   |
-    | Perimeter: $\omega_2^{(x)}$ |  |  |   |
-    | CIrcularity: $\omega_3^{(x)}$ |  |  |   |
+    | bias: $\omega_0^{(x)}$ | $6.5$ | $-4.5$ | $-31.0$ |
+    | log Area: $\omega_1^{(x)}$ | $-1.4$ | $0.1$ | $2.4$ |
+    | log Perimeter: $\omega_2^{(x)}$ | $-0.9$ | $1.0$ | $1.8$ |
+    | Circularity: $\omega_3^{(x)}$ | $2.8$ | $-2.5$ | $1.5$ |
 
     発生させたラベル画像は以下の通り．
+
+    - 領域番号ごとの特徴量と対応する事前確率
+
+      | | region 1 | region 2 | region 3 | region 4 | region 5 | region 6 | region 7 | region 8 |
+      |---|---|---|---|---|---|---|---|---|
+      | $\phi_1$: log_area | 1.39 | 8.88 | 3.50 | 4.44 | 7.36 | 8.83 | 6.35 | 4.29 |
+      | $\phi_2$: log_perimeter | 2.20 | 6.18 | 3.22 | 3.71 | 5.32 | 6.08 | 4.84 | 3.76 |
+      | $\phi_3$: circularity | 0.59 | 0.39 | 0.70 | 0.66 | 0.47 | 0.45 | 0.45 | 0.51 |
+      | ${\bm{\omega}^{(0)}}^{\top} \bm{\phi}(r)$ | 4.23 | -10.39 | 0.66 | -1.21 | -7.27 | -10.07 | -5.48 | -1.46 |
+      | ${\bm{\omega}^{(1)}}^{\top} \bm{\phi}(r)$ | -3.64 | 1.58 | -2.68 | -1.99 | 0.38 | 1.33 | -0.15 | -1.59 |
+      | ${\bm{\omega}^{(2)}}^{\top}\bm{\phi}(r)$ | -22.83 | 2.03 | -15.77 | -12.66 | -3.05 | 1.82 | -6.38 | -13.16 |
+      | $p(x_r=0)$ | 1.00 | 0.00 | 0.97 | 0.68 | 0.00 | 0.00 | 0.00 | 0.53 |
+      | $p(x_r=1)$ | 0.00 | 0.39 | 0.03 | 0.32 | 0.97 | 0.38 | 0.99 | 0.47 |
+      | $p(x_r=2)$ | 0.00 | 0.61 | 0.00 | 0.00 | 0.03 | 0.62 | 0.00 | 0.00 |
+
+    - 生成したラベル画像
+
+      - $x=0$: 黒（0）
+      - $x=1$: 灰色（128）
+      - $x=2$: 白（255）
+
+      ![1.3.2.1-label-vis-000](./exp.1.3.2.1/outputs/labels/visualize/label_000.png)
+      ![1.3.2.1-label-vis-001](./exp.1.3.2.1/outputs/labels/visualize/label_001.png)
+      ![1.3.2.1-label-vis-002](./exp.1.3.2.1/outputs/labels/visualize/label_002.png)
+      ![1.3.2.1-label-vis-003](./exp.1.3.2.1/outputs/labels/visualize/label_003.png)
+      ![1.3.2.1-label-vis-004](./exp.1.3.2.1/outputs/labels/visualize/label_004.png)
 
 
 - 考察
@@ -707,14 +767,35 @@ $$
 
 - 統合領域およびラベル画像をもとに，ピクセル値を生成させる．
 
-    (exp 1.4.1.1)
-    | $(\bm{\mu}_x$, $\Sigma_x)$ | パターン1 | パターン2 |
-    |---|---:|---:|
-    | $x=0$ |  |  |
-    | $x=1$ |  |  |
-    | $x=2$ |  |  |
+    ### [exp 1.4.1.1]
+    | | $\bm{\mu}_x$ | $\Sigma_x$ | 
+    |---|---|---|
+    | $x=0$ | $\begin{bmatrix}200\\50\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    | $x=1$ | $\begin{bmatrix}50\\200\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    | $x=2$ | $\begin{bmatrix}50\\50\\200\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
 
     発生させた画像は以下の通り．
+
+    ![exp1.4.1.1-region](./exp.1.4.1.1/region_000.png)
+    ![exp1.4.1.1-label](./exp.1.4.1.1/label_000_vis.png)
+    ![exp1.4.1.1-generated-000](./exp.1.4.1.1/outputs/generated_000.png)
+    ![exp1.4.1.1-generated-001](./exp.1.4.1.1/outputs/generated_001.png)
+    ![exp1.4.1.1-generated-002](./exp.1.4.1.1/outputs/generated_002.png)
+
+    ### [exp 1.4.1.2]
+    |  | $\bm{\mu}_x$ | $\Sigma_x$ |
+    |---|---|---|
+    | $x=0$ | $\begin{bmatrix}50\\50\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    | $x=1$ | $\begin{bmatrix}150\\150\\150\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    | $x=2$ | $\begin{bmatrix}100\\100\\100\end{bmatrix}$ | $\begin{bmatrix}50&0&0\\0&50&0\\0&0&50\end{bmatrix}$ |
+
+    発生させた画像は以下の通り．
+
+    ![exp1.4.1.2-region](./exp.1.4.1.2/region_000.png)
+    ![exp1.4.1.2-label](./exp.1.4.1.2/label_000_vis.png)
+    ![exp1.4.1.2-generated-000](./exp.1.4.1.2/outputs/generated_000.png)
+    ![exp1.4.1.2-generated-001](./exp.1.4.1.2/outputs/generated_001.png)
+    ![exp1.4.1.2-generated-002](./exp.1.4.1.2/outputs/generated_002.png)
 
 #### 1.4.2 色とテクスチャとノイズの発生をモデル化
 
@@ -729,15 +810,37 @@ $$
 
 -   統合領域およびラベル画像をもとに，ピクセル値を生成させる．
 
-    (exp 1.4.2.1)
+    (exp 1.4.2.1) 4×4因果近傍 $\Omega = \{(\Delta i, \Delta j) \mid \Delta i \in \{-3,\ldots,0\},\, \Delta j \in \{-3,\ldots,0\}\} \setminus \{(0,0)\}$ (15オフセット)
 
-    | $(\bm{\mu}_x, \bm{A}^{(x)},\Sigma_x)$ | パターン1 | パターン2 |
-    |---|---:|---:|
-    | $x=0$ |  |  |
-    | $x=1$ |  |  |
-    | $x=2$ |  |  |
+    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（テクスチャ設計）| $\Sigma_x$ |
+    |---|---|---|---|
+    |$x=0$<br>smooth<br>isotropic| $\begin{bmatrix}50\\50\\50\end{bmatrix}$ | 全15オフセット $A_\Delta^{(0)}=s^{(0)}(d(\Delta))\cdot I_3$，チェビシェフ距離 $d$ による減衰：<br>$s^{(0)}(1)=0.15\ (\det=3.375\!\times\!10^{-3})$，3オフセット<br>$s^{(0)}(2)=0.06\ (\det=2.160\!\times\!10^{-4})$，5オフセット<br>$s^{(0)}(3)=0.02\ (\det=8.000\!\times\!10^{-6})$，7オフセット | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=1$<br>horizontal<br>banding| $\begin{bmatrix}150\\150\\150\end{bmatrix}$ | 水平方向に強い正の自己回帰（非ゼロ4オフセット）：<br>$A_{(0,-1)}^{(1)}=\mathrm{diag}(0.40,0.36,0.32)\ (\det=4.608\!\times\!10^{-2})$<br>$A_{(0,-2)}^{(1)}=\mathrm{diag}(0.18,0.16,0.14)\ (\det=4.032\!\times\!10^{-3})$<br>$A_{(0,-3)}^{(1)}=\mathrm{diag}(0.07,0.06,0.05)\ (\det=2.100\!\times\!10^{-4})$<br>$A_{(-1,0)}^{(1)}=0.03\cdot I_3\ (\det=2.700\!\times\!10^{-5})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=2$<br>diagonal<br>oscillation| $\begin{bmatrix}200\\200\\200\end{bmatrix}$ | 対角方向に符号交互の自己回帰（非ゼロ5オフセット）：<br>$A_{(-1,-1)}^{(2)}=\mathrm{diag}(0.28,0.26,0.24)\ (\det=1.747\!\times\!10^{-2})$<br>$A_{(-2,-2)}^{(2)}=\mathrm{diag}(-0.12,-0.11,-0.10)\ (\det=-1.320\!\times\!10^{-3})$<br>$A_{(-3,-3)}^{(2)}=\mathrm{diag}(0.04,0.04,0.03)\ (\det=4.800\!\times\!10^{-5})$<br>$A_{(-1,0)}^{(2)}=A_{(0,-1)}^{(2)}=0.06\cdot I_3\ (\det=2.160\!\times\!10^{-4})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
     
     発生させた画像は以下の通り．
+
+    ![exp1.4.2.1-region](./exp.1.4.2.1/region_000.png)
+    ![exp1.4.2.1-label](./exp.1.4.2.1/label_000_vis.png)
+    ![exp1.4.2.1-generated-000](./exp.1.4.2.1/outputs/generated_000.png)
+    ![exp1.4.2.1-generated-001](./exp.1.4.2.1/outputs/generated_001.png)
+    ![exp1.4.2.1-generated-002](./exp.1.4.2.1/outputs/generated_002.png)
+
+    (exp 1.4.2.2) 4×4因果近傍（同上，15オフセット）
+
+    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（テクスチャ設計）| $\Sigma_x$ |
+    |---|---|---|---|
+    |$x=0$<br>vertical<br>banding| $\begin{bmatrix}50\\50\\50\end{bmatrix}$ | 垂直方向に強い正の自己回帰（非ゼロ4オフセット）：<br>$A_{(-1,0)}^{(0)}=\mathrm{diag}(0.40,0.36,0.32)\ (\det=4.608\!\times\!10^{-2})$<br>$A_{(-2,0)}^{(0)}=\mathrm{diag}(0.18,0.16,0.14)\ (\det=4.032\!\times\!10^{-3})$<br>$A_{(-3,0)}^{(0)}=\mathrm{diag}(0.07,0.06,0.05)\ (\det=2.100\!\times\!10^{-4})$<br>$A_{(0,-1)}^{(0)}=0.03\cdot I_3\ (\det=2.700\!\times\!10^{-5})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=1$<br>cross-channel<br>mixing| $\begin{bmatrix}150\\150\\150\end{bmatrix}$ | 非対角成分によりRGBチャネル間の結合（非ゼロ5オフセット）：<br>$A_{(-1,0)}^{(1)}=\begin{bmatrix}0.20&0.06&0.02\\0.01&0.18&0.05\\0.02&0.01&0.16\end{bmatrix}(\det\approx5.55\!\times\!10^{-3})$<br>$A_{(0,-1)}^{(1)}=\begin{bmatrix}0.16&0.01&0.04\\0.04&0.15&0.01\\-0.01&0.03&0.14\end{bmatrix}(\det\approx3.36\!\times\!10^{-3})$<br>$A_{(-1,-1)}^{(1)}=\begin{bmatrix}0.10&0.03&0.01\\0.01&0.08&0.02\\0.01&0.00&0.07\end{bmatrix}(\det\approx5.37\!\times\!10^{-4})$<br>$A_{(-2,0)}^{(1)}=\begin{bmatrix}0.08&0.02&0.01\\0.00&0.06&0.01\\0.01&0.00&0.06\end{bmatrix}(\det\approx2.84\!\times\!10^{-4})$<br>$A_{(0,-2)}^{(1)}=\begin{bmatrix}0.06&0.01&0.02\\0.02&0.05&0.00\\0.00&0.01&0.04\end{bmatrix}(\det\approx1.16\!\times\!10^{-4})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=2$<br>granular<br>(anticorrelated)| $\begin{bmatrix}100\\100\\100\end{bmatrix}$ | 近傍との負の自己回帰により粗粒テクスチャ（非ゼロ4オフセット）：<br>$A_{(0,-1)}^{(2)}=\mathrm{diag}(-0.28,-0.24,-0.20)\ (\det=-1.344\!\times\!10^{-2})$<br>$A_{(-1,0)}^{(2)}=\mathrm{diag}(-0.24,-0.20,-0.18)\ (\det=-8.640\!\times\!10^{-3})$<br>$A_{(-1,-1)}^{(2)}=\mathrm{diag}(0.12,0.10,0.08)\ (\det=9.600\!\times\!10^{-4})$<br>$A_{(0,-2)}^{(2)}=\mathrm{diag}(0.06,0.05,0.04)\ (\det=1.200\!\times\!10^{-4})$ | $\begin{bmatrix}50&0&0\\0&50&0\\0&0&50\end{bmatrix}$ |
+    
+    発生させた画像は以下の通り．
+
+    ![exp1.4.2.2-region](./exp.1.4.2.2/region_000.png)
+    ![exp1.4.2.2-label](./exp.1.4.2.2/label_000_vis.png)
+    ![exp1.4.2.2-generated-000](./exp.1.4.2.2/outputs/generated_000.png)
+    ![exp1.4.2.2-generated-001](./exp.1.4.2.2/outputs/generated_001.png)
+    ![exp1.4.2.2-generated-002](./exp.1.4.2.2/outputs/generated_002.png)
 
 - 考察
 
