@@ -785,9 +785,9 @@ $$
     ### [exp 1.4.1.2]
     |  | $\bm{\mu}_x$ | $\Sigma_x$ |
     |---|---|---|
-    | $x=0$ | $\begin{bmatrix}50\\50\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    | $x=1$ | $\begin{bmatrix}150\\150\\150\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    | $x=2$ | $\begin{bmatrix}100\\100\\100\end{bmatrix}$ | $\begin{bmatrix}50&0&0\\0&50&0\\0&0&50\end{bmatrix}$ |
+    |$x=0$| $\begin{bmatrix}90\\100\\90\end{bmatrix}$ |  $\begin{bmatrix}30&0&0\\0&30&0\\0&0&30\end{bmatrix}$ |
+    |$x=1$| $\begin{bmatrix}70\\90\\80\end{bmatrix}$ | $\begin{bmatrix}70&0&0\\0&70&0\\0&0&70\end{bmatrix}$ |
+    |$x=2$| $\begin{bmatrix}120\\120\\100\end{bmatrix}$ | $\begin{bmatrix}15&0&0\\0&15&0\\0&0&15\end{bmatrix}$ |
 
     発生させた画像は以下の通り．
 
@@ -810,13 +810,17 @@ $$
 
 -   統合領域およびラベル画像をもとに，ピクセル値を生成させる．
 
-    (exp 1.4.2.1) 4×4因果近傍 $\Omega = \{(\Delta i, \Delta j) \mid \Delta i \in \{-3,\ldots,0\},\, \Delta j \in \{-3,\ldots,0\}\} \setminus \{(0,0)\}$ (15オフセット)
+    ### [exp 1.4.2.1] 
+    
+    近傍領域
+    
+    $\Omega = \{(\Delta i, \Delta j) \mid \Delta i \in \{-2,-1,0\},\, \Delta j \in \{-2,-1,0\}\} \setminus \{(0,0)\}$ (8オフセット)
 
-    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（テクスチャ設計）| $\Sigma_x$ |
+    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（学習ARパラメータ，全8オフセット使用）| $\Sigma_x$ |
     |---|---|---|---|
-    |$x=0$<br>smooth<br>isotropic| $\begin{bmatrix}50\\50\\50\end{bmatrix}$ | 全15オフセット $A_\Delta^{(0)}=s^{(0)}(d(\Delta))\cdot I_3$，チェビシェフ距離 $d$ による減衰：<br>$s^{(0)}(1)=0.15\ (\det=3.375\!\times\!10^{-3})$，3オフセット<br>$s^{(0)}(2)=0.06\ (\det=2.160\!\times\!10^{-4})$，5オフセット<br>$s^{(0)}(3)=0.02\ (\det=8.000\!\times\!10^{-6})$，7オフセット | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    |$x=1$<br>horizontal<br>banding| $\begin{bmatrix}150\\150\\150\end{bmatrix}$ | 水平方向に強い正の自己回帰（非ゼロ4オフセット）：<br>$A_{(0,-1)}^{(1)}=\mathrm{diag}(0.40,0.36,0.32)\ (\det=4.608\!\times\!10^{-2})$<br>$A_{(0,-2)}^{(1)}=\mathrm{diag}(0.18,0.16,0.14)\ (\det=4.032\!\times\!10^{-3})$<br>$A_{(0,-3)}^{(1)}=\mathrm{diag}(0.07,0.06,0.05)\ (\det=2.100\!\times\!10^{-4})$<br>$A_{(-1,0)}^{(1)}=0.03\cdot I_3\ (\det=2.700\!\times\!10^{-5})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    |$x=2$<br>diagonal<br>oscillation| $\begin{bmatrix}200\\200\\200\end{bmatrix}$ | 対角方向に符号交互の自己回帰（非ゼロ5オフセット）：<br>$A_{(-1,-1)}^{(2)}=\mathrm{diag}(0.28,0.26,0.24)\ (\det=1.747\!\times\!10^{-2})$<br>$A_{(-2,-2)}^{(2)}=\mathrm{diag}(-0.12,-0.11,-0.10)\ (\det=-1.320\!\times\!10^{-3})$<br>$A_{(-3,-3)}^{(2)}=\mathrm{diag}(0.04,0.04,0.03)\ (\det=4.800\!\times\!10^{-5})$<br>$A_{(-1,0)}^{(2)}=A_{(0,-1)}^{(2)}=0.06\cdot I_3\ (\det=2.160\!\times\!10^{-4})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=0$| $\begin{bmatrix}200\\50\\50\end{bmatrix}$ | 支配的な2オフセット（残り6オフセットも非ゼロ，ar_param.json参照）：<br>$A_{(-1,0)}^{(0)}\approx\begin{bmatrix}0.53&0.02&0.06\\0.13&0.38&0.09\\0.09&0.00&0.51\end{bmatrix}$<br>$A_{(0,-1)}^{(0)}\approx\begin{bmatrix}0.60&0.09&0.05\\0.17&0.47&0.10\\0.12&0.09&0.53\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=1$| $\begin{bmatrix}50\\200\\50\end{bmatrix}$ | 支配的な2オフセット（残り6オフセットも非ゼロ，ar_param.json参照）：<br>$A_{(-1,0)}^{(1)}\approx\begin{bmatrix}0.30&0.35&-0.06\\-0.16&0.79&-0.04\\-0.16&0.35&0.40\end{bmatrix}$<br>$A_{(0,-1)}^{(1)}\approx\begin{bmatrix}0.28&0.41&-0.15\\-0.16&0.84&-0.14\\-0.16&0.43&0.27\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=2$| $\begin{bmatrix}50\\50\\200\end{bmatrix}$ | 支配的な2オフセット（残り6オフセットも非ゼロ，ar_param.json参照）：<br>$A_{(-1,0)}^{(2)}\approx\begin{bmatrix}0.57&0.09&0.01\\0.25&0.39&0.03\\0.22&0.09&0.36\end{bmatrix}$<br>$A_{(0,-1)}^{(2)}\approx\begin{bmatrix}0.51&0.06&-0.02\\0.20&0.35&0.00\\0.17&0.05&0.33\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
     
     発生させた画像は以下の通り．
 
@@ -826,13 +830,13 @@ $$
     ![exp1.4.2.1-generated-001](./exp.1.4.2.1/outputs/generated_001.png)
     ![exp1.4.2.1-generated-002](./exp.1.4.2.1/outputs/generated_002.png)
 
-    (exp 1.4.2.2) 4×4因果近傍（同上，15オフセット）
+    ### [exp 1.4.2.2]
 
-    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（テクスチャ設計）| $\Sigma_x$ |
+    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（学習ARパラメータ，exp 1.4.2.1と同一）| $\Sigma_x$ |
     |---|---|---|---|
-    |$x=0$<br>vertical<br>banding| $\begin{bmatrix}50\\50\\50\end{bmatrix}$ | 垂直方向に強い正の自己回帰（非ゼロ4オフセット）：<br>$A_{(-1,0)}^{(0)}=\mathrm{diag}(0.40,0.36,0.32)\ (\det=4.608\!\times\!10^{-2})$<br>$A_{(-2,0)}^{(0)}=\mathrm{diag}(0.18,0.16,0.14)\ (\det=4.032\!\times\!10^{-3})$<br>$A_{(-3,0)}^{(0)}=\mathrm{diag}(0.07,0.06,0.05)\ (\det=2.100\!\times\!10^{-4})$<br>$A_{(0,-1)}^{(0)}=0.03\cdot I_3\ (\det=2.700\!\times\!10^{-5})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    |$x=1$<br>cross-channel<br>mixing| $\begin{bmatrix}150\\150\\150\end{bmatrix}$ | 非対角成分によりRGBチャネル間の結合（非ゼロ5オフセット）：<br>$A_{(-1,0)}^{(1)}=\begin{bmatrix}0.20&0.06&0.02\\0.01&0.18&0.05\\0.02&0.01&0.16\end{bmatrix}(\det\approx5.55\!\times\!10^{-3})$<br>$A_{(0,-1)}^{(1)}=\begin{bmatrix}0.16&0.01&0.04\\0.04&0.15&0.01\\-0.01&0.03&0.14\end{bmatrix}(\det\approx3.36\!\times\!10^{-3})$<br>$A_{(-1,-1)}^{(1)}=\begin{bmatrix}0.10&0.03&0.01\\0.01&0.08&0.02\\0.01&0.00&0.07\end{bmatrix}(\det\approx5.37\!\times\!10^{-4})$<br>$A_{(-2,0)}^{(1)}=\begin{bmatrix}0.08&0.02&0.01\\0.00&0.06&0.01\\0.01&0.00&0.06\end{bmatrix}(\det\approx2.84\!\times\!10^{-4})$<br>$A_{(0,-2)}^{(1)}=\begin{bmatrix}0.06&0.01&0.02\\0.02&0.05&0.00\\0.00&0.01&0.04\end{bmatrix}(\det\approx1.16\!\times\!10^{-4})$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    |$x=2$<br>granular<br>(anticorrelated)| $\begin{bmatrix}100\\100\\100\end{bmatrix}$ | 近傍との負の自己回帰により粗粒テクスチャ（非ゼロ4オフセット）：<br>$A_{(0,-1)}^{(2)}=\mathrm{diag}(-0.28,-0.24,-0.20)\ (\det=-1.344\!\times\!10^{-2})$<br>$A_{(-1,0)}^{(2)}=\mathrm{diag}(-0.24,-0.20,-0.18)\ (\det=-8.640\!\times\!10^{-3})$<br>$A_{(-1,-1)}^{(2)}=\mathrm{diag}(0.12,0.10,0.08)\ (\det=9.600\!\times\!10^{-4})$<br>$A_{(0,-2)}^{(2)}=\mathrm{diag}(0.06,0.05,0.04)\ (\det=1.200\!\times\!10^{-4})$ | $\begin{bmatrix}50&0&0\\0&50&0\\0&0&50\end{bmatrix}$ |
+    |$x=0$| $\begin{bmatrix}90.0\\100.0\\90.0\end{bmatrix}$ | $A_\Delta^{(0)}$はexp 1.4.2.1の$x=0$と同一 | $\begin{bmatrix}30.0&0&0\\0&30.0&0\\0&0&30.0\end{bmatrix}$ |
+    |$x=1$| $\begin{bmatrix}70.0\\90.0\\80.0\end{bmatrix}$ | $A_\Delta^{(1)}$はexp 1.4.2.1の$x=1$と同一 | $\begin{bmatrix}70.0&0&0\\0&70.0&0\\0&0&70.0\end{bmatrix}$ |
+    |$x=2$| $\begin{bmatrix}120.0\\120.0\\100.0\end{bmatrix}$ | $A_\Delta^{(2)}$はexp 1.4.2.1の$x=2$と同一 | $\begin{bmatrix}15.0&0&0\\0&15.0&0\\0&0&15.0\end{bmatrix}$ |
     
     発生させた画像は以下の通り．
 
@@ -870,9 +874,9 @@ $$
         \end{cases}
         $$
     - 設定したパラメータ
-        - $\alpha = \text{xxx}$
-        - $\beta=\text{xxx}$
-        - $\eta=\text{xxx}$
+        - $\alpha = 1.0\times 10^{-8}$
+        - $\beta=8.0$
+        - $\eta=8.0$
 
 - ラベルの事前分布とパラメータ
 
@@ -892,11 +896,11 @@ $$
 
     - 設定したパラメータ
 
-        | | $x=0$ | $x=1$ | $x=2$ |
-        |---|---:|---:|---:|
-        | Area: $(m_1^{(x)}, \sigma_1^{(x)})$ |  |  |   |
-        | Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ |  |  |   |
-        | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ |  |  |   |
+      | | $x=0$ | $x=1$ | $x=2$ |
+      |---|---:|---:|---:|
+      | log Area: $(m_1^{(x)}, \sigma_1^{(x)})$ | $(4.0, 1.0)$ | $(6.5,1.5)$ | $(9.0, 1.0)$  |
+      | log Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ | $(3.5, 0.5)$ | $(5, 0.5)$ | $(6, 0.5)$ |
+      | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ | $(0.45, 0.2)$ | $(0.5, 0.1)$ | $(0.7, 0.1)$ |
 
 - ピクセル値の尤度関数のパラメータ
 
@@ -909,12 +913,12 @@ $$
         $$
 
     - 設定したパラメータ
+      | | $\bm{\mu}_x$ | $\Sigma_x$ | 
+      |---|---|---|
+      | $x=0$ | $\begin{bmatrix}200\\50\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+      | $x=1$ | $\begin{bmatrix}50\\200\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+      | $x=2$ | $\begin{bmatrix}50\\50\\200\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
 
-        |  | $\bm{\mu}_x$ | $\Sigma_x$ |
-        |---|---:|---:|
-        | $x=0$ |  |  |
-        | $x=1$ |  |  |
-        | $x=2$ |  |  |
 
 - 四分木は以下の事前分布をもとに発生させる．
     $$
@@ -923,7 +927,7 @@ $$
 
     パラメータ$g_s$の設定を以下の4パターンで設定し，画像を生成する．そして，生成した画像をもとにパラメータ$g_s$を推定する．
 
-    - (exp.2.1.1)
+    - ### [exp.2.1.1]
         
         | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
         |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -940,7 +944,7 @@ $$
         
         - 学習枚数ごとの推定誤差の推移
 
-    - (exp.2.1.2)
+    - ### [exp.2.1.2]
 
         | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
         |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -957,7 +961,7 @@ $$
         
         - 学習枚数ごとの推定誤差の推移
 
-    - (exp. 2.1.3)
+    - ### [exp. 2.1.3]
 
         | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
         |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -974,7 +978,7 @@ $$
         
         - 学習枚数ごとの推定誤差の推移
 
-    - (exp. 2.1.4)
+    - ### [exp. 2.1.4]
 
         | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
         |---|---:|---:|---:|---:|---:|---:|---:|---:|
