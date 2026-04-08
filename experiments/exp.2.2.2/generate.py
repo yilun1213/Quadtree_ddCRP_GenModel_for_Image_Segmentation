@@ -1,5 +1,5 @@
 # generate.py
-# [exp.2.1.1] 真のパラメータを埋め込んで 50 組のデータを生成する
+# [exp.2.2.2] 真のパラメータを埋め込んで 50 組のデータを生成する
 #
 # 生成するデータ:
 #   outputs/train_data/images/sample_XXXX.png
@@ -7,11 +7,11 @@
 #   outputs/train_data/labels/visualize/sample_XXXX.png
 #
 # 真のパラメータ (branch_probs):
-#   depth 0-6: 0.9, depth 7: 0.0
+#   depth 0-6: 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, depth 7: 0.0
 #
-# その他パラメータ (exp. 2.1 共通):
+# その他パラメータ (exp. 2.2 共通):
 #   ddCRP: alpha=1e-8, beta=8.0, eta=8.0
-#   ラベルモデル: 幾何学的特徴量の正規確率モデル
+#   ラベルモデル: 多項ロジスティック回帰モデル
 #   ピクセルモデル: 多変量正規分布
 
 import os
@@ -25,7 +25,7 @@ from typing import Callable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 import model.quadtree.depth_dependent_model as quadtree_model
-import model.label.geom_features_norm_dist as label_model_module
+import model.label.geom_features_logistic as label_model_module
 import model.pixel.normal_dist as pixel_model_module
 import model.region.affinity as affinity_module
 from model.quadtree.node import Node
@@ -42,25 +42,23 @@ ALPHA = 1e-8
 BETA = 8.0
 ETA = 8.0
 
-# ラベルモデルのパラメータ (幾何学的特徴量の正規確率に基づくモデル, exp. 2.1 共通)
+# ラベルモデルのパラメータ (多項ロジスティック回帰, exp. 2.2.2)
 LABEL_SET = [0, 1, 2]
 LABEL_VALUE_SET = [0, 128, 255]
 LABEL_FEATURE_NAMES = ["log_area", "log_perimeter", "circularity"]
-LABEL_MEANS = [
-    [4.0, 3.5, 0.45],  # x=0
-    [6.5, 5.0, 0.50],  # x=1
-    [9.0, 6.0, 0.70],  # x=2
+# weights: shape (K, d) = (3, 3), rows are [x=0, x=1, x=2], cols are [log_area, log_perimeter, circularity]
+LABEL_WEIGHTS = [
+    [-1.4, -0.9, 2.8],   # x=0
+    [ 0.1,  1.0, -2.5],  # x=1
+    [ 2.4,  1.8,  1.5],  # x=2
 ]
-LABEL_STDS = [
-    [1.0, 0.5, 0.2],
-    [1.5, 0.5, 0.1],
-    [1.0, 0.5, 0.1],
-]
+# bias: shape (K,) = (3,)
+LABEL_BIAS = [6.5, -4.5, -31.0]
 LABEL_PARAM = {
     "image_size": IMAGE_SIZE,
     "feature_names": LABEL_FEATURE_NAMES,
-    "means": LABEL_MEANS,
-    "stds": LABEL_STDS,
+    "weights": LABEL_WEIGHTS,
+    "bias": LABEL_BIAS,
 }
 
 # ピクセル値のパラメータ (exp. 2.1 共通)

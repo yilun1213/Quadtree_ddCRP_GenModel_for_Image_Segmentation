@@ -1127,18 +1127,57 @@ $$
 
 - 生成したデータは以下の通り．(データ数: 50組)
 
+  ![exp2.2.1_img_0](./exp.2.2.1/outputs/train_data/images/sample_0000.png)
+  ![exp2.2.1_img_1](./exp.2.2.1/outputs/train_data/images/sample_0001.png)
+  ![exp2.2.1_img_2](./exp.2.2.1/outputs/train_data/images/sample_0002.png)
+  ![exp2.2.1_img_3](./exp.2.2.1/outputs/train_data/images/sample_0003.png)
+  ![exp2.2.1_img_4](./exp.2.2.1/outputs/train_data/images/sample_0004.png)
+
+  ![exp2.2.1_label_0](./exp.2.2.1/outputs/train_data/labels/visualize/sample_0000.png)
+  ![exp2.2.1_label_1](./exp.2.2.1/outputs/train_data/labels/visualize/sample_0001.png)
+  ![exp2.2.1_label_2](./exp.2.2.1/outputs/train_data/labels/visualize/sample_0002.png)
+  ![exp2.2.1_label_3](./exp.2.2.1/outputs/train_data/labels/visualize/sample_0003.png)
+  ![exp2.2.1_label_4](./exp.2.2.1/outputs/train_data/labels/visualize/sample_0004.png)
+
+  ラベルデータから構築された領域(統合領域):
+
+  ![exp2.2.1_region_0](./exp.2.2.1/outputs/train_data/region_images/sample_0000.png)
+  ![exp2.2.1_region_1](./exp.2.2.1/outputs/train_data/region_images/sample_0001.png)
+  ![exp2.2.1_region_2](./exp.2.2.1/outputs/train_data/region_images/sample_0002.png)
+  ![exp2.2.1_region_3](./exp.2.2.1/outputs/train_data/region_images/sample_0003.png)
+  ![exp2.2.1_region_4](./exp.2.2.1/outputs/train_data/region_images/sample_0004.png)
+
+  パラメータ推定時にラベルデータから抽出された領域:
+
+  ![exp2.2.1_extracted_region_0](./exp.2.2.1/outputs/train_data/region_images_extracted/sample_0000_extracted.png)
+  ![exp2.2.1_extracted_region_1](./exp.2.2.1/outputs/train_data/region_images_extracted/sample_0001_extracted.png)
+  ![exp2.2.1_extracted_region_2](./exp.2.2.1/outputs/train_data/region_images_extracted/sample_0002_extracted.png)
+  ![exp2.2.1_extracted_region_3](./exp.2.2.1/outputs/train_data/region_images_extracted/sample_0003_extracted.png)
+  ![exp2.2.1_extracted_region_4](./exp.2.2.1/outputs/train_data/region_images_extracted/sample_0004_extracted.png)
+
 - パラメータの推定値と推定誤差
 
   | | $x=0$ | $x=1$ | $x=2$ |
   |---|---:|---:|---:|
-  | (推定値) log Area: $(\hat{m}_1^{(x)}, \hat{\sigma}_1^{(x)})$ |  |  |   |
-  | (推定誤差) log Area: $(\hat{m}_1^{(x)}-m_1^{(x)}, \sigma_1^{(x)}-\hat{\sigma}_1^{(x)})$ |  |  |   |
-  | (推定値)log Perimeter: $\hat{m}_2^{(x)}, \hat{\sigma}_2^{(x)}$ |  |  |  |
-  | (推定誤差)log Perimeter: $(m_2^{(x)}- \hat{m}_2^{(x)}, \hat{\sigma}_2^{(x)}-\sigma_2^{(x)})$ |  |  |  |
-  | (推定値)log Perimeter: $\hat{m}_3^{(x)}, \hat{\sigma}_3^{(x)}$ |  |  |  |
-  | (推定誤差)log Perimeter: $(m_3^{(x)}- \hat{m}_3^{(x)}, \hat{\sigma}_3^{(x)}-\sigma_3^{(x)})$ |  |  |  |
+  | (推定値) log Area: $(\hat{m}_1^{(x)}, \hat{\sigma}_1^{(x)})$ | $(4.7166, 0.7890)$ | $(9.1111, 0.9933)$ | $(8.7701, 0.8132)$ |
+  | (推定誤差) log Area: $(\hat{m}_1^{(x)}-m_1^{(x)}, \hat{\sigma}_1^{(x)}-\sigma_1^{(x)})$ | $(0.7166, -0.2110)$ | $(2.6111, -0.5067)$ | $(-0.2299, -0.1868)$ |
+  | (推定値) log Perimeter: $(\hat{m}_2^{(x)}, \hat{\sigma}_2^{(x)})$ | $(4.0576, 0.4965)$ | $(6.6745, 0.6532)$ | $(5.9444, 0.3994)$ |
+  | (推定誤差) log Perimeter: $(\hat{m}_2^{(x)}-m_2^{(x)}, \hat{\sigma}_2^{(x)}-\sigma_2^{(x)})$ | $(0.5576, -0.0035)$ | $(1.6745, 0.1532)$ | $(-0.0556, -0.1006)$ |
+  | (推定値) Circularity: $(\hat{m}_3^{(x)}, \hat{\sigma}_3^{(x)})$ | $(0.4555, 0.1426)$ | $(0.1995, 0.1013)$ | $(0.5730, 0.1358)$ |
+  | (推定誤差) Circularity: $(\hat{m}_3^{(x)}-m_3^{(x)}, \hat{\sigma}_3^{(x)}-\sigma_3^{(x)})$ | $(0.0055, -0.0574)$ | $(-0.3005, 0.0013)$ | $(-0.1270, 0.0358)$ |
 
 - パラメータの推定誤差の推移
+
+  - テキストデータ（1組目から50組目までの推定推移）:
+    `./exp.2.2.1/outputs/estimation_results/label_param_trajectory.tsv`
+
+  - $m$ の推定誤差推移:
+
+    ![exp2.2.1_m_error](./exp.2.2.1/outputs/estimation_results/m_error_trajectory.png)
+
+  - $\sigma$ の推定誤差推移:
+
+    ![exp2.2.1_sigma_error](./exp.2.2.1/outputs/estimation_results/sigma_error_trajectory.png)
 
 #### 2.2.2 幾何学的特徴量からロジスティック回帰モデルに従ってラベルが発生するモデルを仮定したときのラベルの事前分布のパラメータ推定
 
@@ -1161,15 +1200,57 @@ $$
 
 - 生成したデータは以下の通り(データ数: 50組)
 
+  ![exp2.2.2_img_0](./exp.2.2.2/outputs/train_data/images/sample_0000.png)
+  ![exp2.2.2_img_1](./exp.2.2.2/outputs/train_data/images/sample_0001.png)
+  ![exp2.2.2_img_2](./exp.2.2.2/outputs/train_data/images/sample_0002.png)
+  ![exp2.2.2_img_3](./exp.2.2.2/outputs/train_data/images/sample_0003.png)
+  ![exp2.2.2_img_4](./exp.2.2.2/outputs/train_data/images/sample_0004.png)
+
+  ![exp2.2.2_label_0](./exp.2.2.2/outputs/train_data/labels/visualize/sample_0000.png)
+  ![exp2.2.2_label_1](./exp.2.2.2/outputs/train_data/labels/visualize/sample_0001.png)
+  ![exp2.2.2_label_2](./exp.2.2.2/outputs/train_data/labels/visualize/sample_0002.png)
+  ![exp2.2.2_label_3](./exp.2.2.2/outputs/train_data/labels/visualize/sample_0003.png)
+  ![exp2.2.2_label_4](./exp.2.2.2/outputs/train_data/labels/visualize/sample_0004.png)
+
+  ラベルデータから構築された領域(統合領域):
+
+  ![exp2.2.2_region_0](./exp.2.2.2/outputs/train_data/region_images/sample_0000.png)
+  ![exp2.2.2_region_1](./exp.2.2.2/outputs/train_data/region_images/sample_0001.png)
+  ![exp2.2.2_region_2](./exp.2.2.2/outputs/train_data/region_images/sample_0002.png)
+  ![exp2.2.2_region_3](./exp.2.2.2/outputs/train_data/region_images/sample_0003.png)
+  ![exp2.2.2_region_4](./exp.2.2.2/outputs/train_data/region_images/sample_0004.png)
+
+  パラメータ推定時にラベルデータから抽出された領域:
+
+  ![exp2.2.2_extracted_region_0](./exp.2.2.2/outputs/train_data/region_images_extracted/sample_0000_extracted.png)
+  ![exp2.2.2_extracted_region_1](./exp.2.2.2/outputs/train_data/region_images_extracted/sample_0001_extracted.png)
+  ![exp2.2.2_extracted_region_2](./exp.2.2.2/outputs/train_data/region_images_extracted/sample_0002_extracted.png)
+  ![exp2.2.2_extracted_region_3](./exp.2.2.2/outputs/train_data/region_images_extracted/sample_0003_extracted.png)
+  ![exp2.2.2_extracted_region_4](./exp.2.2.2/outputs/train_data/region_images_extracted/sample_0004_extracted.png)
+
 - パラメータの推定値と推定誤差
 
   | | $x=0$ | $x=1$ | $x=2$ |
   |---|---:|---:|---:|
-  | (推定値)bias: $\hat{\omega}_0^{(x)}$ |  |  |  |
-  | (推定誤差)bias: $\hat{\omega}_0^{(x)}-\omega_0^{(x)}$ |  |  |  |
-  | log Area: $\omega_1^{(x)}$ | $-1.4$ | $0.1$ | $2.4$ |
-  | log Perimeter: $\omega_2^{(x)}$ | $-0.9$ | $1.0$ | $1.8$ |
-  | Circularity: $\omega_3^{(x)}$ | $2.8$ | $-2.5$ | $1.5$ |
+  | (推定値) bias: $\hat{\omega}_0^{(x)}$ | $-17.5131$ | $-5.8859$ | $23.3990$ |
+  | (推定誤差) bias: $\hat{\omega}_0^{(x)}-\omega_0^{(x)}$ | $-24.0131$ | $-1.3859$ | $54.3990$ |
+  | (推定値) log Area: $\hat{\omega}_1^{(x)}$ | $-8.6225$ | $-0.2803$ | $8.9028$ |
+  | (推定誤差) log Area: $\hat{\omega}_1^{(x)}-\omega_1^{(x)}$ | $-7.2225$ | $-0.3803$ | $6.5028$ |
+  | (推定値) log Perimeter: $\hat{\omega}_2^{(x)}$ | $13.6559$ | $1.7571$ | $-15.4130$ |
+  | (推定誤差) log Perimeter: $\hat{\omega}_2^{(x)}-\omega_2^{(x)}$ | $14.5559$ | $0.7571$ | $-17.2130$ |
+  | (推定値) Circularity: $\hat{\omega}_3^{(x)}$ | $13.6029$ | $-1.9507$ | $-11.6522$ |
+  | (推定誤差) Circularity: $\hat{\omega}_3^{(x)}-\omega_3^{(x)}$ | $10.8029$ | $0.5493$ | $-13.1522$ |
+
+  > **注**: 多項ロジスティック回帰モデルはクラスによらず全パラメータに定数を加算しても確率値が変わらない（softmax の不変性）ため, パラメータは定数シフト分だけ不可識別である. L2 正則化によって推定値はゼロ付近に固定されるが, 真値が非ゼロ平均であるため, 推定誤差は定数シフトの分だけかさ上げされる.
+
+- パラメータの推定誤差の推移
+
+  - テキストデータ（1組目から50組目までの推定推移）:
+    `./exp.2.2.2/outputs/estimation_results/label_param_trajectory.tsv`
+
+  - $\omega$ の推定誤差推移:
+
+    ![exp2.2.2_omega_error](./exp.2.2.2/outputs/estimation_results/omega_error_trajectory.png)
 
 
 ## 3. セグメンテーションアルゴリズムの正確性とセグメンテーション結果の特徴を精査することを目的とした実験
