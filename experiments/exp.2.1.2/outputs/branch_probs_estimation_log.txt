@@ -1,0 +1,112 @@
+ラベル画像数: 50
+真の branch_probs: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0]
+
+=== 四分木パラメータの逐次推定 ===
+  n=  1 | d0=0.0000  d1=0.0000  d2=0.0000  d3=0.0000  d4=0.0000  d5=0.0000  d6=0.0000
+  n=  2 | d0=0.5000  d1=0.5000  d2=0.3750  d3=0.3333  d4=0.3125  d5=0.5000  d6=0.3500
+  n=  3 | d0=0.6667  d1=0.3750  d2=0.4167  d3=0.4000  d4=0.4062  d5=0.5192  d6=0.3611
+  n=  4 | d0=0.7500  d1=0.3333  d2=0.5000  d3=0.3438  d4=0.4545  d5=0.4750  d6=0.3618
+  n=  5 | d0=0.6000  d1=0.3333  d2=0.5000  d3=0.3438  d4=0.4545  d5=0.4750  d6=0.3618
+  n=  6 | d0=0.6667  d1=0.4375  d2=0.4375  d3=0.4028  d4=0.4853  d5=0.4214  d6=0.3381
+  n=  7 | d0=0.5714  d1=0.4375  d2=0.4375  d3=0.4028  d4=0.4853  d5=0.4214  d6=0.3381
+  n=  8 | d0=0.6250  d1=0.4500  d2=0.4271  d3=0.4625  d4=0.5238  d5=0.4010  d6=0.3328
+  n=  9 | d0=0.6667  d1=0.5000  d2=0.4531  d3=0.4132  d4=0.5032  d5=0.4160  d6=0.3356
+  n= 10 | d0=0.7000  d1=0.5000  d2=0.3906  d3=0.3990  d4=0.4892  d5=0.4214  d6=0.3371
+  n= 11 | d0=0.6364  d1=0.5000  d2=0.3906  d3=0.3990  d4=0.4892  d5=0.4214  d6=0.3371
+  n= 12 | d0=0.5833  d1=0.5000  d2=0.3906  d3=0.3990  d4=0.4892  d5=0.4214  d6=0.3371
+  n= 13 | d0=0.5385  d1=0.5000  d2=0.3906  d3=0.3990  d4=0.4892  d5=0.4214  d6=0.3371
+  n= 14 | d0=0.5714  d1=0.4688  d2=0.3719  d3=0.4087  d4=0.5029  d5=0.4330  d6=0.3320
+  n= 15 | d0=0.5333  d1=0.4688  d2=0.3719  d3=0.4087  d4=0.5029  d5=0.4330  d6=0.3320
+  n= 16 | d0=0.5625  d1=0.4444  d2=0.3594  d3=0.4077  d4=0.5029  d5=0.4268  d6=0.3320
+  n= 17 | d0=0.5294  d1=0.4444  d2=0.3594  d3=0.4077  d4=0.5029  d5=0.4268  d6=0.3320
+  n= 18 | d0=0.5556  d1=0.4250  d2=0.3490  d3=0.3964  d4=0.4944  d5=0.4313  d6=0.3302
+  n= 19 | d0=0.5789  d1=0.4545  d2=0.3281  d3=0.3786  d4=0.5056  d5=0.4217  d6=0.3378
+  n= 20 | d0=0.6000  d1=0.4375  d2=0.3656  d3=0.4232  d4=0.5180  d5=0.4167  d6=0.3402
+  n= 21 | d0=0.5714  d1=0.4375  d2=0.3656  d3=0.4232  d4=0.5180  d5=0.4167  d6=0.3402
+  n= 22 | d0=0.5909  d1=0.4423  d2=0.3979  d3=0.4484  d4=0.5315  d5=0.4224  d6=0.3421
+  n= 23 | d0=0.6087  d1=0.4464  d2=0.4143  d3=0.4531  d4=0.5195  d5=0.4258  d6=0.3427
+  n= 24 | d0=0.6250  d1=0.4667  d2=0.4469  d3=0.4444  d4=0.5046  d5=0.4042  d6=0.3422
+  n= 25 | d0=0.6400  d1=0.4531  d2=0.4573  d3=0.4457  d4=0.5025  d5=0.4086  d6=0.3461
+  n= 26 | d0=0.6538  d1=0.4412  d2=0.4603  d3=0.4444  d4=0.5080  d5=0.4036  d6=0.3446
+  n= 27 | d0=0.6296  d1=0.4412  d2=0.4603  d3=0.4444  d4=0.5080  d5=0.4036  d6=0.3446
+  n= 28 | d0=0.6071  d1=0.4412  d2=0.4603  d3=0.4444  d4=0.5080  d5=0.4036  d6=0.3446
+  n= 29 | d0=0.5862  d1=0.4412  d2=0.4603  d3=0.4444  d4=0.5080  d5=0.4036  d6=0.3446
+  n= 30 | d0=0.6000  d1=0.4306  d2=0.4527  d3=0.4449  d4=0.5076  d5=0.4080  d6=0.3462
+  n= 31 | d0=0.6129  d1=0.4342  d2=0.4594  d3=0.4449  d4=0.5027  d5=0.4026  d6=0.3447
+  n= 32 | d0=0.6250  d1=0.4250  d2=0.4620  d3=0.4442  d4=0.5072  d5=0.3998  d6=0.3478
+  n= 33 | d0=0.6061  d1=0.4250  d2=0.4620  d3=0.4442  d4=0.5072  d5=0.3998  d6=0.3478
+  n= 34 | d0=0.6176  d1=0.4286  d2=0.4793  d3=0.4475  d4=0.5019  d5=0.4020  d6=0.3460
+  n= 35 | d0=0.6286  d1=0.4318  d2=0.4809  d3=0.4431  d4=0.5008  d5=0.4036  d6=0.3433
+  n= 36 | d0=0.6111  d1=0.4318  d2=0.4809  d3=0.4431  d4=0.5008  d5=0.4036  d6=0.3433
+  n= 37 | d0=0.5946  d1=0.4318  d2=0.4809  d3=0.4431  d4=0.5008  d5=0.4036  d6=0.3433
+  n= 38 | d0=0.6053  d1=0.4348  d2=0.4830  d3=0.4462  d4=0.4965  d5=0.4062  d6=0.3417
+  n= 39 | d0=0.6154  d1=0.4271  d2=0.4843  d3=0.4468  d4=0.4950  d5=0.4035  d6=0.3419
+  n= 40 | d0=0.6000  d1=0.4271  d2=0.4843  d3=0.4468  d4=0.4950  d5=0.4035  d6=0.3419
+  n= 41 | d0=0.6098  d1=0.4300  d2=0.4723  d3=0.4468  d4=0.4908  d5=0.4040  d6=0.3441
+  n= 42 | d0=0.6190  d1=0.4327  d2=0.4683  d3=0.4443  d4=0.4933  d5=0.4020  d6=0.3432
+  n= 43 | d0=0.6047  d1=0.4327  d2=0.4683  d3=0.4443  d4=0.4933  d5=0.4020  d6=0.3432
+  n= 44 | d0=0.6136  d1=0.4444  d2=0.4692  d3=0.4491  d4=0.4971  d5=0.4088  d6=0.3450
+  n= 45 | d0=0.6000  d1=0.4444  d2=0.4692  d3=0.4491  d4=0.4971  d5=0.4088  d6=0.3450
+  n= 46 | d0=0.6087  d1=0.4375  d2=0.4692  d3=0.4522  d4=0.4985  d5=0.4125  d6=0.3466
+  n= 47 | d0=0.6170  d1=0.4310  d2=0.4654  d3=0.4537  d4=0.5006  d5=0.4166  d6=0.3468
+  n= 48 | d0=0.6250  d1=0.4333  d2=0.4635  d3=0.4560  d4=0.4997  d5=0.4161  d6=0.3462
+  n= 49 | d0=0.6327  d1=0.4435  d2=0.4599  d3=0.4505  d4=0.4994  d5=0.4166  d6=0.3455
+  n= 50 | d0=0.6400  d1=0.4531  d2=0.4659  d3=0.4398  d4=0.4979  d5=0.4157  d6=0.3466
+
+=== 最終推定結果（全 50 枚使用時） ===
+    深さ  depth0  depth1  depth2  depth3  depth4  depth5  depth6  depth7
+   真の値  0.5000  0.5000  0.5000  0.5000  0.5000  0.5000  0.5000  0.0000
+   推定値  0.6400  0.4531  0.4659  0.4398  0.4979  0.4157  0.3466  0.0000
+    誤差  0.1400  0.0469  0.0341  0.0602  0.0021  0.0843  0.1534  0.0000
+
+=== 推定時に構築した四分木画像（全ラベル画像） ===
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0000.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0001.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0002.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0003.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0004.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0005.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0006.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0007.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0008.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0009.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0010.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0011.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0012.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0013.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0014.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0015.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0016.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0017.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0018.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0019.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0020.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0021.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0022.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0023.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0024.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0025.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0026.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0027.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0028.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0029.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0030.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0031.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0032.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0033.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0034.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0035.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0036.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0037.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0038.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0039.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0040.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0041.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0042.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0043.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0044.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0045.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0046.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0047.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0048.png
+C:\Users\yitsu\Desktop\Quadtree_ddCRP_GenModel_for_Image_Segmentation\experiments\exp.2.1.2\outputs\estimation_quadtree_images\sample_0049.png

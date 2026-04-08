@@ -935,14 +935,26 @@ $$
 
         - 生成された四分木と画像
 
+            |  | sample(1) | sample(2) | sample(3) |
+            |---|---|---|---|
+            | 生成した画像 | <img src="./exp.2.1.1/outputs/train_data/images/sample_0001.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/images/sample_0002.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/images/sample_0003.png" width="120"> |
+            | 真のラベル | <img src="./exp.2.1.1/outputs/train_data/labels/visualize/sample_0001.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/labels/visualize/sample_0002.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/labels/visualize/sample_0003.png" width="120"> |
+            | 真の統合領域 | <img src="./exp.2.1.1/outputs/train_data/region_images/sample_0001.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/region_images/sample_0002.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/region_images/sample_0003.png" width="120"> |
+            | 真の四分木 | <img src="./exp.2.1.1/outputs/train_data/quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.1/outputs/train_data/quadtree_images/sample_0003.png" width="120"> |
+            | 推定時にラベルから構築した四分木 | <img src="./exp.2.1.1/outputs/estimation_quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.1/outputs/estimation_quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.1/outputs/estimation_quadtree_images/sample_0003.png" width="120"> |
+
         - 推定されたパラメータ$g_s$
+          - 学習データ数: 50組
+          - パラメータの推定結果
 
             | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
             |---|---:|---:|---:|---:|---:|---:|---:|---:|
-            | 推定値 $\hat{g}_s$ |  |  |  |  |  |  |  | 0 |
-            | 推定誤差 $\hat{g}_s - g_s$ |  |  |  |  |  |  |  | 0 |
+            | 推定値 $\hat{g}_s$ | 0.9000 | 0.8833 | 0.8375 | 0.6893 | 0.5754 | 0.5438 | 0.4184 | 0.0000 |
+            | 推定誤差 $\hat{g}_s-g_s$| 0.0000 | 0.0167 | 0.0625 | 0.2107 | 0.3246 | 0.3562 | 0.4816 | 0.0000 |
         
         - 学習枚数ごとの推定誤差の推移
+
+            ![exp2.1.1_branch_error](./exp.2.1.1/outputs/branch_probs_error.png)
 
     - ### [exp.2.1.2]
 
@@ -952,14 +964,26 @@ $$
 
         - 生成された四分木と画像
 
-        - 推定されたパラメータ$g_s$
+            |  | sample(1) | sample(2) | sample(3) |
+            |---|---|---|---|
+            | 生成した画像 | <img src="./exp.2.1.2/outputs/train_data/images/sample_0001.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/images/sample_0002.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/images/sample_0003.png" width="120"> |
+            | 真のラベル | <img src="./exp.2.1.2/outputs/train_data/labels/visualize/sample_0001.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/labels/visualize/sample_0002.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/labels/visualize/sample_0003.png" width="120"> |
+            | 真の統合領域 | <img src="./exp.2.1.2/outputs/train_data/region_images/sample_0001.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/region_images/sample_0002.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/region_images/sample_0003.png" width="120"> |
+            | 真の四分木 | <img src="./exp.2.1.2/outputs/train_data/quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.2/outputs/train_data/quadtree_images/sample_0003.png" width="120"> |
+            | 推定時にラベルから構築した四分木 | <img src="./exp.2.1.2/outputs/estimation_quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.2/outputs/estimation_quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.2/outputs/estimation_quadtree_images/sample_0003.png" width="120"> |
 
-            | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-            |---|---:|---:|---:|---:|---:|---:|---:|---:|
-            | 推定値 $\hat{g}_s$ |  |  |  |  |  |  |  | 0 |
-            | 推定誤差 $\hat{g}_s - g_s$ |  |  |  |  |  |  |  | 0 |
+        - 推定されたパラメータ$g_s$
+          - 学習データ数: 50組
+          - パラメータの推定結果
+
+          | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+          |---|---:|---:|---:|---:|---:|---:|---:|---:|
+          | 推定値 $\hat{g}_s$ | 0.6400 | 0.4531 | 0.4659 | 0.4398 | 0.4979 | 0.4157 | 0.3466 | 0.0000 |
+          | 推定誤差 $\hat{g}_s-g_s$ | 0.1400 | 0.0469 | 0.0341 | 0.0602 | 0.0021 | 0.0843 | 0.1534 | 0.0000 |
         
         - 学習枚数ごとの推定誤差の推移
+
+          ![exp2.1.2_branch_error](./exp.2.1.2/outputs/branch_probs_error.png)
 
     - ### [exp. 2.1.3]
 
@@ -969,14 +993,26 @@ $$
 
         - 生成された四分木と画像
 
-        - 推定されたパラメータ$g_s$
+          |  | sample(1) | sample(2) | sample(3) |
+          |---|---|---|---|
+          | 生成した画像 | <img src="./exp.2.1.3/outputs/train_data/images/sample_0001.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/images/sample_0002.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/images/sample_0003.png" width="120"> |
+          | 真のラベル | <img src="./exp.2.1.3/outputs/train_data/labels/visualize/sample_0001.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/labels/visualize/sample_0002.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/labels/visualize/sample_0003.png" width="120"> |
+          | 真の統合領域 | <img src="./exp.2.1.3/outputs/train_data/region_images/sample_0001.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/region_images/sample_0002.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/region_images/sample_0003.png" width="120"> |
+          | 真の四分木 | <img src="./exp.2.1.3/outputs/train_data/quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.3/outputs/train_data/quadtree_images/sample_0003.png" width="120"> |
+          | 推定時にラベルから構築した四分木 | <img src="./exp.2.1.3/outputs/estimation_quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.3/outputs/estimation_quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.3/outputs/estimation_quadtree_images/sample_0003.png" width="120"> |
 
-            | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-            |---|---:|---:|---:|---:|---:|---:|---:|---:|
-            | 推定値 $\hat{g}_s$ |  |  |  |  |  |  |  | 0 |
-            | 推定誤差 $\hat{g}_s - g_s$ |  |  |  |  |  |  |  | 0 |
+        - 推定されたパラメータ$g_s$
+          - 学習データ数: 50組
+          - パラメータの推定結果
+
+          | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+          |---|---:|---:|---:|---:|---:|---:|---:|---:|
+          | 推定値 $\hat{g}_s$ | 0.9000 | 0.8167 | 0.6518 | 0.5171 | 0.4231 | 0.3327 | 0.2174 | 0.0000 |
+          | 推定誤差 $\hat{g}_s-g_s$ | 0.0000 | 0.0167 | 0.0482 | 0.0829 | 0.0769 | 0.0673 | 0.0826 | 0.0000 |
         
         - 学習枚数ごとの推定誤差の推移
+
+          ![exp2.1.3_branch_error](./exp.2.1.3/outputs/branch_probs_error.png)
 
     - ### [exp. 2.1.4]
 
@@ -986,14 +1022,26 @@ $$
 
         - 生成された四分木と画像
 
-        - 推定されたパラメータ$g_s$
+          |  | sample(1) | sample(2) | sample(3) |
+          |---|---|---|---|
+          | 生成した画像 | <img src="./exp.2.1.4/outputs/train_data/images/sample_0001.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/images/sample_0002.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/images/sample_0003.png" width="120"> |
+          | 真のラベル | <img src="./exp.2.1.4/outputs/train_data/labels/visualize/sample_0001.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/labels/visualize/sample_0002.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/labels/visualize/sample_0003.png" width="120"> |
+          | 真の統合領域 | <img src="./exp.2.1.4/outputs/train_data/region_images/sample_0001.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/region_images/sample_0002.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/region_images/sample_0003.png" width="120"> |
+          | 真の四分木 | <img src="./exp.2.1.4/outputs/train_data/quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.4/outputs/train_data/quadtree_images/sample_0003.png" width="120"> |
+          | 推定時にラベルから構築した四分木 | <img src="./exp.2.1.4/outputs/estimation_quadtree_images/sample_0001.png" width="120"> | <img src="./exp.2.1.4/outputs/estimation_quadtree_images/sample_0002.png" width="120"> | <img src="./exp.2.1.4/outputs/estimation_quadtree_images/sample_0003.png" width="120"> |
 
-            | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-            |---|---:|---:|---:|---:|---:|---:|---:|---:|
-            | 推定値 $\hat{g}_s$ |  |  |  |  |  |  |  | 0 |
-            | 推定誤差 $\hat{g}_s - g_s$ |  |  |  |  |  |  |  | 0 |
+        - 推定されたパラメータ$g_s$
+          - 学習データ数: 50組
+          - パラメータの推定結果
+
+          | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+          |---|---:|---:|---:|---:|---:|---:|---:|---:|
+          | 推定値 $\hat{g}_s$ | 0.9000 | 0.8778 | 0.7878 | 0.4608 | 0.4637 | 0.4102 | 0.3268 | 0.0000 |
+          | 推定誤差 $\hat{g}_s-g_s$ | 0.0000 | 0.0222 | 0.1122 | 0.0392 | 0.0363 | 0.0898 | 0.1732 | 0.0000 |
         
         - 学習枚数ごとの推定誤差の推移
+
+          ![exp2.1.4_branch_error](./exp.2.1.4/outputs/branch_probs_error.png)
 
 
 ### 2.2 発生させた人工データからラベルの事前分布のパラメータを推定
@@ -1003,7 +1051,11 @@ $$
     p(T;\mathbf{g})=\prod_{s\in \mathcal{L}(T)}(1-g_s)\prod_{s'\in \mathcal{I}(T)}g_{s'}
     $$
 
+    設定したパラメータ:
+
     | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+    |---|---:|---:|---:|---:|---:|---:|---:|---:|
+    | パラメータ $g_s$ | 0.9 | 0.8 | 0.7 | 0.6 | 0.5 | 0.4 | 0.3 | 0 |
 
 - 統合領域は以下の事前分布をもとに発生させる．
 
@@ -1023,11 +1075,11 @@ $$
     \end{cases}
     $$
 
-    設定したパラメータ
+    設定したパラメータ:
 
-    - $\alpha = \text{xxx}$
-    - $\beta=\text{xxx}$
-    - $\eta=\text{xxx}$
+    - $\alpha = 1.0\times 10^{-8}$
+    - $\beta=8.0$
+    - $\eta=8.0$
 
 - ピクセル値は以下の尤度関数に従って生成する．
 
@@ -1038,27 +1090,91 @@ $$
         y_{(i,j)} \sim N^3(\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})
     $$
 
-    設定したパラメータ
+    設定したパラメータ:
 
-    |  | $\bm{\mu}_x$ | $\Sigma_x$ |
-    |---|---:|---:|
-    | $x=0$ |  |  |
-    | $x=1$ |  |  |
-    | $x=2$ |  |  |
+    | | $\bm{\mu}_x$ | $\Sigma_x$ | 
+    |---|---|---|
+    | $x=0$ | $\begin{bmatrix}200\\50\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    | $x=1$ | $\begin{bmatrix}50\\200\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    | $x=2$ | $\begin{bmatrix}50\\50\\200\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
 
-#### 2.1.1 幾何学的特徴量の分布が正規分布に従うことを仮定したときのモデルのパラメータ推定
+#### 2.2.1 幾何学的特徴量の分布が正規分布に従うことを仮定したときのラベルの事前分布のパラメータ推定
+
+### [exp.2.2.1]
+
+- 以下の事前分布に従ってラベルを生成する．
+
+  $$p(\phi_i(r)\mid x_r=x) =\mathcal{N} \left(\phi_i(r);m_i^{(x)},\left(\sigma_i^{(x)}\right)^2\right)$$
+  $$p\left(\boldsymbol{\phi}(r)\mid x_r=x\right) =
+  \prod_{i=1}^{|\bm{\phi}|}
+  p(\phi_i(r)\mid x_r=x)$$
+  $$p(x_r=x) = 
+  \frac{
+  p\left(\boldsymbol{\phi}(r)\mid x_r=x\right)
+  }{
+  \sum\limits_{x'\in\mathcal{X}}
+  p\left(\boldsymbol{\phi}(r)\mid x_r=x'\right)
+  }$$
+
+- 設定したパラメータ
+
+  | | $x=0$ | $x=1$ | $x=2$ |
+  |---|---:|---:|---:|
+  | log Area: $(m_1^{(x)}, \sigma_1^{(x)})$ | $(4.0, 1.0)$ | $(6.5,1.5)$ | $(9.0, 1.0)$  |
+  | log Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ | $(3.5, 0.5)$ | $(5, 0.5)$ | $(6, 0.5)$ |
+  | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ | $(0.45, 0.2)$ | $(0.5, 0.1)$ | $(0.7, 0.1)$ |
 
 
+- 生成したデータは以下の通り．(データ数: 50組)
+
+- パラメータの推定値と推定誤差
+
+  | | $x=0$ | $x=1$ | $x=2$ |
+  |---|---:|---:|---:|
+  | (推定値) log Area: $(\hat{m}_1^{(x)}, \hat{\sigma}_1^{(x)})$ |  |  |   |
+  | (推定誤差) log Area: $(\hat{m}_1^{(x)}-m_1^{(x)}, \sigma_1^{(x)}-\hat{\sigma}_1^{(x)})$ |  |  |   |
+  | (推定値)log Perimeter: $\hat{m}_2^{(x)}, \hat{\sigma}_2^{(x)}$ |  |  |  |
+  | (推定誤差)log Perimeter: $(m_2^{(x)}- \hat{m}_2^{(x)}, \hat{\sigma}_2^{(x)}-\sigma_2^{(x)})$ |  |  |  |
+  | (推定値)log Perimeter: $\hat{m}_3^{(x)}, \hat{\sigma}_3^{(x)}$ |  |  |  |
+  | (推定誤差)log Perimeter: $(m_3^{(x)}- \hat{m}_3^{(x)}, \hat{\sigma}_3^{(x)}-\sigma_3^{(x)})$ |  |  |  |
+
+- パラメータの推定誤差の推移
+
+#### 2.2.2 幾何学的特徴量からロジスティック回帰モデルに従ってラベルが発生するモデルを仮定したときのラベルの事前分布のパラメータ推定
+
+### [exp.2.2.2] 
+
+- 以下の事前分布に従ってラベルを発生させる．
+
+  $$
+  p(x_r = x;\bm{\omega}) =\frac{\exp \left( {\bm{\omega}^{(x)}}^{\top} \bm{\phi}(r) \right)}{\sum_{x'\in X} \exp \left( {\bm{\omega}^{(x')}}^{\top} \bm{\phi}(r) \right)}
+  $$
+
+- 設定したパラメータ
+
+  | | $x=0$ | $x=1$ | $x=2$ |
+  |---|---:|---:|---:|
+  | bias: $\omega_0^{(x)}$ | $6.5$ | $-4.5$ | $-31.0$ |
+  | log Area: $\omega_1^{(x)}$ | $-1.4$ | $0.1$ | $2.4$ |
+  | log Perimeter: $\omega_2^{(x)}$ | $-0.9$ | $1.0$ | $1.8$ |
+  | Circularity: $\omega_3^{(x)}$ | $2.8$ | $-2.5$ | $1.5$ |
+
+- 生成したデータは以下の通り(データ数: 50組)
+
+- パラメータの推定値と推定誤差
+
+  | | $x=0$ | $x=1$ | $x=2$ |
+  |---|---:|---:|---:|
+  | (推定値)bias: $\hat{\omega}_0^{(x)}$ |  |  |  |
+  | (推定誤差)bias: $\hat{\omega}_0^{(x)}-\omega_0^{(x)}$ |  |  |  |
+  | log Area: $\omega_1^{(x)}$ | $-1.4$ | $0.1$ | $2.4$ |
+  | log Perimeter: $\omega_2^{(x)}$ | $-0.9$ | $1.0$ | $1.8$ |
+  | Circularity: $\omega_3^{(x)}$ | $2.8$ | $-2.5$ | $1.5$ |
 
 
+## 3. セグメンテーションアルゴリズムの正確性とセグメンテーション結果の特徴を精査することを目的とした実験
 
-
-
-
-
-
-
-
+### 3.1 生成モデルから発生した画像に対するセグメンテーション結果
 
 
 

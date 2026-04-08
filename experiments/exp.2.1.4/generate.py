@@ -1,17 +1,86 @@
 # generate.py
+# [exp.2.1.1] 真のパラメータを埋め込んで 50 組のデータを生成する
+#
+# 生成するデータ:
+#   outputs/train_data/images/sample_XXXX.png
+#   outputs/train_data/labels/sample_XXXX.png
+#   outputs/train_data/labels/visualize/sample_XXXX.png
+#
+# 真のパラメータ (branch_probs):
+#   depth 0-6: 0.9, depth 7: 0.0
+#
+# その他パラメータ (exp. 2.1 共通):
+#   ddCRP: alpha=1e-8, beta=8.0, eta=8.0
+#   ラベルモデル: 幾何学的特徴量の正規確率モデル
+#   ピクセルモデル: 多変量正規分布
 
-from config_gen import Config, DataSavingConfig, load_config
 import os
 import sys
 import numpy as np
 from PIL import Image
 import random
-from model.quadtree.node import Node
-import traceback
 from typing import Callable
 
-def ensure_split_dirs(base_dir: str) -> None:
-    for sub in ("images", "labels", "labels/visualize", "regions", "quadtrees"):
+# プロジェクトルートをパスに追加
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+import model.quadtree.depth_dependent_model as quadtree_model
+import model.label.geom_features_norm_dist as label_model_module
+import model.pixel.normal_dist as pixel_model_module
+import model.region.affinity as affinity_module
+from model.quadtree.node import Node
+
+# ===== 真のパラメータ =====
+MAX_DEPTH = 7
+IMAGE_SIZE = 2 ** MAX_DEPTH  # 128
+
+# 四分木の分岐確率 (exp.2.1.2)
+TRUE_BRANCH_PROBS = [0.9, 0.9, 0.9, 0.5, 0.5, 0.5, 0.5, 0.0]
+
+# ddCRP パラメータ (exp. 2.1 共通)
+ALPHA = 1e-8
+BETA = 8.0
+ETA = 8.0
+
+# ラベルモデルのパラメータ (幾何学的特徴量の正規確率に基づくモデル, exp. 2.1 共通)
+LABEL_SET = [0, 1, 2]
+LABEL_VALUE_SET = [0, 128, 255]
+LABEL_FEATURE_NAMES = ["log_area", "log_perimeter", "circularity"]
+LABEL_MEANS = [
+    [4.0, 3.5, 0.45],  # x=0
+    [6.5, 5.0, 0.50],  # x=1
+    [9.0, 6.0, 0.70],  # x=2
+]
+LABEL_STDS = [
+    [1.0, 0.5, 0.2],
+    [1.5, 0.5, 0.1],
+    [1.0, 0.5, 0.1],
+]
+LABEL_PARAM = {
+    "image_size": IMAGE_SIZE,
+    "feature_names": LABEL_FEATURE_NAMES,
+    "means": LABEL_MEANS,
+    "stds": LABEL_STDS,
+}
+
+# ピクセル値のパラメータ (exp. 2.1 共通)
+PIXEL_PARAM = {
+    "label_set": LABEL_SET,
+    "mean": [[200, 50, 50], [50, 200, 50], [50, 50, 200]],
+    "variance": [
+        [[20, 0, 0], [0, 20, 0], [0, 0, 20]],
+        [[20, 0, 0], [0, 20, 0], [0, 0, 20]],
+        [[20, 0, 0], [0, 20, 0], [0, 0, 20]],
+    ],
+}
+
+# 生成枚数・出力先
+NUM_SAMPLES = 50
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'outputs', 'train_data')
+SEED = 42
+
+def ensure_dirs(base_dir: str) -> None:
+    for sub in ("images", "labels", "labels/visualize", "quadtree_images", "region_images"):
         os.makedirs(os.path.join(base_dir, sub), exist_ok=True)
 
 
@@ -257,26 +326,18 @@ def save_region_growing_image(max_depth: int, region_dict: dict[int, set[tuple[i
     Image.fromarray(image).save(filename)
 
 
-def sample_label_images(config: Config, region_dict: dict[int, set[tuple[int, int]]]) -> tuple[np.ndarray, np.ndarray]:
-    size = 2 ** config.quadtree_config.max_depth
-    label_image = np.zeros((size, size), dtype=np.uint8)
-    label_vis_image = np.zeros((size, size), dtype=np.uint8)
-    label_set = config.label_config.label_set
-    label_value_map = {
-        int(label): int(value)
-        for label, value in zip(config.label_config.label_set, config.label_config.label_value_set)
-    }
-    for idx, region in region_dict.items():
-        probs = config.label_config.model.label_prior(
-            region=region, param=config.label_config.param)
-        chosen_idx = int(np.random.choice(range(config.label_config.label_num), p=probs))
-        label = int(label_set[chosen_idx])
+def sample_label_image(region_dict: dict[int, set[tuple[int, int]]]) -> tuple[np.ndarray, np.ndarray]:
+    label_image = np.zeros((IMAGE_SIZE, IMAGE_SIZE), dtype=np.uint8)
+    label_vis_image = np.zeros((IMAGE_SIZE, IMAGE_SIZE), dtype=np.uint8)
+    label_value_map = dict(zip(LABEL_SET, LABEL_VALUE_SET))
+    for _idx, region in region_dict.items():
+        probs = label_model_module.label_prior(region=region, param=LABEL_PARAM)
+        chosen_idx = int(np.random.choice(len(LABEL_SET), p=probs))
+        label = int(LABEL_SET[chosen_idx])
         vis_value = int(label_value_map.get(label, label))
-        for coords in region:
-            i = int(coords[0])
-            j = int(coords[1])
-            label_image[i][j] = label
-            label_vis_image[i][j] = vis_value
+        for (i, j) in region:
+            label_image[i, j] = label
+            label_vis_image[i, j] = vis_value
     return label_image, label_vis_image
 
 
@@ -290,140 +351,67 @@ def save_label_images(
     Image.fromarray(label_vis_image).save(label_vis_filename)
 
 
-def _seed_with_offset(seed: int | None, offset: int) -> int | None:
-    if seed is None:
-        return None
-    return seed + offset
+def main():
+    np.random.seed(SEED)
+    random.seed(SEED)
 
+    ensure_dirs(OUTPUT_DIR)
 
-def _sample_stem(quadtree_idx: int, region_idx: int, label_idx: int, image_idx: int) -> str:
-    return f"qt{quadtree_idx:04d}_rg{region_idx:04d}_lb{label_idx:04d}_im{image_idx:04d}"
+    print(f"真の branch_probs: {TRUE_BRANCH_PROBS}")
+    print(f"alpha={ALPHA}, beta={BETA}, eta={ETA}")
+    print(f"{NUM_SAMPLES} 組のデータを生成します -> {OUTPUT_DIR}\n")
 
+    for idx in range(NUM_SAMPLES):
+        print(f"[{idx + 1}/{NUM_SAMPLES}] サンプル生成中...")
 
-def generate_split_data(config: Config, split_cfg: DataSavingConfig, split_name: str) -> None:
-    quadtree_num = split_cfg.quadtree_num
-    total_images = split_cfg.total_images
-    generated_images = 0
-
-    print(
-        f"[{split_name}] quadtree={quadtree_num}, regions/quadtree={split_cfg.regions_per_quadtree}, "
-        f"labels/region={split_cfg.labels_per_region}, images/label={split_cfg.images_per_label}, "
-        f"total_images={total_images}"
-    )
-
-    for qt_idx in range(quadtree_num):
-        qt_seed = _seed_with_offset(config.seed, qt_idx)
-
-        print(f"Generating: quadtree {split_name} qt={qt_idx}")
-        qt = config.quadtree_config.model.QuadTree(
-            max_depth=config.quadtree_config.max_depth,
-            branch_prob=config.quadtree_config.branch_probs,
-            seed=qt_seed
+        qt = quadtree_model.QuadTree(
+            max_depth=MAX_DEPTH,
+            branch_prob=TRUE_BRANCH_PROBS,
+            seed=SEED + idx,
         )
         all_leaves = qt.get_leaves()
         adjacency_dict = precompute_adjacencies(all_leaves)
 
-        for rg_idx in range(split_cfg.regions_per_quadtree):
-            print(f"Generating: region {split_name} qt={qt_idx} rg={rg_idx}")
-            region_dict = ddcrp_region_generation(
-                all_leaves=all_leaves,
-                adjacency_dict=adjacency_dict,
-                affinity_func=config.affinity_func,
-                alpha=config.alpha,
-                **config.affinity_params
-            )
-            print(f"  -> Generated {len(region_dict)} regions from {len(all_leaves)} leaves")
+        region_dict = ddcrp_region_generation(
+            all_leaves=all_leaves,
+            adjacency_dict=adjacency_dict,
+            affinity_func=affinity_module.log_affinity_boundary_and_depth,
+            alpha=ALPHA,
+            beta=BETA,
+            eta=ETA,
+        )
 
-            for lb_idx in range(split_cfg.labels_per_region):
-                print(f"Generating: label {split_name} qt={qt_idx} rg={rg_idx} lb={lb_idx}")
-                label_array, label_vis_array = sample_label_images(config=config, region_dict=region_dict)
+        label_array, label_vis_array = sample_label_image(region_dict)
 
-                for im_idx in range(split_cfg.images_per_label):
-                    stem = _sample_stem(
-                        quadtree_idx=qt_idx,
-                        region_idx=rg_idx,
-                        label_idx=lb_idx,
-                        image_idx=im_idx,
-                    )
+        rgb = pixel_model_module.generate_rgb_from_labels(
+            label_image=label_array,
+            region_dict=region_dict,
+            theta=PIXEL_PARAM,
+            width=IMAGE_SIZE,
+            height=IMAGE_SIZE,
+            seed=SEED + NUM_SAMPLES + idx,
+        )
 
-                    save_quadtree_image(
-                        all_leaves=all_leaves,
-                        max_depth=config.quadtree_config.max_depth,
-                        filename=f"{split_cfg.dir}/quadtrees/{stem}.png",
-                    )
-                    save_region_growing_image(
-                        max_depth=config.quadtree_config.max_depth,
-                        region_dict=region_dict,
-                        filename=f"{split_cfg.dir}/regions/{stem}.png",
-                    )
-                    save_label_images(
-                        label_image=label_array,
-                        label_vis_image=label_vis_array,
-                        label_filename=f"{split_cfg.dir}/labels/{stem}.png",
-                        label_vis_filename=f"{split_cfg.dir}/labels/visualize/{stem}.png",
-                    )
+        stem = f"sample_{idx:04d}"
+        save_quadtree_image(
+            all_leaves=all_leaves,
+            max_depth=MAX_DEPTH,
+            filename=os.path.join(OUTPUT_DIR, "quadtree_images", f"{stem}.png"),
+        )
+        save_region_growing_image(
+            max_depth=MAX_DEPTH,
+            region_dict=region_dict,
+            filename=os.path.join(OUTPUT_DIR, "region_images", f"{stem}.png"),
+        )
+        Image.fromarray(rgb).save(os.path.join(OUTPUT_DIR, "images", f"{stem}.png"))
+        Image.fromarray(label_array).save(os.path.join(OUTPUT_DIR, "labels", f"{stem}.png"))
+        Image.fromarray(label_vis_array).save(
+            os.path.join(OUTPUT_DIR, "labels", "visualize", f"{stem}.png")
+        )
+        print(f"  -> {stem} 保存完了 (regions={len(region_dict)})")
 
-                    image_seed = _seed_with_offset(config.seed, generated_images)
-                    rgb = config.pixel_config.model.generate_rgb_from_labels(
-                        label_image=label_array,
-                        region_dict=region_dict,
-                        theta=config.pixel_config.param,
-                        width=2**config.quadtree_config.max_depth,
-                        height=2**config.quadtree_config.max_depth,
-                        seed=image_seed
-                    )
+    print(f"\n生成完了: {NUM_SAMPLES} 組を {OUTPUT_DIR} に保存しました。")
 
-                    Image.fromarray(rgb).save(f"{split_cfg.dir}/images/{stem}.png")
-                    generated_images += 1
-                    print(f"Generating: image {split_name} {stem} ({generated_images}/{total_images})")
-
-    print("-"*20)
-
-
-def main():
-    # 設定の読み込み（config_gen.py 側でパラメータディレクトリ/ファイル名を管理）
-    try:
-        config_gen = load_config()
-    except FileNotFoundError as e:
-        print("エラー: パラメータファイルが見つかりません。")
-        print(str(e))
-        sys.exit(1)
-
-    # パラメータファイルの確認
-    param_dir = config_gen.param_dir
-    required_files = [
-        config_gen.pixel_param_filename,
-        config_gen.branch_probs_filename,
-        config_gen.label_param_filename,
-    ]
-    missing_files = []
-
-    if not os.path.exists(param_dir):
-        missing_files = required_files
-    else:
-        for f in required_files:
-            if not os.path.exists(os.path.join(param_dir, f)):
-                missing_files.append(f)
-
-    if missing_files:
-        print("エラー: 以下のパラメータファイルが見つかりません。")
-        print(f"検索ディレクトリ: {param_dir}")
-        for f in missing_files:
-            print(f"- {f}")
-        print("\ntrain.py 出力形式に合わせたJSONを配置してください。")
-        print("\n[pixel_param.json の例]")
-        print('{"label_set": [0, 1], "channels": 3, "mean": [[80, 80, 80], [180, 180, 180]], "variance": [[[400,0,0],[0,400,0],[0,0,400]], [[400,0,0],[0,400,0],[0,0,400]]], "std": [[20, 20, 20], [20, 20, 20]]}')
-        print("\n[branch_probs.json の例]")
-        print('{"branch_probs": [1.0, 0.67, ...]}')
-        print("\n[label_param.json の例]")
-        print('{"label_num": 2, "label_set": [0, 1], "label_value_set": [0, 255], "weights": [[...], [...]], "bias": [...], "image_size": 128, "feature_names": ["log_area", "log_perimeter", "circularity"]}')
-        sys.exit(1)
-
-    ensure_split_dirs(config_gen.train.dir)
-    ensure_split_dirs(config_gen.test.dir)
-
-    generate_split_data(config=config_gen, split_cfg=config_gen.train, split_name="train")
-    generate_split_data(config=config_gen, split_cfg=config_gen.test, split_name="test")
 
 if __name__ == "__main__":
     main()

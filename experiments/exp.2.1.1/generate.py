@@ -80,7 +80,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'outputs', 'train_data')
 SEED = 42
 
 def ensure_dirs(base_dir: str) -> None:
-    for sub in ("images", "labels", "labels/visualize"):
+    for sub in ("images", "labels", "labels/visualize", "quadtree_images", "region_images"):
         os.makedirs(os.path.join(base_dir, sub), exist_ok=True)
 
 
@@ -393,6 +393,16 @@ def main():
         )
 
         stem = f"sample_{idx:04d}"
+        save_quadtree_image(
+            all_leaves=all_leaves,
+            max_depth=MAX_DEPTH,
+            filename=os.path.join(OUTPUT_DIR, "quadtree_images", f"{stem}.png"),
+        )
+        save_region_growing_image(
+            max_depth=MAX_DEPTH,
+            region_dict=region_dict,
+            filename=os.path.join(OUTPUT_DIR, "region_images", f"{stem}.png"),
+        )
         Image.fromarray(rgb).save(os.path.join(OUTPUT_DIR, "images", f"{stem}.png"))
         Image.fromarray(label_array).save(os.path.join(OUTPUT_DIR, "labels", f"{stem}.png"))
         Image.fromarray(label_vis_array).save(
