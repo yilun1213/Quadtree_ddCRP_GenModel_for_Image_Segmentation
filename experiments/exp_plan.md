@@ -816,11 +816,11 @@ $$
     
     $\Omega = \{(\Delta i, \Delta j) \mid \Delta i \in \{-2,-1,0\},\, \Delta j \in \{-2,-1,0\}\} \setminus \{(0,0)\}$ (8オフセット)
 
-    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（学習ARパラメータ，全8オフセット使用）| $\Sigma_x$ |
+    | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$| $\Sigma_x$ |
     |---|---|---|---|
-    |$x=0$| $\begin{bmatrix}200\\50\\50\end{bmatrix}$ | 支配的な2オフセット（残り6オフセットも非ゼロ，ar_param.json参照）：<br>$A_{(-1,0)}^{(0)}\approx\begin{bmatrix}0.53&0.02&0.06\\0.13&0.38&0.09\\0.09&0.00&0.51\end{bmatrix}$<br>$A_{(0,-1)}^{(0)}\approx\begin{bmatrix}0.60&0.09&0.05\\0.17&0.47&0.10\\0.12&0.09&0.53\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    |$x=1$| $\begin{bmatrix}50\\200\\50\end{bmatrix}$ | 支配的な2オフセット（残り6オフセットも非ゼロ，ar_param.json参照）：<br>$A_{(-1,0)}^{(1)}\approx\begin{bmatrix}0.30&0.35&-0.06\\-0.16&0.79&-0.04\\-0.16&0.35&0.40\end{bmatrix}$<br>$A_{(0,-1)}^{(1)}\approx\begin{bmatrix}0.28&0.41&-0.15\\-0.16&0.84&-0.14\\-0.16&0.43&0.27\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
-    |$x=2$| $\begin{bmatrix}50\\50\\200\end{bmatrix}$ | 支配的な2オフセット（残り6オフセットも非ゼロ，ar_param.json参照）：<br>$A_{(-1,0)}^{(2)}\approx\begin{bmatrix}0.57&0.09&0.01\\0.25&0.39&0.03\\0.22&0.09&0.36\end{bmatrix}$<br>$A_{(0,-1)}^{(2)}\approx\begin{bmatrix}0.51&0.06&-0.02\\0.20&0.35&0.00\\0.17&0.05&0.33\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=0$| $\begin{bmatrix}200\\50\\50\end{bmatrix}$ | (省略) | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=1$| $\begin{bmatrix}50\\200\\50\end{bmatrix}$ | (省略) | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+    |$x=2$| $\begin{bmatrix}50\\50\\200\end{bmatrix}$ | (省略) | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
     
     発生させた画像は以下の通り．
 
@@ -834,9 +834,9 @@ $$
 
     | | $\bm{\mu}_x$ | $\bm{A}^{(x)}_\Delta$（学習ARパラメータ，exp 1.4.2.1と同一）| $\Sigma_x$ |
     |---|---|---|---|
-    |$x=0$| $\begin{bmatrix}90.0\\100.0\\90.0\end{bmatrix}$ | $A_\Delta^{(0)}$はexp 1.4.2.1の$x=0$と同一 | $\begin{bmatrix}30.0&0&0\\0&30.0&0\\0&0&30.0\end{bmatrix}$ |
-    |$x=1$| $\begin{bmatrix}70.0\\90.0\\80.0\end{bmatrix}$ | $A_\Delta^{(1)}$はexp 1.4.2.1の$x=1$と同一 | $\begin{bmatrix}70.0&0&0\\0&70.0&0\\0&0&70.0\end{bmatrix}$ |
-    |$x=2$| $\begin{bmatrix}120.0\\120.0\\100.0\end{bmatrix}$ | $A_\Delta^{(2)}$はexp 1.4.2.1の$x=2$と同一 | $\begin{bmatrix}15.0&0&0\\0&15.0&0\\0&0&15.0\end{bmatrix}$ |
+    |$x=0$| $\begin{bmatrix}90.0\\100.0\\90.0\end{bmatrix}$ | (省略) | $\begin{bmatrix}30.0&0&0\\0&30.0&0\\0&0&30.0\end{bmatrix}$ |
+    |$x=1$| $\begin{bmatrix}70.0\\90.0\\80.0\end{bmatrix}$ | (省略) | $\begin{bmatrix}70.0&0&0\\0&70.0&0\\0&0&70.0\end{bmatrix}$ |
+    |$x=2$| $\begin{bmatrix}120.0\\120.0\\100.0\end{bmatrix}$ | (省略) | $\begin{bmatrix}15.0&0&0\\0&15.0&0\\0&0&15.0\end{bmatrix}$ |
     
     発生させた画像は以下の通り．
 
@@ -924,6 +924,7 @@ $$
     $$
     p(T;\mathbf{g})=\prod_{s\in \mathcal{L}(T)}(1-g_s)\prod_{s'\in \mathcal{I}(T)}g_{s'}
     $$
+
 
     パラメータ$g_s$の設定を以下の4パターンで設定し，画像を生成する．そして，生成した画像をもとにパラメータ$g_s$を推定する．
 
@@ -1243,6 +1244,7 @@ $$
 
   > **注**: 多項ロジスティック回帰モデルはクラスによらず全パラメータに定数を加算しても確率値が変わらない（softmax の不変性）ため, パラメータは定数シフト分だけ不可識別である. L2 正則化によって推定値はゼロ付近に固定されるが, 真値が非ゼロ平均であるため, 推定誤差は定数シフトの分だけかさ上げされる.
 
+
 - パラメータの推定誤差の推移
 
   - テキストデータ（1組目から50組目までの推定推移）:
@@ -1257,5 +1259,523 @@ $$
 
 ### 3.1 生成モデルから発生した画像に対するセグメンテーション結果
 
+- 画像生成時の設定
+  
+  - 四分木の事前分布のパラメータ
+    $$
+    p(T;\mathbf{g})=\prod_{s\in \mathcal{L}(T)}(1-g_s)\prod_{s'\in \mathcal{I}(T)}g_{s'}
+    $$
+
+  - 設定したパラメータ
+
+    | 深さ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+    |---|---:|---:|---:|---:|---:|---:|---:|---:|
+    | パラメータ $g_s$ | 0.9 | 0.8 | 0.7 | 0.6 | 0.5 | 0.4 | 0.3 | 0 |
+
+  - 統合領域の事前分布とパラメータ
+      - 事前分布の確率関数
+
+          $$
+          p(c_s=s'\mid T;\alpha,\beta,\eta)\propto
+          \begin{cases}
+          \dfrac{f(s,s')}{\alpha+\sum_{s''\in \mathcal{L}(T)\setminus\{s\}}f(s,s'')} & (s\neq s')\\
+          \dfrac{\alpha}{\alpha+\sum_{s''\in \mathcal{L}(T)\setminus\{s\}}f(s,s'')} & (s=s')
+          \end{cases}
+          $$
+
+          $$
+          f(s,s')=
+          \begin{cases}
+          \exp\left(\beta B(s,s')+\eta(\mathrm{depth}(s)-\mathrm{depth}(s'))\right) & (\text{$s$と$s'$が隣接している})\\
+          0 & (\text{$s$と$s'$が隣接していない})
+          \end{cases}
+          $$
+      - 設定したパラメータ
+          - $\alpha = 1.0\times 10^{-8}$
+          - $\beta=8.0$
+          - $\eta=8.0$
+
+  - ラベルの事前分布とパラメータ
+
+      - 幾何学的特徴量の正規確率に基づくラベルの発生モデル
+
+          $$p(\phi_i(r)\mid x_r=x) =\mathcal{N} \left(\phi_i(r);m_i^{(x)},\left(\sigma_i^{(x)}\right)^2\right)$$
+          $$p\left(\boldsymbol{\phi}(r)\mid x_r=x\right) =
+          \prod_{i=1}^{|\bm{\phi}|}
+          p(\phi_i(r)\mid x_r=x)$$
+          $$p(x_r=x) = 
+          \frac{
+          p\left(\boldsymbol{\phi}(r)\mid x_r=x\right)
+          }{
+          \sum\limits_{x'\in\mathcal{X}}
+          p\left(\boldsymbol{\phi}(r)\mid x_r=x'\right)
+          }$$
+
+      - 設定したパラメータ
+
+        | | $x=0$ | $x=1$ | $x=2$ |
+        |---|---:|---:|---:|
+        | log Area: $(m_1^{(x)}, \sigma_1^{(x)})$ | $(4.0, 1.0)$ | $(6.5,1.5)$ | $(9.0, 1.0)$  |
+        | log Perimeter: $(m_2^{(x)}, \sigma_2^{(x)})$ | $(3.5, 0.5)$ | $(5, 0.5)$ | $(6, 0.5)$ |
+        | Circularity: $(m_3^{(x)}, \sigma_3^{(x)})$ | $(0.45, 0.2)$ | $(0.5, 0.1)$ | $(0.7, 0.1)$ |
+
+  - ピクセル値の尤度関数のパラメータ
+
+      - ピクセル値の尤度関数
+          $$
+             p(Y_r\mid x_r;\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)};\boldsymbol{\mu}_{x_r},  \Sigma_{x_r}\bigr) 
+          $$
+          $$
+              y_{(i,j)} \sim N^3(\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})
+          $$
+
+      - 設定したパラメータ
+        | | $\bm{\mu}_x$ | $\Sigma_x$ | 
+        |---|---|---|
+        | $x=0$ | $\begin{bmatrix}200\\50\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+        | $x=1$ | $\begin{bmatrix}50\\200\\50\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
+        | $x=2$ | $\begin{bmatrix}50\\50\\200\end{bmatrix}$ | $\begin{bmatrix}20&0&0\\0&20&0\\0&0&20\end{bmatrix}$ |
 
 
+### [exp.3.1.1]
+
+- テストデータに対するセグメンテーション結果を以下に示す．
+
+##### `sample_0000`
+
+<table>
+  <tr>
+    <th>推定対象画像</th>
+    <th>真のラベル</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.3.1.1/outputs/test_data/images/sample_0000.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/test_data/labels/visualize/sample_0000.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>MAP木</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/quadtree/sample_0000.png" width="220" height="220" style="width:220px; height:220px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th></th>
+    <th>統合領域</th>
+    <th>推定ラベル</th>
+    <th>真のラベルとの差分</th>
+  </tr>
+  <tr>
+    <th>ギブス1回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0000_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0000_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0000_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス2回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0000_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0000_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0000_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス3回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0000_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0000_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0000_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス4回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0000_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0000_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0000_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス5回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0000_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0000_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0000_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+##### `sample_0001`
+
+<table>
+  <tr>
+    <th>推定対象画像</th>
+    <th>真のラベル</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.3.1.1/outputs/test_data/images/sample_0001.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/test_data/labels/visualize/sample_0001.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>MAP木</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/quadtree/sample_0001.png" width="220" height="220" style="width:220px; height:220px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th></th>
+    <th>統合領域</th>
+    <th>推定ラベル</th>
+    <th>真のラベルとの差分</th>
+  </tr>
+  <tr>
+    <th>ギブス1回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0001_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0001_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0001_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス2回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0001_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0001_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0001_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス3回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0001_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0001_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0001_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス4回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0001_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0001_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0001_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス5回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0001_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0001_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0001_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+##### `sample_0002`
+
+<table>
+  <tr>
+    <th>推定対象画像</th>
+    <th>真のラベル</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.3.1.1/outputs/test_data/images/sample_0002.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/test_data/labels/visualize/sample_0002.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>MAP木</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/quadtree/sample_0002.png" width="220" height="220" style="width:220px; height:220px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th></th>
+    <th>統合領域</th>
+    <th>推定ラベル</th>
+    <th>真のラベルとの差分</th>
+  </tr>
+  <tr>
+    <th>ギブス1回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0002_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0002_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0002_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス2回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0002_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0002_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0002_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス3回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0002_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0002_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0002_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス4回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0002_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0002_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0002_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス5回目</th>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/region/sample_0002_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/visualize/sample_0002_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.3.1.1/outputs/estimation_results/label/diff/sample_0002_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+
+
+
+## 4. 合成データの実験結果
+
+### [exp.4]
+
+- `exp.4/make_syn_data2.py` を用いて，$256\times 256$ の合成画像データを作成した．
+
+- 学習データ数は100枚，テストデータ数は5枚である．
+
+- ラベル集合は $\mathcal{X}=\{0,1,2\}$ とし，それぞれ背景，矩形，円に対応する．
+
+#### 4.1 作成した画像データとラベルデータ
+
+- 学習データの代表例を以下に示す．各セルの上段が生成画像，下段が対応するラベルの可視化画像である．
+
+    <table>
+      <tr>
+        <th>`train_000`</th>
+        <th>`train_001`</th>
+        <th>`train_002`</th>
+        <th>`train_003`</th>
+        <th>`train_004`</th>
+      </tr>
+      <tr>
+        <td>
+          <img src="./exp.4/train_data/images/train_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block; margin-bottom:6px;">
+          <img src="./exp.4/train_data/labels/visualize/train_000.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;">
+        </td>
+        <td>
+          <img src="./exp.4/train_data/images/train_001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block; margin-bottom:6px;">
+          <img src="./exp.4/train_data/labels/visualize/train_001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;">
+        </td>
+        <td>
+          <img src="./exp.4/train_data/images/train_002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block; margin-bottom:6px;">
+          <img src="./exp.4/train_data/labels/visualize/train_002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;">
+        </td>
+        <td>
+          <img src="./exp.4/train_data/images/train_003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block; margin-bottom:6px;">
+          <img src="./exp.4/train_data/labels/visualize/train_003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;">
+        </td>
+        <td>
+          <img src="./exp.4/train_data/images/train_004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block; margin-bottom:6px;">
+          <img src="./exp.4/train_data/labels/visualize/train_004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;">
+        </td>
+      </tr>
+    </table>
+
+#### 4.2 推定したパラメータ
+
+- 四分木の事前分布は以下を仮定する．
+
+    $$
+    p(T;\mathbf{g})=\prod_{s\in \mathcal{L}(T)}(1-g_s)\prod_{s'\in \mathcal{I}(T)}g_{s'}
+    $$
+
+- ラベルの事前分布は以下を仮定する．
+
+    $$
+    p(x_r = x;\bm{\omega}) =\frac{\exp \left( {\bm{\omega}^{(x)}}^{\top} \bm{\phi}(r) \right)}{\sum_{x'\in X} \exp \left( {\bm{\omega}^{(x')}}^{\top} \bm{\phi}(r) \right)}
+    $$
+
+- ピクセル値の尤度関数は以下を仮定する．
+
+    $$
+    p(Y_r\mid x_{r};\bm{\theta}) = p(Y_r;\bm{\theta}_{x_{r}})
+    $$
+    $$
+    p(Y_r\mid x_r;\boldsymbol{\mu}_{x_r},  \Sigma_{x_r})= \prod_{(i,j)\in r} p\bigl(y_{(i,j)};\boldsymbol{\mu}_{x_r},  \Sigma_{x_r}\bigr)
+    $$
+    $$
+    y_{(i,j)} \sim N(\mu_{x_r}, \sigma_{x_r}^2)
+    $$
+
+- 推定されたパラメータは以下の通りである．
+
+    - 四分木事前分布パラメータ $\hat{\bm{g}}$
+
+      | 深さ $d$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+      |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+      | $\hat{g}_d$ | 1.0000 | 0.9850 | 0.7334 | 0.5333 | 0.5128 | 0.4794 | 0.4344 | 0.3342 | 0 |
+
+    - ラベル事前分布パラメータ $\hat{\bm{\omega}}$
+
+      | | $x=0$ | $x=1$ | $x=2$ |
+      |---|---:|---:|---:|
+      | bias: $\hat{\omega}_0^{(x)}$ | $-95.1724$ | $77.4324$ | $17.7400$ |
+      | log Area: $\hat{\omega}_1^{(x)}$ | $6.1112$ | $-6.5004$ | $0.3892$ |
+      | log Perimeter: $\hat{\omega}_2^{(x)}$ | $5.7695$ | $-3.4069$ | $-2.3627$ |
+      | Circularity: $\hat{\omega}_3^{(x)}$ | $-1.9461$ | $0.2563$ | $1.6898$ |
+
+    - ピクセル値分布パラメータ $\hat{\bm{\theta}}$
+
+      | | $x=0$ | $x=1$ | $x=2$ |
+      |---|---:|---:|---:|
+      | 平均 $\hat{\mu}_x$ | $101.5950$ | $149.5399$ | $149.5123$ |
+      | 標準偏差 $\hat{\sigma}_x$ | $64.4662$ | $19.9764$ | $20.0134$ |
+
+#### 4.3 テストデータに対する推定結果
+
+- 以下では `test_001.png` の結果に絞って，MAP木とギブスサンプリングの全反復結果を示す．
+
+##### `test_001`
+
+<table>
+  <tr>
+    <th>推定対象画像</th>
+    <th>真のラベル</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.4/test_data/images/test_001.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/test_data/labels/visualize/test_001.png" width="170" height="170" style="width:170px; height:170px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>MAP木</th>
+  </tr>
+  <tr>
+    <td><img src="./exp.4/estimation_results/quadtree/test_001.png" width="220" height="220" style="width:220px; height:220px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th></th>
+    <th>統合領域</th>
+    <th>推定ラベル</th>
+    <th>真のラベルとの差分</th>
+  </tr>
+  <tr>
+    <th>ギブス1回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0001.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス2回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0002.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス3回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0003.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス4回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0004.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス5回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0005.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス6回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0006.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0006.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0006.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス7回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0007.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0007.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0007.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス8回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0008.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0008.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0008.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス9回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0009.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0009.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0009.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス10回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0010.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0010.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0010.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス11回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0011.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0011.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0011.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス12回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0012.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0012.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0012.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス13回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0013.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0013.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0013.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス14回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0014.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0014.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0014.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス15回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0015.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0015.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0015.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス16回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0016.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0016.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0016.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス17回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0017.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0017.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0017.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス18回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0018.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0018.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0018.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス19回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0019.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0019.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0019.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+  <tr>
+    <th>ギブス20回目</th>
+    <td><img src="./exp.4/estimation_results/region/test_001_0020.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/visualize/test_001_0020.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+    <td><img src="./exp.4/estimation_results/label/diff/test_001_0020.png" width="120" height="120" style="width:120px; height:120px; max-width:none; object-fit:contain; display:block;"></td>
+  </tr>
+</table>
+
+## 5. 合成データの実験part2
