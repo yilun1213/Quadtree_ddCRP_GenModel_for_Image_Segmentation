@@ -56,8 +56,8 @@ def main() -> None:
     parser.add_argument(
         "input_csv",
         nargs="?",
-        default=os.path.join("outputs", "estimation_results", "oa_error_trend.csv"),
-        help="Input CSV path. Default: outputs/estimation_results/oa_error_trend.csv",
+        default=os.path.join("outputs", "estimation_results_icm", "oa_error_trend.csv"),
+        help="Input CSV path. Default: outputs/estimation_results_icm/oa_error_trend.csv",
     )
     parser.add_argument(
         "-o",

@@ -40,6 +40,7 @@ class Config:
     gibbs_num_iterations: int
     affinity_params: Dict[str, Any]
     oa_log_filepath: str
+    oa_error_csv_path: str
     est_label_diff_dir: str
     enable_logq_cache: bool
 
@@ -90,6 +91,7 @@ config = Config(
         "eta": _ETA,
     },
     oa_log_filepath=os.path.join(DATASET_DIR, "estimation_results" + _PARAM_SUFFIX, "label", "oa_log.txt"),
+    oa_error_csv_path=os.path.join(DATASET_DIR, "estimation_results_logi" + _PARAM_SUFFIX, "oa_error_trend.csv"),
     est_label_diff_dir=os.path.join(DATASET_DIR, "estimation_results" + _PARAM_SUFFIX, "label", "diff"),
     enable_logq_cache=True,
 )
