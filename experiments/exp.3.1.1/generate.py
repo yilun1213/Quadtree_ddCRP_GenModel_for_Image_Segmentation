@@ -17,6 +17,7 @@
 import os
 import sys
 import shutil
+import csv
 import numpy as np
 from PIL import Image
 import random
@@ -36,26 +37,26 @@ MAX_DEPTH = 7
 IMAGE_SIZE = 2 ** MAX_DEPTH  # 128
 
 # 四分木の分岐確率 (exp.2.1.2)
-TRUE_BRANCH_PROBS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.0]
+TRUE_BRANCH_PROBS = [0.99, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.0]
 
 # ddCRP パラメータ (exp. 2.1 共通)
 ALPHA = 1e-8
-BETA = 8.0
-ETA = 8.0
+BETA = 8
+ETA = 8
 
 # ラベルモデルのパラメータ (幾何学的特徴量の正規確率に基づくモデル, exp. 2.1 共通)
 LABEL_SET = [0, 1, 2]
 LABEL_VALUE_SET = [0, 128, 255]
-LABEL_FEATURE_NAMES = ["log_area", "log_perimeter", "circularity"]
+LABEL_FEATURE_NAMES = ["log_area", "circularity"]
 LABEL_MEANS = [
-    [4.0, 3.5, 0.45],  # x=0
-    [6.5, 5.0, 0.50],  # x=1
-    [9.0, 6.0, 0.70],  # x=2
+    [8.0, 0.30],  # x=0
+    [5.5, 0.65],  # x=1
+    [5.5, 0.35],  # x=2
 ]
 LABEL_STDS = [
-    [1.0, 0.5, 0.2],
-    [1.5, 0.5, 0.1],
-    [1.0, 0.5, 0.1],
+    [1.0, 0.05],
+    [0.5, 0.05],
+    [0.5, 0.05],
 ]
 LABEL_PARAM = {
     "image_size": IMAGE_SIZE,
@@ -67,21 +68,22 @@ LABEL_PARAM = {
 # ピクセル値のパラメータ (exp. 2.1 共通)
 PIXEL_PARAM = {
     "label_set": LABEL_SET,
-    "mean": [[200, 50, 50], [50, 200, 50], [50, 50, 200]],
+    "mean": [[100, 100, 100], [200, 50, 50], [220, 30, 30]],
     "variance": [
-        [[20, 0, 0], [0, 20, 0], [0, 0, 20]],
-        [[20, 0, 0], [0, 20, 0], [0, 0, 20]],
-        [[20, 0, 0], [0, 20, 0], [0, 0, 20]],
+        [[2500, 0, 0], [0, 2500, 0], [0, 0, 2500]],
+        [[400, 0, 0], [0, 400, 0], [0, 0, 400]],
+        [[400, 0, 0], [0, 400, 0], [0, 0, 400]],
     ],
 }
 
 # 生成枚数・出力先
 TRAIN_NUM_SAMPLES = 50
-TEST_NUM_SAMPLES = 3
+TEST_NUM_SAMPLES = 10
 OUTPUT_ROOT = os.path.join(os.path.dirname(__file__), 'outputs')
 TRAIN_OUTPUT_DIR = os.path.join(OUTPUT_ROOT, 'train_data')
 TEST_OUTPUT_DIR = os.path.join(OUTPUT_ROOT, 'test_data')
-SEED = 42
+ALL_REGION_FEATURES_CSV = os.path.join(OUTPUT_ROOT, 'all_region_features.csv')
+SEED = 40
 
 def ensure_dirs(base_dir: str) -> None:
     for sub in (
@@ -90,6 +92,7 @@ def ensure_dirs(base_dir: str) -> None:
         "labels/visualize",
         "quadtree_images",
         "region_images",
+        "region_features",
         "region_images_extracted",
     ):
         os.makedirs(os.path.join(base_dir, sub), exist_ok=True)
@@ -186,64 +189,57 @@ def ddcrp_region_generation(
     """
     # ステップ1: 各葉ノードの結合先をサンプリング
     choice_dict: dict[Node, Node] = {}  # c_s を格納
-    
-    # デバッグ情報
-    num_self_reference = 0  # 新領域起点となったノード数
-    affinity_values = []  # 親和度の値のリスト
-    
+
+    log_alpha = np.log(alpha) if alpha > 0.0 else -np.inf
+
+    def _logsumexp(log_vals: list) -> float:
+        if not log_vals:
+            return -np.inf
+        m = max(log_vals)
+        return m + np.log(sum(np.exp(v - m) for v in log_vals))
+
     for leaf_s in all_leaves:
         # ノード s の隣接ノード
         neighbors = adjacency_dict.get(leaf_s, [])
-        
+
         if not neighbors:
             # 隣接ノードがない場合は必ず新領域の起点となる
             choice_dict[leaf_s] = leaf_s
-            num_self_reference += 1
             continue
-        
-        # 各隣接ノードに対する親和度を計算
-        affinities = {}
-        affinity_sum = 0.0
+
+        # 各隣接ノードに対する対数親和度を計算（affinity_func は log f を返す）
+        log_f_map: dict[Node, float] = {}
         for leaf_neighbor in neighbors:
-            aff = affinity_func(leaf_s, leaf_neighbor, adjacency_dict, **affinity_params)
-            if aff > 0:
-                affinities[leaf_neighbor] = aff
-                affinity_sum += aff
-                affinity_values.append(aff)
-        
-        # サンプリング確率を計算
-        denominator = alpha + affinity_sum
-        
-        # 新領域起点となる確率（c_s = s）
-        prob_self = alpha / denominator
-        
-        # 隣接ノードへの結合確率
-        probs_neighbors = {leaf_neighbor: aff / denominator for leaf_neighbor, aff in affinities.items()}
-        
+            lf = affinity_func(leaf_s, leaf_neighbor, adjacency_dict, **affinity_params)
+            if np.isfinite(lf):
+                log_f_map[leaf_neighbor] = lf
+
+        if not log_f_map:
+            # 全ての log f が -inf → 自己参照
+            choice_dict[leaf_s] = leaf_s
+            continue
+
+        log_sum_f = _logsumexp(list(log_f_map.values()))
+
+        # log( α + Σf ) = logsumexp( log_α, log_sum_f )
+        log_denom = _logsumexp([log_alpha, log_sum_f])
+
+        # p(c_s = s) = α / denom
+        prob_self = np.exp(log_alpha - log_denom)
+
         # c_s をサンプリング
         r = random.random()
-        cumsum = 0.0
         if r < prob_self:
             choice_dict[leaf_s] = leaf_s
-            num_self_reference += 1
         else:
-            # サンプリング確率の累積分布から選択
             cumsum = prob_self
-            chosen = leaf_s  # デフォルト
-            for leaf_neighbor, prob_neighbor in probs_neighbors.items():
-                cumsum += prob_neighbor
+            chosen = leaf_s  # フォールバック（浮動小数点誤差対策）
+            for leaf_neighbor, lf in log_f_map.items():
+                cumsum += np.exp(lf - log_denom)
                 if r < cumsum:
                     chosen = leaf_neighbor
                     break
             choice_dict[leaf_s] = chosen
-    
-    # デバッグ情報を出力
-    if affinity_values:
-        print(f"  [ddCRP Debug] Affinity stats: min={min(affinity_values):.4f}, max={max(affinity_values):.4f}, mean={np.mean(affinity_values):.4f}")
-        print(f"  [ddCRP Debug] Self-reference nodes: {num_self_reference}/{len(all_leaves)} ({100*num_self_reference/len(all_leaves):.1f}%)")
-        avg_affinity = np.mean(affinity_values)
-        expected_prob = alpha / (alpha + avg_affinity * 4) if avg_affinity > 0 else 1.0
-        print(f"  [ddCRP Debug] Alpha={alpha}, Expected self-reference prob approx {expected_prob:.4f}")
     
     # ステップ2: 結合グラフから領域を構成（弱連結成分を計算）
     region_dict = _compute_weakly_connected_components(all_leaves, choice_dict)
@@ -343,6 +339,123 @@ def save_region_growing_image(max_depth: int, region_dict: dict[int, set[tuple[i
     Image.fromarray(image).save(filename)
 
 
+def _compute_region_perimeter(pixels: set[tuple[int, int]]) -> int:
+    perimeter = 0
+    for i, j in pixels:
+        if (i - 1, j) not in pixels:
+            perimeter += 1
+        if (i + 1, j) not in pixels:
+            perimeter += 1
+        if (i, j - 1) not in pixels:
+            perimeter += 1
+        if (i, j + 1) not in pixels:
+            perimeter += 1
+    return perimeter
+
+
+def compute_region_shape_features(region_dict: dict[int, set[tuple[int, int]]]) -> list[dict[str, float | int]]:
+    rows: list[dict[str, float | int]] = []
+
+    for region_id, pixels in region_dict.items():
+        if not pixels:
+            continue
+
+        area = len(pixels)
+        perimeter = _compute_region_perimeter(pixels)
+
+        ys = [p[0] for p in pixels]
+        xs = [p[1] for p in pixels]
+        min_row, max_row = min(ys), max(ys)
+        min_col, max_col = min(xs), max(xs)
+
+        bbox_height = max_row - min_row + 1
+        bbox_width = max_col - min_col + 1
+        bbox_area = bbox_height * bbox_width
+
+        centroid_row = float(np.mean(ys))
+        centroid_col = float(np.mean(xs))
+
+        circularity = (4.0 * np.pi * area / (perimeter * perimeter)) if perimeter > 0 else 0.0
+        extent = (area / bbox_area) if bbox_area > 0 else 0.0
+
+        rows.append(
+            {
+                "region_id": int(region_id),
+                "area": int(area),
+                "perimeter": int(perimeter),
+                "log_area": float(np.log(area)),
+                "log_perimeter": float(np.log(perimeter)) if perimeter > 0 else 0.0,
+                "circularity": float(circularity),
+                "bbox_min_row": int(min_row),
+                "bbox_max_row": int(max_row),
+                "bbox_min_col": int(min_col),
+                "bbox_max_col": int(max_col),
+                "bbox_width": int(bbox_width),
+                "bbox_height": int(bbox_height),
+                "bbox_area": int(bbox_area),
+                "extent": float(extent),
+                "centroid_row": float(centroid_row),
+                "centroid_col": float(centroid_col),
+            }
+        )
+
+    rows.sort(key=lambda r: int(r["region_id"]))
+    return rows
+
+
+def add_sample_metadata_to_region_features(
+    feature_rows: list[dict[str, float | int]],
+    dataset_split: str,
+    sample_name: str,
+) -> list[dict[str, str | float | int]]:
+    rows_with_meta: list[dict[str, str | float | int]] = []
+    for row in feature_rows:
+        row_with_meta: dict[str, str | float | int] = {
+            "dataset_split": dataset_split,
+            "sample_name": sample_name,
+        }
+        row_with_meta.update(row)
+        rows_with_meta.append(row_with_meta)
+    return rows_with_meta
+
+
+def save_region_shape_features_csv(
+    feature_rows: list[dict[str, str | float | int]],
+    filename: str,
+) -> None:
+    fieldnames = [
+        "dataset_split",
+        "sample_name",
+        "region_id",
+        "area",
+        "perimeter",
+        "log_area",
+        "log_perimeter",
+        "circularity",
+        "bbox_min_row",
+        "bbox_max_row",
+        "bbox_min_col",
+        "bbox_max_col",
+        "bbox_width",
+        "bbox_height",
+        "bbox_area",
+        "extent",
+        "centroid_row",
+        "centroid_col",
+    ]
+
+    if not feature_rows:
+        with open(filename, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+        return
+
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(feature_rows)
+
+
 def sample_label_image(region_dict: dict[int, set[tuple[int, int]]]) -> tuple[np.ndarray, np.ndarray]:
     label_image = np.zeros((IMAGE_SIZE, IMAGE_SIZE), dtype=np.uint8)
     label_vis_image = np.zeros((IMAGE_SIZE, IMAGE_SIZE), dtype=np.uint8)
@@ -368,8 +481,9 @@ def save_label_images(
     Image.fromarray(label_vis_image).save(label_vis_filename)
 
 
-def generate_dataset(output_dir: str, num_samples: int, seed_offset: int) -> None:
+def generate_dataset(output_dir: str, num_samples: int, seed_offset: int, dataset_split: str) -> list[dict[str, str | float | int]]:
     print(f"{num_samples} 組のデータを生成します -> {output_dir}\n")
+    all_rows: list[dict[str, str | float | int]] = []
 
     for idx in range(num_samples):
         print(f"[{idx + 1}/{num_samples}] サンプル生成中...")
@@ -413,6 +527,14 @@ def generate_dataset(output_dir: str, num_samples: int, seed_offset: int) -> Non
             region_dict=region_dict,
             filename=os.path.join(output_dir, "region_images", f"{stem}.png"),
         )
+        region_feature_rows = compute_region_shape_features(region_dict)
+        all_rows.extend(
+            add_sample_metadata_to_region_features(
+                feature_rows=region_feature_rows,
+                dataset_split=dataset_split,
+                sample_name=stem,
+            )
+        )
         Image.fromarray(rgb).save(os.path.join(output_dir, "images", f"{stem}.png"))
         Image.fromarray(label_array).save(os.path.join(output_dir, "labels", f"{stem}.png"))
         Image.fromarray(label_vis_array).save(
@@ -421,6 +543,7 @@ def generate_dataset(output_dir: str, num_samples: int, seed_offset: int) -> Non
         print(f"  -> {stem} 保存完了 (regions={len(region_dict)})")
 
     print(f"\n生成完了: {num_samples} 組を {output_dir} に保存しました。")
+    return all_rows
 
 
 def main():
@@ -430,11 +553,31 @@ def main():
     print(f"真の branch_probs: {TRUE_BRANCH_PROBS}")
     print(f"alpha={ALPHA}, beta={BETA}, eta={ETA}")
 
+    os.makedirs(OUTPUT_ROOT, exist_ok=True)
+
     reset_dataset_dir(TRAIN_OUTPUT_DIR)
-    generate_dataset(TRAIN_OUTPUT_DIR, TRAIN_NUM_SAMPLES, seed_offset=0)
+    all_region_feature_rows = generate_dataset(
+        TRAIN_OUTPUT_DIR,
+        TRAIN_NUM_SAMPLES,
+        seed_offset=0,
+        dataset_split="train",
+    )
 
     reset_dataset_dir(TEST_OUTPUT_DIR)
-    generate_dataset(TEST_OUTPUT_DIR, TEST_NUM_SAMPLES, seed_offset=10000)
+    all_region_feature_rows.extend(
+        generate_dataset(
+            TEST_OUTPUT_DIR,
+            TEST_NUM_SAMPLES,
+            seed_offset=10000,
+            dataset_split="test",
+        )
+    )
+
+    save_region_shape_features_csv(
+        feature_rows=all_region_feature_rows,
+        filename=ALL_REGION_FEATURES_CSV,
+    )
+    print(f"全小領域の幾何学的特徴量CSVを保存しました: {ALL_REGION_FEATURES_CSV}")
 
 
 if __name__ == "__main__":

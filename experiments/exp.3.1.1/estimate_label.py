@@ -8,105 +8,21 @@ import os
 import sys
 import json
 import hashlib
-from dataclasses import dataclass
-from typing import Callable, Any, Dict
 import numpy as np
 import time
 from PIL import Image
 from collections import defaultdict
 
-# プロジェクトルートをパスに追加
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+# プロジェクトルートをパスに追加（model/utils 用）
+_PROJECT_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
+sys.path.insert(0, _PROJECT_ROOT)
+# 実験ディレクトリを先頭に追加して exp.3.1.1/config.py を優先する
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import model.label.geom_features_logistic as label_model
-import model.pixel.normal_dist as pixel_model
-import model.quadtree.depth_dependent_model as quadtree_model
-import model.region.affinity as region_model
 from model.quadtree.node import Node
 from model.quadtree.depth_dependent_model import make_tree, label_ndarray
 import utils
-
-
-@dataclass(frozen=True)
-class Config:
-    train_image_dir: str
-    train_label_dir: str
-    test_image_dir: str
-    test_label_dir: str
-    out_param_dir: str
-    est_label_folder_path: str
-    est_label_dirname: str
-    est_label_visualize_dirname: str
-    est_region_dirname: str
-    est_quadtree_dirname: str
-    train_label_vis_dir: str
-    test_label_vis_dir: str
-    label_param_filename: str
-    pixel_param_filename: str
-    branch_probs_filename: str
-    label_feature_names: list[str]
-    label_min_region_area: int
-    offset: list
-    label_model: Callable
-    pixel_model: Callable
-    quadtree_model: Callable
-    affinity_func: Callable
-    alpha: float
-    gibbs_num_iterations: int
-    affinity_params: Dict[str, Any]
-    oa_log_filepath: str
-    est_label_diff_dir: str
-    enable_logq_cache: bool
-
-
-EXPERIMENT_DIR = os.path.dirname(__file__)
-OUTPUTS_DIR = os.path.join(EXPERIMENT_DIR, "outputs")
-TRAIN_DATA_DIR = os.path.join(OUTPUTS_DIR, "train_data")
-TEST_DATA_DIR = os.path.join(OUTPUTS_DIR, "test_data")
-ESTIMATED_PARAM_DIR = os.path.join(OUTPUTS_DIR, "estimated_param")
-ESTIMATION_RESULTS_DIR = os.path.join(OUTPUTS_DIR, "estimation_results")
-
-_BETA = 30.0
-_ETA = 30.0
-_ALPHA = 1e-8
-
-config = Config(
-    train_image_dir=os.path.join(TRAIN_DATA_DIR, "images"),
-    train_label_dir=os.path.join(TRAIN_DATA_DIR, "labels"),
-    train_label_vis_dir=os.path.join(TRAIN_DATA_DIR, "labels", "visualize"),
-    test_image_dir=os.path.join(TEST_DATA_DIR, "images"),
-    test_label_dir=os.path.join(TEST_DATA_DIR, "labels"),
-    test_label_vis_dir=os.path.join(TEST_DATA_DIR, "labels", "visualize"),
-    out_param_dir=ESTIMATED_PARAM_DIR,
-    est_label_folder_path=ESTIMATION_RESULTS_DIR,
-    est_label_dirname="label",
-    est_label_visualize_dirname="visualize",
-    est_region_dirname="region",
-    est_quadtree_dirname="quadtree",
-    label_param_filename="label_param.json",
-    pixel_param_filename="pixel_param.json",
-    branch_probs_filename="branch_probs.json",
-    label_feature_names=["log_area", "log_perimeter", "circularity"],
-    label_min_region_area=32,
-    offset=[
-        (-2, -2), (-2, -1), (-2, 0),
-        (-1, -2), (-1, -1), (-1, 0),
-        (0, -2), (0, -1),
-    ],
-    label_model=label_model,
-    pixel_model=pixel_model,
-    quadtree_model=quadtree_model,
-    affinity_func=region_model.log_affinity_boundary_and_depth,
-    alpha=_ALPHA,
-    gibbs_num_iterations=5,
-    affinity_params={
-        "beta": _BETA,
-        "eta": _ETA,
-    },
-    oa_log_filepath=os.path.join(ESTIMATION_RESULTS_DIR, "label", "oa_log.txt"),
-    est_label_diff_dir=os.path.join(ESTIMATION_RESULTS_DIR, "label", "diff"),
-    enable_logq_cache=True,
-)
+from config import Config, config
 
 
 LOG_EPS = 1e-300
@@ -1474,6 +1390,7 @@ def estimate_label_gibbs_sampling(
     oa_log_filepath=None,
     true_label_array=None,
     label_to_value_map=None,
+    oa_error_csv_path=None,
 ):
     """
     ギブスサンプリングによるセグメンテーション推定
@@ -1669,6 +1586,8 @@ def estimate_label_gibbs_sampling(
             oa = compute_overall_accuracy(X_est, true_label_array)
             oa_history.append((iteration + 1, oa))
             print(f"    - Overall Accuracy at iteration {iteration + 1}: {oa:.4f}")
+            if oa_error_csv_path is not None and image_stem is not None:
+                _update_oa_error_csv(oa_error_csv_path, image_stem, iteration + 1, 1.0 - oa)
 
             if label_diff_output_dir is not None:
                 os.makedirs(label_diff_output_dir, exist_ok=True)
@@ -1703,7 +1622,51 @@ def estimate_label_gibbs_sampling(
     return X_est
 
 
-def estimate_segmentation(image_path, cfg: Config):
+# ---------------------------------------------------------------------------
+# OA error trend CSV helper
+# ---------------------------------------------------------------------------
+
+def _update_oa_error_csv(csv_path: str, image_name: str, iteration: int, error_rate: float) -> None:
+    """CSV を更新する。行=画像ファイル名, 列=イテレーション番号, 値=1-OA (誤推定割合)。"""
+    import csv as _csv
+
+    data: dict = {}  # {image_name: {iter: error_rate}}
+    if os.path.exists(csv_path):
+        with open(csv_path, 'r', newline='', encoding='utf-8') as f:
+            reader = _csv.DictReader(f)
+            for row in reader:
+                img = row.get('image', '')
+                if not img:
+                    continue
+                data[img] = {}
+                for k, v in row.items():
+                    if k != 'image' and v != '':
+                        try:
+                            it = int(k)
+                            data[img][it] = float(v)
+                        except ValueError:
+                            pass
+
+    if image_name not in data:
+        data[image_name] = {}
+    data[image_name][iteration] = error_rate
+
+    all_iters = sorted({it for iters in data.values() for it in iters})
+    csv_dir = os.path.dirname(csv_path)
+    if csv_dir:
+        os.makedirs(csv_dir, exist_ok=True)
+    with open(csv_path, 'w', newline='', encoding='utf-8') as f:
+        fieldnames = ['image'] + [str(it) for it in all_iters]
+        writer = _csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for img in sorted(data):
+            row = {'image': img}
+            for it in all_iters:
+                row[str(it)] = f"{data[img][it]:.6f}" if it in data[img] else ''
+            writer.writerow(row)
+
+
+def estimate_segmentation(image_path, cfg: Config, oa_error_csv_path=None):
     """
     画像のセグメンテーションを推定する
     
@@ -1795,6 +1758,7 @@ def estimate_segmentation(image_path, cfg: Config):
         oa_log_filepath=image_oa_log_path,
         true_label_array=true_label_array,
         label_to_value_map=label_to_value_map,
+        oa_error_csv_path=oa_error_csv_path,
     )
     print(f"    ✓ Segmentation completed (took {time.time() - seg_start:.2f}s)")
     
@@ -1854,6 +1818,11 @@ def process_test_images(cfg: Config) -> None:
     else:
         print("Label visualization map not found. Falling back to generated grayscale values.")
 
+    oa_error_csv_path = os.path.join(cfg.est_label_folder_path, "oa_error_trend.csv")
+    # 前回の結果を引き継がないよう実行開始時に初期化
+    if os.path.exists(oa_error_csv_path):
+        os.remove(oa_error_csv_path)
+
     total_start_time = time.time()
     for idx, image_file in enumerate(image_files, 1):
         image_path = os.path.join(image_dir, image_file)
@@ -1861,7 +1830,7 @@ def process_test_images(cfg: Config) -> None:
 
         try:
             file_start_time = time.time()
-            X_est = estimate_segmentation(image_path, cfg)
+            X_est = estimate_segmentation(image_path, cfg, oa_error_csv_path=oa_error_csv_path)
             save_results(X_est, cfg.est_label_folder_path, image_file, label_to_value_map, cfg)
 
             elapsed = time.time() - file_start_time

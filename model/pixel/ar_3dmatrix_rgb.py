@@ -477,6 +477,79 @@ def log_prob_Y_given_X(
     
     return result
 
+
+def log_prob_pixel_given_label(
+    center_pixel: np.ndarray,
+    neighbor_pixels: np.ndarray,
+    label: int,
+    theta: dict,
+    offsets: list[tuple[int, int]] | None = None,
+) -> float:
+    """統一インターフェース: 単一画素の AR 対数尤度 log p(y_ij | x, neighbors) を返す。"""
+    try:
+        label_idx = theta["label_set"].index(label)
+    except (ValueError, KeyError):
+        return -np.inf
+
+    mean_vec = np.asarray(theta["mean"][label_idx], dtype=np.float64).reshape(-1)
+    covariance = np.asarray(theta["variance"][label_idx], dtype=np.float64)
+    channels = mean_vec.shape[0]
+
+    center = np.asarray(center_pixel, dtype=np.float64).reshape(-1)
+    if center.shape[0] != channels:
+        return -np.inf
+    if covariance.shape != (channels, channels):
+        return -np.inf
+
+    try:
+        ar_coeffs = {
+            tuple(map(int, k.strip("()").split(","))): np.asarray(v, dtype=np.float64)
+            for k, v in theta["ar_param"][label_idx].items()
+        }
+    except Exception:
+        return -np.inf
+
+    if offsets is None:
+        offsets = sorted(ar_coeffs.keys())
+
+    neighbors = np.asarray(neighbor_pixels, dtype=np.float64)
+    if neighbors.ndim == 1:
+        neighbors = neighbors.reshape(-1, 1)
+
+    if neighbors.shape[0] != len(offsets):
+        return -np.inf
+    if neighbors.shape[1] != channels:
+        return -np.inf
+
+    ar_term = np.zeros(channels, dtype=np.float64)
+    for idx, off in enumerate(offsets):
+        mat = ar_coeffs.get(tuple(off))
+        if mat is None:
+            continue
+        nb = neighbors[idx]
+        if not np.all(np.isfinite(nb)):
+            continue
+        ar_term += mat @ (nb - mean_vec)
+
+    expected_val = mean_vec + ar_term
+    diff = center - expected_val
+
+    covariance = covariance + 1e-6 * np.eye(channels)
+    try:
+        sign, log_det = np.linalg.slogdet(covariance)
+        if sign <= 0:
+            return -np.inf
+        inv_cov = np.linalg.inv(covariance)
+    except (LinAlgError, np.linalg.LinAlgError):
+        return -np.inf
+
+    mahalanobis_dist = float(diff @ inv_cov @ diff.T)
+    if not np.isfinite(mahalanobis_dist):
+        return -np.inf
+
+    log_2pi_k = - (channels / 2.0) * np.log(2 * np.pi)
+    return float(log_2pi_k - 0.5 * log_det - 0.5 * mahalanobis_dist)
+
 def add_label_set(ar_param_path, label_param_path):
     """
     ar_param.json に label_param.json から読み込んだ label_set を追加する。

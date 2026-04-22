@@ -1,0 +1,24 @@
+PWD c:/Users/ohwen/Study/Quadtree and ddCRP/experiments
+INPUT c:/w32tex/share/texmf-dist/web2c/texmf.cnf
+INPUT c:/w32tex/share/texmf-dist/web2c/pdftex/latex.fmt
+INPUT c:/Users/ohwen/Study/Quadtree and ddCRP/experiments/exp_plan.tex
+OUTPUT c:/Users/ohwen/Study/Quadtree and ddCRP/experiments/exp_plan.log
+INPUT c:/w32tex/share/texmf-dist/tex/latex/jlreq/jlreq.cls
+INPUT c:/w32tex/share/texmf-dist/tex/latex/jlreq/jlreq.cls
+INPUT c:/w32tex/share/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+INPUT c:/w32tex/share/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+INPUT c:/w32tex/share/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+INPUT c:/w32tex/share/texmf-dist/tex/generic/xkeyval/keyval.tex
+INPUT c:/w32tex/share/texmf-dist/tex/latex/everyhook/everyhook.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/everyhook/everyhook.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/svn-prov/svn-prov.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/svn-prov/svn-prov.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/filehook/filehook.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/filehook/filehook.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/base/ifthen.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/base/ifthen.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/jlreq/jlreq-helpers.sty
+INPUT c:/w32tex/share/texmf-dist/tex/latex/jlreq/jlreq-helpers.sty

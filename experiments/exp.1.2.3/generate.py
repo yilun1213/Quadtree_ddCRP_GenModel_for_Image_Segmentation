@@ -47,7 +47,7 @@ from model.label.geom_features import compute_geom_features
 # ── 実験定数 ──────────────────────────────────────────────────
 SEED        = 40
 MAX_DEPTH   = 7
-BRANCH_PROBS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.0]   # exp.1.1.3
+BRANCH_PROBS = [0.99, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.0]   # exp.1.1.3
 IMAGE_SIZE  = 2 ** MAX_DEPTH   # 128
 
 N_REGIONS_PER_PARAM = 10

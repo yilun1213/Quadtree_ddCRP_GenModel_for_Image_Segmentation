@@ -1,0 +1,66 @@
+\documentclass[pdftex,11pt,a4paper]{jlreq} % 日本語用の高機能クラス
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=25mm}
+
+\title{ISITA2026に向けた実験報告}
+\author{Wang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% ... 以下、以前の内容と同じ
+
+この資料はISITA2026投稿に向けた実験結果または今後実験をする予定の事項を報告するものである．
+実験が完了している事項には適宜実験結果を記載しており，結果が未記載の箇所はこれから実験予定とする事項である．
+
+\section{仮定した確率的生成モデルの挙動や表現力を確認することを目的とした実験}
+
+\subsection{四分木の事前分布}
+\begin{itemize}
+    \item 事前分布の確率関数
+    \begin{equation}
+        p(T;\mathbf{g})=\prod_{s\in \mathcal{L}(T)}(1-g_s)\prod_{s'\in \mathcal{I}(T)}g_{s'}
+    \end{equation}
+
+    \item 深さごとに以下のようなパラメータ$g_s$を設定し，生成される四分木と出現する葉ノードの深さの分布を調査する．
+    \begin{itemize}
+        \item 全ノード共通のパラメータを設定
+        
+        \subsubsection*{[exp. 1.1.1]}
+        
+        \begin{table}[h]
+            \centering
+            \begin{tabular}{lcccccccc}
+                \toprule
+                深さ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+                \midrule
+                パラメータ $g_s$ & 0.9 & 0.9 & 0.9 & 0.9 & 0.9 & 0.9 & 0.9 & 0 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+        
+        \item 生成された四分木
+    \end{itemize}
+\end{itemize}
+
+\section{ギブスサンプリングの結果 (推定結果の例)}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        試行 & 領域分割 & 推定ラベル & 差分 \\
+        \midrule
+        ギブス18回目 & [画像] & [画像] & [画像] \\
+        ギブス19回目 & [画像] & [画像] & [画像] \\
+        ギブス20回目 & [画像] & [画像] & [画像] \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\end{document}

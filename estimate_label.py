@@ -84,12 +84,14 @@ def _build_runtime_signature(cfg: Config | None) -> dict:
     if cfg is None:
         return {"cfg": None}
     affinity_params = getattr(cfg, "affinity_params", {})
+    offset = getattr(cfg, "offset", None)
     return {
         "label_model": _module_fingerprint(getattr(cfg, "label_model", None)),
         "pixel_model": _module_fingerprint(getattr(cfg, "pixel_model", None)),
         "quadtree_model": _module_fingerprint(getattr(cfg, "quadtree_model", None)),
         "affinity_func": _callable_fingerprint(getattr(cfg, "affinity_func", None)),
         "affinity_params_hash": _stable_hash_from_jsonable(affinity_params if isinstance(affinity_params, dict) else {"value": str(affinity_params)}),
+        "offset_hash": _stable_hash_from_jsonable({"offset": offset}),
     }
 
 
@@ -116,7 +118,7 @@ def _build_step1_cache_meta(
     cfg: Config | None = None,
 ) -> dict:
     return {
-        "cache_version": 1,
+        "cache_version": 2,
         "image_size": int(image_size),
         "num_nodes": int(num_nodes),
         "image_shape": [int(v) for v in image.shape],
@@ -194,7 +196,7 @@ def _build_node_likelihood_cache_meta(
     cfg: Config | None = None,
 ) -> dict:
     return {
-        "cache_version": 1,
+        "cache_version": 2,
         "num_leaf_nodes": int(num_leaf_nodes),
         "num_labels": int(num_labels),
         "image_shape": [int(v) for v in image.shape],
@@ -287,6 +289,7 @@ def build_node_likelihood_cache(
     image: np.ndarray,
     label_param: dict,
     pixel_param: dict,
+    pixel_log_likelihood_integrals: np.ndarray,
     cfg: Config | None = None,
     image_stem: str | None = None,
 ) -> dict:
@@ -323,20 +326,11 @@ def build_node_likelihood_cache(
     for node_idx, node in enumerate(leaf_nodes):
         node_likelihood_cache[node] = {}
         for label_idx in range(num_labels):
-            try:
-                log_likelihood = log_prob_Y_given_X((node,), label_idx, image, pixel_param)
-                node_likelihood_cache[node][label_idx] = log_likelihood
-            except Exception as e:
-                if PIXEL_LIKELIHOOD_WARN_COUNT < PIXEL_LIKELIHOOD_WARN_MAX:
-                    print(
-                        "[WARN] precompute log_prob_Y_given_X failed: "
-                        f"node=({node.upper_edge},{node.left_edge},size={node.size},depth={node.depth}) "
-                        f"label={label_idx} error={type(e).__name__}: {e}"
-                    )
-                elif PIXEL_LIKELIHOOD_WARN_COUNT == PIXEL_LIKELIHOOD_WARN_MAX:
-                    print("[WARN] Further precompute log_prob_Y_given_X errors suppressed...")
-                PIXEL_LIKELIHOOD_WARN_COUNT += 1
-                node_likelihood_cache[node][label_idx] = -1e10
+            node_likelihood_cache[node][label_idx] = _compute_log_likelihood_of_node_given_label_from_integral(
+                node,
+                label_idx,
+                pixel_log_likelihood_integrals,
+            )
 
         if (node_idx + 1) % max(1, len(leaf_nodes) // 5) == 0:
             elapsed = time.time() - cache_start_time
@@ -358,6 +352,141 @@ def build_node_likelihood_cache(
         print(f"  [cache] node_likelihood_cache saved to {cache_path}")
 
     return node_likelihood_cache
+
+
+def _get_num_labels(label_param: dict) -> int:
+    num_labels = label_param.get("label_num", None)
+    if num_labels is None:
+        num_labels = len(label_param.get("label_set", []))
+    if int(num_labels) <= 0:
+        raise ValueError("label_num must be positive")
+    return int(num_labels)
+
+
+def _compute_pixel_log_likelihood_integrals(
+    image: np.ndarray,
+    pixel_param: dict,
+    num_labels: int,
+    cfg: Config | None = None,
+) -> np.ndarray:
+    """画素独立仮定に基づき、各ラベルの画素対数尤度の積分画像を作る。"""
+    global PIXEL_LIKELIHOOD_WARN_COUNT
+
+    H, W = image.shape[:2]
+    channels = 1 if image.ndim == 2 else image.shape[2]
+    offsets = _resolve_neighbor_offsets(pixel_param, cfg)
+    pixel_log_likelihoods = np.full((num_labels, H, W), -1e10, dtype=np.float64)
+
+    for i in range(H):
+        for j in range(W):
+            pixel_node = Node(upper_edge=i, left_edge=j, size=1, depth=0)
+            center_pixel, neighbor_pixels = _extract_pixel_context(image, i, j, offsets, channels)
+            for label_idx in range(num_labels):
+                try:
+                    pixel_log_likelihoods[label_idx, i, j] = _compute_log_prob_pixel_given_label(
+                        center_pixel,
+                        neighbor_pixels,
+                        label_idx,
+                        pixel_param,
+                        offsets,
+                        pixel_node,
+                        image,
+                    )
+                except Exception as e:
+                    if PIXEL_LIKELIHOOD_WARN_COUNT < PIXEL_LIKELIHOOD_WARN_MAX:
+                        print(
+                            "[WARN] per-pixel log_prob_Y_given_X failed: "
+                            f"pixel=({i},{j}) label={label_idx} error={type(e).__name__}: {e}"
+                        )
+                    elif PIXEL_LIKELIHOOD_WARN_COUNT == PIXEL_LIKELIHOOD_WARN_MAX:
+                        print("[WARN] Further per-pixel log_prob_Y_given_X errors suppressed...")
+                    PIXEL_LIKELIHOOD_WARN_COUNT += 1
+
+    integrals = np.zeros((num_labels, H + 1, W + 1), dtype=np.float64)
+    integrals[:, 1:, 1:] = np.cumsum(np.cumsum(pixel_log_likelihoods, axis=1), axis=2)
+    return integrals
+
+
+def _rect_sum_from_integral(integral_2d: np.ndarray, i1: int, i2: int, j1: int, j2: int) -> float:
+    return float(
+        integral_2d[i2, j2]
+        - integral_2d[i1, j2]
+        - integral_2d[i2, j1]
+        + integral_2d[i1, j1]
+    )
+
+
+def _compute_log_likelihood_of_node_given_label_from_integral(
+    node: Node,
+    label_idx: int,
+    pixel_log_likelihood_integrals: np.ndarray,
+) -> float:
+    return _rect_sum_from_integral(
+        pixel_log_likelihood_integrals[label_idx],
+        node.upper_edge,
+        node.lower_edge,
+        node.left_edge,
+        node.right_edge,
+    )
+
+
+def _resolve_neighbor_offsets(pixel_param: dict, cfg: Config | None = None) -> list[tuple[int, int]]:
+    """近傍オフセットを config 優先で解決し、未指定時は pixel_param から推定する。"""
+    cfg_offset = getattr(cfg, "offset", None) if cfg is not None else None
+    if isinstance(cfg_offset, list) and cfg_offset:
+        return [tuple(int(v) for v in off) for off in cfg_offset]
+
+    ar_param = pixel_param.get("ar_param", [])
+    if isinstance(ar_param, list) and ar_param and isinstance(ar_param[0], dict):
+        parsed = []
+        for k in ar_param[0].keys():
+            if isinstance(k, str):
+                parsed.append(tuple(map(int, k.strip("()").split(","))))
+            else:
+                parsed.append(tuple(int(v) for v in k))
+        return sorted(parsed)
+    return []
+
+
+def _extract_pixel_context(
+    image: np.ndarray,
+    i: int,
+    j: int,
+    offsets: list[tuple[int, int]],
+    channels: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """中心画素と近傍画素行列を返す。境界外近傍は NaN 埋め。"""
+    if image.ndim == 2:
+        center = np.array([float(image[i, j])], dtype=np.float64)
+    else:
+        center = image[i, j].astype(np.float64)
+
+    neighbors = np.full((len(offsets), channels), np.nan, dtype=np.float64)
+    H, W = image.shape[:2]
+    for idx, (di, dj) in enumerate(offsets):
+        ni, nj = i + di, j + dj
+        if 0 <= ni < H and 0 <= nj < W:
+            if image.ndim == 2:
+                neighbors[idx, 0] = float(image[ni, nj])
+            else:
+                neighbors[idx, :] = image[ni, nj]
+    return center, neighbors
+
+
+def _compute_log_prob_pixel_given_label(
+    center_pixel: np.ndarray,
+    neighbor_pixels: np.ndarray,
+    label_idx: int,
+    pixel_param: dict,
+    offsets: list[tuple[int, int]],
+    pixel_node: Node,
+    image: np.ndarray,
+) -> float:
+    """pixel_model が提供する共通APIを優先し、未対応なら既存APIへフォールバック。"""
+    pixel_fn = getattr(MODEL_CFG.pixel_model, "log_prob_pixel_given_label", None)
+    if callable(pixel_fn):
+        return float(pixel_fn(center_pixel, neighbor_pixels, label_idx, pixel_param, offsets))
+    return float(log_prob_Y_given_X((pixel_node,), label_idx, image, pixel_param))
 
 
 def _logsumexp(log_values: np.ndarray) -> float:
@@ -607,7 +736,13 @@ def _estimate_labels_from_regions(
     return X_est
 
 
-def _compute_log_p_Y_given_node(node: Node, image: np.ndarray, label_param: dict, pixel_param: dict) -> float:
+def _compute_log_p_Y_given_node(
+    node: Node,
+    image: np.ndarray,
+    label_param: dict,
+    pixel_param: dict,
+    pixel_log_likelihood_integrals: np.ndarray,
+) -> float:
     """
     ノード s に対する q の葉項を計算する。
     論文の式: (1/|X|) Σ_{x∈X} Π_{(i,j)∈s} p(y_{(i,j)} | x; θ_x)
@@ -622,36 +757,26 @@ def _compute_log_p_Y_given_node(node: Node, image: np.ndarray, label_param: dict
     Returns:
         float: log((1/|X|) Σ_x Π p(y_{(i,j)} | x; θ_x)) の値
     """
+    del image
+    del pixel_param
+
     # ラベル数を取得（均一事前確率 1/|X| を使うので label_prior は不要）
-    num_labels = label_param.get("label_num", None)
-    if num_labels is None:
-        num_labels = len(label_param.get("label_set", []))
+    num_labels = _get_num_labels(label_param)
 
-    region_tuple = (node,)  # log_prob_Y_given_X は tuple[Node, ...] を期待
-
-    # 各ラベルに対する尤度 log p(Y_s | x; θ_x) を計算
-    log_likelihoods = np.zeros(num_labels)
-    global PIXEL_LIKELIHOOD_WARN_COUNT
+    # p(Y_s|x) = Π_{(i,j)∈s} p(y_{(i,j)}|x) を log 空間で加算する
+    log_likelihoods = np.zeros(num_labels, dtype=np.float64)
     for label_idx in range(num_labels):
-        try:
-            log_likelihoods[label_idx] = log_prob_Y_given_X(region_tuple, label_idx, image, pixel_param)
-        except Exception as e:
-            if PIXEL_LIKELIHOOD_WARN_COUNT < PIXEL_LIKELIHOOD_WARN_MAX:
-                print(
-                    "[WARN] log_prob_Y_given_X failed: "
-                    f"node=({node.upper_edge},{node.left_edge},size={node.size},depth={node.depth}) "
-                    f"label={label_idx} error={type(e).__name__}: {e}"
-                )
-            elif PIXEL_LIKELIHOOD_WARN_COUNT == PIXEL_LIKELIHOOD_WARN_MAX:
-                print("[WARN] Further log_prob_Y_given_X errors suppressed...")
-            PIXEL_LIKELIHOOD_WARN_COUNT += 1
-            log_likelihoods[label_idx] = -1e10
+        log_likelihoods[label_idx] = _compute_log_likelihood_of_node_given_label_from_integral(
+            node,
+            label_idx,
+            pixel_log_likelihood_integrals,
+        )
 
     # log((1/|X|) Σ_x Π p(y|x)) = logsumexp_x(log_likelihoods) - log(|X|)
     return _logsumexp(log_likelihoods) - np.log(num_labels)
         
 
-def compute_q_recursive(node, image, branch_probs, label_param, pixel_param):
+def compute_q_recursive(node, image, branch_probs, label_param, pixel_param, pixel_log_likelihood_integrals):
     """
     論文の再帰関数 q(Y_s | g_s) を計算する
     log q(Y_s | g_s) を返す（対数確率）。
@@ -671,14 +796,21 @@ def compute_q_recursive(node, image, branch_probs, label_param, pixel_param):
     
     # 最大深度の場合
     if node.is_leaf or depth >= len(branch_probs) - 1:
-        return _compute_log_p_Y_given_node(node, image, label_param, pixel_param)
+        return _compute_log_p_Y_given_node(node, image, label_param, pixel_param, pixel_log_likelihood_integrals)
 
-    log_p_y = _compute_log_p_Y_given_node(node, image, label_param, pixel_param)
+    log_p_y = _compute_log_p_Y_given_node(node, image, label_param, pixel_param, pixel_log_likelihood_integrals)
 
     # 子ノードの log q を再帰的に計算
     log_q_children = 0.0
     for child in [node.ul_node, node.ur_node, node.ll_node, node.lr_node]:
-        log_q_children += compute_q_recursive(child, image, branch_probs, label_param, pixel_param)
+        log_q_children += compute_q_recursive(
+            child,
+            image,
+            branch_probs,
+            label_param,
+            pixel_param,
+            pixel_log_likelihood_integrals,
+        )
 
     if g_s >= 1.0:
         return log_q_children
@@ -731,7 +863,16 @@ def compute_g_given_Y(node, image, branch_probs, q_values):
     return min(max(g_given_y, 0.0), 1.0)
 
 
-def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param, cfg: Config | None = None, image_stem: str | None = None):
+def compute_map_tree_flags(
+    root,
+    image,
+    branch_probs,
+    label_param,
+    pixel_param,
+    pixel_log_likelihood_integrals: np.ndarray,
+    cfg: Config | None = None,
+    image_stem: str | None = None,
+):
     """
     論文のアルゴリズムに基づき、事後確率最大四分木 \hat{T} を計算する
     
@@ -786,7 +927,13 @@ def compute_map_tree_flags(root, image, branch_probs, label_param, pixel_param, 
     def calc_logq(node):
         key = _node_key(node)
         if key not in log_p_y_cache:
-            log_p_y_cache[key] = _compute_log_p_Y_given_node(node, image, label_param, pixel_param)
+            log_p_y_cache[key] = _compute_log_p_Y_given_node(
+                node,
+                image,
+                label_param,
+                pixel_param,
+                pixel_log_likelihood_integrals,
+            )
 
         if node.is_leaf:
             node.logq_Ys = log_p_y_cache[key]
@@ -1085,7 +1232,16 @@ def construct_map_tree(root, flags):
     return all_nodes, leaf_nodes, internal_nodes, node_dict
 
 
-def create_map_quadtree(max_depth, image, branch_probs, label_param, pixel_param, cfg: Config | None = None, image_stem: str | None = None):
+def create_map_quadtree(
+    max_depth,
+    image,
+    branch_probs,
+    label_param,
+    pixel_param,
+    pixel_log_likelihood_integrals: np.ndarray,
+    cfg: Config | None = None,
+    image_stem: str | None = None,
+):
     """
     論文のアルゴリズムに基づき、事後確率最大四分木を構築する
     
@@ -1115,6 +1271,7 @@ def create_map_quadtree(max_depth, image, branch_probs, label_param, pixel_param
         branch_probs,
         label_param,
         pixel_param,
+        pixel_log_likelihood_integrals,
         cfg=cfg,
         image_stem=image_stem,
     )
@@ -1465,11 +1622,29 @@ def estimate_label_gibbs_sampling(
     actual_channels = 1 if image.ndim == 2 else image.shape[2]
     print(f"Pixel model channels expected={expected_channels}, adapted image channels={actual_channels}")
 
+    num_labels = _get_num_labels(label_param)
+    print("Pre-computing per-pixel log-likelihood integrals for p(Y_r|x_r)=Π p(y_ij|x_r)...")
+    t_integral = time.time()
+    pixel_log_likelihood_integrals = _compute_pixel_log_likelihood_integrals(
+        image,
+        pixel_param,
+        num_labels,
+        cfg=cfg,
+    )
+    print(f"  ✓ Per-pixel log-likelihood integrals ready (took {time.time() - t_integral:.2f}s)")
+
     # 論文のStep 1: 事後確率最大四分木を計算
     print(f"Computing MAP quadtree with max_depth={max_depth}...")
     quadtree_start = time.time()
     root, all_nodes, leaf_nodes, internal_nodes, node_dict, adjacency_dict = create_map_quadtree(
-        max_depth, image, branch_probs, label_param, pixel_param, cfg=cfg, image_stem=image_stem
+        max_depth,
+        image,
+        branch_probs,
+        label_param,
+        pixel_param,
+        pixel_log_likelihood_integrals,
+        cfg=cfg,
+        image_stem=image_stem,
     )
     quadtree_time = time.time() - quadtree_start
     
@@ -1485,7 +1660,13 @@ def estimate_label_gibbs_sampling(
     # ノードごとのピクセル対数尤度をキャッシュ化（サンプリング前に一度だけ計算）
     print()
     node_likelihood_cache = build_node_likelihood_cache(
-        leaf_nodes, image, label_param, pixel_param, cfg=cfg, image_stem=image_stem
+        leaf_nodes,
+        image,
+        label_param,
+        pixel_param,
+        pixel_log_likelihood_integrals,
+        cfg=cfg,
+        image_stem=image_stem,
     )
 
     # 初期化

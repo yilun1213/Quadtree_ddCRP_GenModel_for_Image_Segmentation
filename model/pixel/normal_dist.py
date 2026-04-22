@@ -216,6 +216,50 @@ def log_prob_Y_given_X(region_tuple: tuple[Node, ...], label: int, img_array: np
     return float(total)
 
 
+def log_prob_pixel_given_label(
+    center_pixel: np.ndarray,
+    neighbor_pixels: np.ndarray,
+    label: int,
+    theta: dict,
+    offsets: list[tuple[int, int]] | None = None,
+) -> float:
+    """統一インターフェース: 単一画素の log p(y_ij | x=label) を返す。"""
+    del neighbor_pixels
+    del offsets
+
+    label_idx = _label_to_index(theta, int(label))
+    if label_idx < 0:
+        return -np.inf
+
+    means, covs = _parse_mean_and_cov(theta)
+    mean_vec = means[label_idx]
+    cov = covs[label_idx]
+    channels = mean_vec.shape[0]
+
+    center = np.asarray(center_pixel, dtype=np.float64).reshape(-1)
+    if center.shape[0] != channels:
+        return -np.inf
+    if cov.shape != (channels, channels):
+        return -np.inf
+
+    cov = cov + 1e-6 * np.eye(channels)
+    try:
+        sign, logdet = np.linalg.slogdet(cov)
+        if sign <= 0:
+            return -np.inf
+        inv_cov = np.linalg.inv(cov)
+    except np.linalg.LinAlgError:
+        return -np.inf
+
+    diff = center - mean_vec
+    maha = float(diff @ inv_cov @ diff.T)
+    if not np.isfinite(maha):
+        return -np.inf
+
+    const_term = -0.5 * (channels * np.log(2.0 * np.pi) + logdet)
+    return float(const_term - 0.5 * maha)
+
+
 def add_label_set(ar_param_path, label_param_path):
     """Compatibility helper used by train.py; keeps API identical to AR module."""
     with open(ar_param_path, "r", encoding="utf-8") as f:
