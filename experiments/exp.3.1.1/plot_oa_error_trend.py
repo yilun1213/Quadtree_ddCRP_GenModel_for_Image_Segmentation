@@ -36,14 +36,36 @@ def load_mean_error_by_iteration(csv_path: str) -> tuple[list[int], list[float]]
     return iterations, mean_errors
 
 
-def plot_mean_error_trend(iterations: list[int], mean_errors: list[float], output_path: str) -> None:
+def plot_mean_error_trends(
+    gibbs_iterations: list[int],
+    gibbs_mean_errors: list[float],
+    icm_iterations: list[int],
+    icm_mean_errors: list[float],
+    output_path: str,
+) -> None:
     fig, ax = plt.subplots(figsize=(8.5, 5.0))
-    ax.plot(iterations, mean_errors, marker="o", color="steelblue", linewidth=2)
-    ax.set_xlabel("Gibbs sampling iteration")
-    ax.set_ylabel("Mean error over all images")
-    ax.set_title("Average Estimation Error Trend")
+    ax.plot(
+        gibbs_iterations,
+        gibbs_mean_errors,
+        marker="o",
+        color="steelblue",
+        linewidth=2,
+        label="IV-A",
+    )
+    ax.plot(
+        icm_iterations,
+        icm_mean_errors,
+        marker="s",
+        color="tomato",
+        linewidth=2,
+        label="IV-B",
+    )
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Average loss among test images")
     ax.grid(True, alpha=0.35)
-    ax.set_xticks(iterations)
+    all_iterations = sorted(set(gibbs_iterations + icm_iterations))
+    ax.set_xticks(all_iterations)
+    ax.legend()
     fig.tight_layout()
     fig.savefig(output_path, dpi=150)
     plt.close(fig)
@@ -51,39 +73,59 @@ def plot_mean_error_trend(iterations: list[int], mean_errors: list[float], outpu
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Plot the average error trend from oa_error_trend.csv."
+        description="Plot Gibbs and ICM average error trends on one graph."
     )
     parser.add_argument(
-        "input_csv",
+        "gibbs_csv",
+        nargs="?",
+        default=os.path.join("outputs", "estimation_results_gibbs", "oa_error_trend.csv"),
+        help="Gibbs OA CSV path. Default: outputs/estimation_results_gibbs/oa_error_trend.csv",
+    )
+    parser.add_argument(
+        "icm_csv",
         nargs="?",
         default=os.path.join("outputs", "estimation_results_icm", "oa_error_trend.csv"),
-        help="Input CSV path. Default: outputs/estimation_results_icm/oa_error_trend.csv",
+        help="ICM OA CSV path. Default: outputs/estimation_results_icm/oa_error_trend.csv",
     )
     parser.add_argument(
         "-o",
         "--output",
         default=None,
-        help="Output PNG path. Default: next to the CSV as mean_oa_error_trend.png",
+        help="Output PNG path. Default: outputs/oa_error_trend_comparison.png",
     )
     args = parser.parse_args()
 
-    input_csv = os.path.abspath(args.input_csv)
-    if not os.path.exists(input_csv):
-        raise FileNotFoundError(f"Input CSV not found: {input_csv}")
+    gibbs_csv = os.path.abspath(args.gibbs_csv)
+    icm_csv = os.path.abspath(args.icm_csv)
+    if not os.path.exists(gibbs_csv):
+        raise FileNotFoundError(f"Gibbs CSV not found: {gibbs_csv}")
+    if not os.path.exists(icm_csv):
+        raise FileNotFoundError(f"ICM CSV not found: {icm_csv}")
 
     output_path = args.output
     if output_path is None:
-        output_path = os.path.join(os.path.dirname(input_csv), "mean_oa_error_trend.png")
+        output_path = os.path.join("outputs", "oa_error_trend_comparison.png")
     output_path = os.path.abspath(output_path)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    iterations, mean_errors = load_mean_error_by_iteration(input_csv)
-    plot_mean_error_trend(iterations, mean_errors, output_path)
+    gibbs_iterations, gibbs_mean_errors = load_mean_error_by_iteration(gibbs_csv)
+    icm_iterations, icm_mean_errors = load_mean_error_by_iteration(icm_csv)
+    plot_mean_error_trends(
+        gibbs_iterations,
+        gibbs_mean_errors,
+        icm_iterations,
+        icm_mean_errors,
+        output_path,
+    )
 
-    print(f"Input:  {input_csv}")
+    print(f"Gibbs input: {gibbs_csv}")
+    print(f"ICM input:   {icm_csv}")
     print(f"Output: {output_path}")
-    print("Mean error by iteration:")
-    for iteration, mean_error in zip(iterations, mean_errors):
+    print("Gibbs mean error by iteration:")
+    for iteration, mean_error in zip(gibbs_iterations, gibbs_mean_errors):
+        print(f"  iter={iteration:>3}: mean_error={mean_error:.6f}")
+    print("ICM mean error by iteration:")
+    for iteration, mean_error in zip(icm_iterations, icm_mean_errors):
         print(f"  iter={iteration:>3}: mean_error={mean_error:.6f}")
 
 
