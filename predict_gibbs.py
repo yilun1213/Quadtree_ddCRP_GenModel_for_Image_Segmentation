@@ -5,23 +5,54 @@ Bayes最適解を粗近似するギブスサンプリング手法
 """
 
 import os
+import sys
 import json
 import hashlib
 import numpy as np
 import time
 from PIL import Image
 from collections import defaultdict
-from config import config, Config
-import config as config_module
+import importlib.util
+
+# デフォルトのConfigを読み込み
+from config import config as default_config
+import config as default_config_module
+
 from model.quadtree.node import Node
 from model.quadtree.depth_dependent_model import make_tree, label_ndarray
 import utils
 
+# 静的または動的に上書きされるConfig参照
+Config = default_config_module.Config
+MODEL_CFG: Config = default_config
+CURRENT_CONFIG_MODULE = default_config_module
 
 LOG_EPS = 1e-300
-MODEL_CFG: Config = config
 PIXEL_LIKELIHOOD_WARN_COUNT = 0
 PIXEL_LIKELIHOOD_WARN_MAX = 12
+
+
+def load_custom_config(config_path: str):
+    """引数で指定された設定ファイルを動的にロードする"""
+    global MODEL_CFG, CURRENT_CONFIG_MODULE
+    abs_path = os.path.abspath(config_path)
+    if not os.path.exists(abs_path):
+        raise FileNotFoundError(f"Config file not found: {abs_path}")
+        
+    spec = importlib.util.spec_from_file_location("custom_config", abs_path)
+    module = importlib.util.module_from_spec(spec)
+    
+    # 関連モジュールの解決のためパスを追加
+    config_dir = os.path.dirname(abs_path)
+    if config_dir not in sys.path:
+        sys.path.insert(0, config_dir)
+        
+    spec.loader.exec_module(module)
+    
+    MODEL_CFG = module.config
+    CURRENT_CONFIG_MODULE = module
+    return MODEL_CFG, CURRENT_CONFIG_MODULE
+
 
 
 def log_prob_Y_given_X(region_tuple, label, img_array, theta):
@@ -96,7 +127,7 @@ def _build_runtime_signature(cfg: Config | None) -> dict:
 
 
 def _get_calc_log_dir(cfg: Config) -> str:
-    dataset_dir = getattr(config_module, "DATASET_DIR", None)
+    dataset_dir = getattr(CURRENT_CONFIG_MODULE, "DATASET_DIR", None)
     if dataset_dir:
         return os.path.join(dataset_dir, ".calc_log")
     # fallback: .../test_data/images -> dataset root
@@ -318,7 +349,7 @@ def build_node_likelihood_cache(
         else:
             print(f"  [cache] node_likelihood_cache miss: {reason}")
 
-    print(f"Pre-computing node likelihood cache for {len(leaf_nodes)} leaf nodes × {num_labels} labels...")
+    print(f"Pre-computing node likelihood cache for {len(leaf_nodes)} leaf nodes x {num_labels} labels...")
     print(f"  (Total {len(leaf_nodes) * num_labels} likelihood computations)")
     cache_start_time = time.time()
     node_likelihood_cache: dict = {}
@@ -337,7 +368,7 @@ def build_node_likelihood_cache(
             print(f"  - Cached {node_idx + 1}/{len(leaf_nodes)} nodes (elapsed: {elapsed:.2f}s)...")
 
     cache_time = time.time() - cache_start_time
-    print(f"Node likelihood cache computed: {len(node_likelihood_cache)} nodes × {num_labels} labels (took {cache_time:.2f}s)")
+    print(f"Node likelihood cache computed: {len(node_likelihood_cache)} nodes x {num_labels} labels (took {cache_time:.2f}s)")
 
     if use_cache and cfg is not None and cache_path is not None:
         expected_meta = _build_node_likelihood_cache_meta(
@@ -983,7 +1014,7 @@ def compute_map_tree_flags(
                 print(f"    - [cache] saved Step1 cache to {cache_path}")
 
     step1_time = time.time() - step1_start
-    print(f"    ✓ Step 1 completed: {len(log_p_y_cache)} nodes (took {step1_time:.2f}s)")
+    print(f"    [OK] Step 1 completed: {len(log_p_y_cache)} nodes (took {step1_time:.2f}s)")
 
     # Step 2: 各ノードで leaf/split の事後確率を比較し MAP 木を決定（v2 流儀）
     step2_start = time.time()
@@ -1108,15 +1139,15 @@ def compute_map_tree_flags(
 
     determine_map_tree(root)
     step2_time = time.time() - step2_start
-    print(f"    ✓ Step 2 completed (took {step2_time:.2f}s)")
+    print(f"    [OK] Step 2 completed (took {step2_time:.2f}s)")
 
     # ---- 深さごとのデバッグサマリーを出力 ----
     print()
-    print("  ╔══════════════════════════════════════════════════════════════════════════╗")
-    print("  ║                 [DEBUG] MAP Tree Statistics per Depth                  ║")
-    print("  ╠════╦═══════╦════════╦════════╦══════════════╦══════════════╦══════╦═════╣")
-    print("  ║ d  ║  g_s  ║ g|Y mn ║ g|Y mx ║  delta mean  ║ margin mean  ║ LEAF ║SPLT ║")
-    print("  ╠════╬═══════╬════════╬════════╬══════════════╬══════════════╬══════╬═════╣")
+    print("  +--------------------------------------------------------------------------+")
+    print("  |                 [DEBUG] MAP Tree Statistics per Depth                  |")
+    print("  +----+-------+--------+--------+--------------+--------------+------+-----+")
+    print("  | d  |  g_s  | g|Y mn | g|Y mx |  delta mean  | margin mean  | LEAF |SPLT |")
+    print("  +----+-------+--------+--------+--------------+--------------+------+-----+")
     for d in sorted(depth_debug.keys()):
         dd = depth_debug[d]
         g_s_val = dd["g_s"] if dd["g_s"] is not None else float('nan')
@@ -1129,8 +1160,8 @@ def compute_map_tree_flags(
         m_mean = float(np.mean(margin_list)) if margin_list else float('nan')
         n_leaf = dd["n_leaf"]
         n_spl  = dd["n_split"]
-        print(f"  ║ {d:2d} ║ {g_s_val:5.3f} ║ {g_mn:6.3f} ║ {g_mx:6.3f} ║ {d_mean:+12.2f} ║ {m_mean:+12.2f} ║ {n_leaf:4d} ║{n_spl:4d} ║")
-    print("  ╚════╩═══════╩════════╩════════╩══════════════╩══════════════╩══════╩═════╝")
+        print(f"  | {d:2d} | {g_s_val:5.3f} | {g_mn:6.3f} | {g_mx:6.3f} | {d_mean:+12.2f} | {m_mean:+12.2f} | {n_leaf:4d} |{n_spl:4d} |")
+    print("  +----+-------+--------+--------+--------------+--------------+------+-----+")
     print("   ※ delta = log q(children) - log q(leaf_y)  （正＝分割で尤度改善）")
     print("   ※ margin = log ψ_split - log ψ_leaf  （正＝SPLIT 勝ち、負＝LEAF 勝ち）")
     print()
@@ -1138,7 +1169,7 @@ def compute_map_tree_flags(
     # 浅い深さの個別ノード詳細
     for d in sorted(k for k in depth_debug.keys() if k <= 3):
         dd = depth_debug[d]
-        print(f"  [DEBUG depth={d}] Individual nodes (size={2**(int(np.log2(root.size))-d)}×{2**(int(np.log2(root.size))-d)}):")
+        print(f"  [DEBUG depth={d}] Individual nodes (size={2**(int(np.log2(root.size))-d)}x{2**(int(np.log2(root.size))-d)}):")
         for ni in dd["nodes"]:
             ue, le, sz = ni["pos"]
             print(f"    Node(upper={ue:3d}, left={le:3d}, sz={sz:3d}): "
@@ -1177,7 +1208,7 @@ def compute_map_tree_flags(
     step3_time = time.time() - step3_start
     n_split_total = sum(v["split"] for v in depth_flag_counts.values())
     n_leaf_total  = sum(v["leaf"]  for v in depth_flag_counts.values())
-    print(f"    ✓ Step 3 completed: {len(flags)} flags (split={n_split_total}, leaf={n_leaf_total}) (took {step3_time:.2f}s)")
+    print(f"    [OK] Step 3 completed: {len(flags)} flags (split={n_split_total}, leaf={n_leaf_total}) (took {step3_time:.2f}s)")
     print("    [DEBUG] MAP tree node counts per depth (only nodes in MAP tree):")
     for d in sorted(depth_flag_counts.keys()):
         fc = depth_flag_counts[d]
@@ -1261,7 +1292,7 @@ def create_map_quadtree(
     root = Node(upper_edge=0, left_edge=0, size=2**max_depth, depth=0)
     make_tree(root, max_depth)
     tree_time = time.time() - tree_start
-    print(f"    ✓ Complete quadtree generated (took {tree_time:.2f}s)")
+    print(f"    [OK] Complete quadtree generated (took {tree_time:.2f}s)")
     
     # Step 2: 事後確率最大四分木のフラグを計算
     print(f"  Computing MAP quadtree flags (this may take a while)...")
@@ -1281,14 +1312,14 @@ def create_map_quadtree(
     construct_start = time.time()
     all_nodes, leaf_nodes, internal_nodes, node_dict = construct_map_tree(root, flags)
     construct_time = time.time() - construct_start
-    print(f"    ✓ MAP quadtree constructed (took {construct_time:.2f}s)")
+    print(f"    [OK] MAP quadtree constructed (took {construct_time:.2f}s)")
     
     # Step 4: 隣接辞書を構築（v2相当: 葉インデックス画像で高速化）
     print(f"  Building adjacency dictionary for {len(leaf_nodes)} leaf nodes...")
     adj_start = time.time()
     adjacency_dict = _build_leaf_adjacency_from_index_map(leaf_nodes, root.size, root.size)
     adj_time = time.time() - adj_start
-    print(f"    ✓ Adjacency dictionary built (took {adj_time:.2f}s)")
+    print(f"    [OK] Adjacency dictionary built (took {adj_time:.2f}s)")
     print(f"    - Total adjacency pairs: {sum(len(v) for v in adjacency_dict.values())}")
 
     return root, all_nodes, leaf_nodes, internal_nodes, node_dict, adjacency_dict
@@ -1389,7 +1420,7 @@ def get_regions_from_connections(connections):
     O(N) 実装: 一度だけ全エッジを走査して双方向隣接リストを作り、
     その後は BFS で弱連結成分を列挙する。
     以前の実装は DFS の内部で connections.items() を毎回スキャンして
-    O(N²) になっていたため大幅に高速化。
+    O(N ) になっていたため大幅に高速化。
 
     Args:
         connections: {leaf_node: connection_target} 辞書
@@ -1528,13 +1559,34 @@ def sample_connection(leaf_node, connections, leaf_nodes, adjacency_dict,
             
         log_probs.append(prior_prob + log_likelihood_ratio)
         
-    # Softmaxで確率に変換
+    # サンプリング確率計算のロバスト化
     log_probs = np.array(log_probs, dtype=np.float64)
-    log_norm = _logsumexp(log_probs)
-    probs = np.exp(log_probs - log_norm)
+    log_probs[np.isnan(log_probs)] = -np.inf
     
-    # サンプリング
-    new_idx = np.random.choice(len(candidates), p=probs)
+    probs = np.zeros(len(candidates), dtype=np.float64)
+    posinf_mask = np.isposinf(log_probs)
+    
+    if np.any(posinf_mask):
+        # +inf がある場合はその候補群に一様配分
+        probs[posinf_mask] = 1.0 / float(np.sum(posinf_mask))
+    else:
+        finite_mask = np.isfinite(log_probs)
+        if np.any(finite_mask):
+            max_log = np.max(log_probs[finite_mask])
+            weights = np.zeros(len(candidates), dtype=np.float64)
+            weights[finite_mask] = np.exp(log_probs[finite_mask] - max_log)
+            weight_sum = float(np.sum(weights))
+            if np.isfinite(weight_sum) and weight_sum > 0.0:
+                probs = weights / weight_sum
+                
+    # 正規化に失敗した場合は自己結合（最後の候補 = leaf_node）へフォールバック
+    if (not np.all(np.isfinite(probs))) or float(np.sum(probs)) <= 0.0:
+        probs.fill(0.0)
+        probs[-1] = 1.0
+        if verbose:
+            print("      [WARN] Invalid sampling probs detected. Falling back to self-connection.")
+            
+    new_idx = int(np.random.choice(len(candidates), p=probs))
     new_target = candidates[new_idx]
     
     connections[leaf_node] = new_target
@@ -1642,7 +1694,7 @@ def estimate_label_gibbs_sampling(
         num_labels,
         cfg=cfg,
     )
-    print(f"  ✓ Per-pixel log-likelihood integrals ready (took {time.time() - t_integral:.2f}s)")
+    print(f"  [OK] Per-pixel log-likelihood integrals ready (took {time.time() - t_integral:.2f}s)")
 
     # 論文のStep 1: 事後確率最大四分木を計算
     print(f"Computing MAP quadtree with max_depth={max_depth}...")
@@ -1659,14 +1711,14 @@ def estimate_label_gibbs_sampling(
     )
     quadtree_time = time.time() - quadtree_start
     
-    print(f"✓ MAP quadtree created in {quadtree_time:.2f}s:")
+    print(f"[OK] MAP quadtree created in {quadtree_time:.2f}s:")
     print(f"  - Total nodes: {len(all_nodes)}")
     print(f"  - Leaf nodes: {len(leaf_nodes)}")
     print(f"  - Internal nodes: {len(internal_nodes)}")
 
     if quadtree_output_path is not None:
         save_quadtree_image_from_leaves(leaf_nodes, H, quadtree_output_path)
-        print(f"  ✓ Saved MAP quadtree image to {quadtree_output_path}")
+        print(f"  [OK] Saved MAP quadtree image to {quadtree_output_path}")
     
     # ノードごとのピクセル対数尤度をキャッシュ化（サンプリング前に一度だけ計算）
     print()
@@ -1696,7 +1748,7 @@ def estimate_label_gibbs_sampling(
         initial_regions = get_regions_from_connections(connections)
         initial_region_path = os.path.join(region_output_dir, f"{image_stem}_0000.png")
         save_region_growing_image_from_regions(H, initial_regions, initial_region_path)
-        print(f"  ✓ Saved initial region partition to {initial_region_path}")
+        print(f"  [OK] Saved initial region partition to {initial_region_path}")
     
     # ギブスサンプリング
     alpha = cfg.alpha
@@ -1737,14 +1789,14 @@ def estimate_label_gibbs_sampling(
         _gr_time = time.time() - _t_gr
         iter_time = time.time() - iter_start_time
         region_sizes = [len(r) for r in current_regions]
-        print(f"    ✓ Iteration completed in {iter_time:.2f}s  (get_regions={_gr_time:.2f}s)")
+        print(f"    [OK] Iteration completed in {iter_time:.2f}s  (get_regions={_gr_time:.2f}s)")
         print(f"    - Regions: {len(current_regions)} regions, avg_size={np.mean(region_sizes):.1f} nodes, " 
               f"min={min(region_sizes)}, max={max(region_sizes)}")
 
         if region_output_dir is not None and (iteration + 1) % 1 == 0:
             iteration_region_path = os.path.join(region_output_dir, f"{image_stem}_{iteration + 1:04d}.png")
             save_region_growing_image_from_regions(H, current_regions, iteration_region_path)
-            print(f"    ✓ Saved region partition snapshot to {iteration_region_path}")
+            print(f"    [OK] Saved region partition snapshot to {iteration_region_path}")
 
         # 毎イテレーションごとにラベル推定
         label_est_start = time.time()
@@ -1752,21 +1804,21 @@ def estimate_label_gibbs_sampling(
             current_regions, H, W, image, label_param_with_size, pixel_param, node_likelihood_cache
         )
         label_est_time = time.time() - label_est_start
-        print(f"    ✓ Label estimation completed in {label_est_time:.2f}s")
+        print(f"    [OK] Label estimation completed in {label_est_time:.2f}s")
 
         # ラベル推定画像を保存
         if label_output_dir is not None:
             os.makedirs(label_output_dir, exist_ok=True)
             iter_label_path = os.path.join(label_output_dir, f"{image_stem}_{iteration + 1:04d}.png")
             Image.fromarray(X_est.astype(np.uint8)).save(iter_label_path)
-            print(f"    ✓ Saved label estimate to {iter_label_path}")
+            print(f"    [OK] Saved label estimate to {iter_label_path}")
 
             if label_vis_output_dir is not None and label_to_value_map is not None:
                 os.makedirs(label_vis_output_dir, exist_ok=True)
                 vis_image = build_visualize_label_image(X_est, label_to_value_map)
                 iter_vis_path = os.path.join(label_vis_output_dir, f"{image_stem}_{iteration + 1:04d}.png")
                 Image.fromarray(vis_image).save(iter_vis_path)
-                print(f"    ✓ Saved label visualization to {iter_vis_path}")
+                print(f"    [OK] Saved label visualization to {iter_vis_path}")
 
         # Overall Accuracy を計算し、差分画像を保存
         if true_label_array is not None:
@@ -1780,7 +1832,7 @@ def estimate_label_gibbs_sampling(
                 os.makedirs(label_diff_output_dir, exist_ok=True)
                 diff_path = os.path.join(label_diff_output_dir, f"{image_stem}_{iteration + 1:04d}.png")
                 save_diff_image(X_est, true_label_array, diff_path)
-                print(f"    ✓ Saved diff image to {diff_path}")
+                print(f"    [OK] Saved diff image to {diff_path}")
 
     # X_est はギブスサンプリングの各イテレーションで更新済み。
     # イテレーション数が0の場合のフォールバック。
@@ -1800,7 +1852,7 @@ def estimate_label_gibbs_sampling(
             f.write("iteration,overall_accuracy\n")
             for iter_num, oa in oa_history:
                 f.write(f"{iter_num},{oa:.6f}\n")
-        print(f"  ✓ OA log saved to {oa_log_filepath}")
+        print(f"  [OK] OA log saved to {oa_log_filepath}")
 
     return X_est
 
@@ -1852,6 +1904,7 @@ def estimate_segmentation(image_path, cfg: Config, oa_error_csv_path=None):
     Args:
         image_path: 入力画像ファイルパス
         cfg: Config インスタンス
+        oa_error_csv_path: 全体の誤差推移を保存するCSVパス
     
     Returns:
         X_est: 推定ラベル画像
@@ -1864,35 +1917,32 @@ def estimate_segmentation(image_path, cfg: Config, oa_error_csv_path=None):
     image = image.astype(np.float64)
     H, W = image.shape[:2]
     channel_info = 1 if image.ndim == 2 else image.shape[2]
-    print(f"    ✓ Image loaded: {H}×{W}×{channel_info}ch (took {time.time() - load_start:.2f}s)")
+    print(f"    [OK] Image loaded: {H}x{W}x{channel_info}ch (took {time.time() - load_start:.2f}s)")
 
     image_stem = os.path.splitext(os.path.basename(image_path))[0]
+    
+    # 出力先ルートとサブフォルダの解決 (Gibbs専用フォルダに置換)
+    base_output_dir = cfg.est_label_folder_path.replace("estimation_results", "estimation_results_gibbs", 1)
     if oa_error_csv_path is None:
-        oa_error_csv_path = getattr(cfg, "oa_error_csv_path", None)
+        oa_error_csv_path = os.path.join(base_output_dir, "oa_error_trend.csv")
 
-    # 出力ディレクトリの設定
-    region_output_dir = os.path.join(cfg.est_label_folder_path, cfg.est_region_dirname)
-    quadtree_output_dir = os.path.join(cfg.est_label_folder_path, cfg.est_quadtree_dirname)
+    region_output_dir = os.path.join(base_output_dir, cfg.est_region_dirname)
+    quadtree_output_dir = os.path.join(base_output_dir, cfg.est_quadtree_dirname)
     quadtree_output_path = os.path.join(quadtree_output_dir, f"{image_stem}.png")
-    label_output_dir = os.path.join(cfg.est_label_folder_path, cfg.est_label_dirname)
+    label_output_dir = os.path.join(base_output_dir, cfg.est_label_dirname)
     label_vis_output_dir = os.path.join(label_output_dir, cfg.est_label_visualize_dirname)
-    label_diff_output_dir = cfg.est_label_diff_dir
+    label_diff_output_dir = os.path.join(label_output_dir, "diff")
 
     # OA ログファイルパスの設定（画像ごとに独立したファイルを作成）
-    oa_log_dir = os.path.dirname(cfg.oa_log_filepath)
-    oa_log_basename = os.path.basename(cfg.oa_log_filepath)
-    image_oa_log_path = (
-        os.path.join(oa_log_dir, f"{image_stem}_{oa_log_basename}") if oa_log_dir
-        else f"{image_stem}_{oa_log_basename}"
-    )
+    oa_log_dir = os.path.join(base_output_dir, "oa_log")
+    image_oa_log_path = os.path.join(oa_log_dir, f"{image_stem}_oa_log.csv")
 
     os.makedirs(region_output_dir, exist_ok=True)
     os.makedirs(quadtree_output_dir, exist_ok=True)
     os.makedirs(label_output_dir, exist_ok=True)
     os.makedirs(label_vis_output_dir, exist_ok=True)
     os.makedirs(label_diff_output_dir, exist_ok=True)
-    if oa_log_dir:
-        os.makedirs(oa_log_dir, exist_ok=True)
+    os.makedirs(oa_log_dir, exist_ok=True)
 
     # 正解ラベルを読み込む（存在する場合のみ）
     true_label_array = None
@@ -1940,68 +1990,75 @@ def estimate_segmentation(image_path, cfg: Config, oa_error_csv_path=None):
         label_to_value_map=label_to_value_map,
         oa_error_csv_path=oa_error_csv_path,
     )
-    print(f"    ✓ Segmentation completed (took {time.time() - seg_start:.2f}s)")
+    print(f"    [OK] Segmentation completed (took {time.time() - seg_start:.2f}s)")
     
     return X_est
 
 
-def save_results(X_est, output_dir, image_name, label_to_value_map):
+def save_results(X_est, output_dir, image_name, label_to_value_map, cfg: Config):
     """
     推定結果を保存する
     
     Args:
         X_est: 推定ラベル画像
-        output_dir: 出力ディレクトリ
+        output_dir: 出力先ベースディレクトリ
         image_name: 画像名
         label_to_value_map: train.py で保存した可視化値マップ
+        cfg: Config インスタンス
     """
     os.makedirs(output_dir, exist_ok=True)
 
     image_stem, _ = os.path.splitext(image_name)
-    label_dir = os.path.join(output_dir, config.est_label_dirname)
-    vis_dir = os.path.join(label_dir, config.est_label_visualize_dirname)
+    label_dir = os.path.join(output_dir, cfg.est_label_dirname)
+    vis_dir = os.path.join(label_dir, cfg.est_label_visualize_dirname)
     os.makedirs(label_dir, exist_ok=True)
     os.makedirs(vis_dir, exist_ok=True)
 
     label_path = os.path.join(label_dir, f"{image_stem}.png")
     label_image = X_est.astype(np.uint8)
     Image.fromarray(label_image).save(label_path)
-    print(f"    ✓ Saved label image to {label_path}")
+    print(f"    [OK] Saved label image to {label_path}")
 
     vis_path = os.path.join(vis_dir, f"{image_stem}.png")
     vis_image = build_visualize_label_image(X_est, label_to_value_map)
     Image.fromarray(vis_image).save(vis_path)
-    print(f"    ✓ Saved visualization to {vis_path}")
+    print(f"    [OK] Saved visualization to {vis_path}")
 
 
-if __name__ == '__main__':
-    import sys
-    
-    # config.test_image_dir 内のすべての画像を処理
-    image_dir = config.test_image_dir
+def process_test_images(cfg: Config, cfg_module) -> None:
+    """
+    すべてのテスト画像に対してセグメンテーション推定を一括実行する
+    """
+    image_dir = cfg.test_image_dir
     
     if not os.path.exists(image_dir):
-        print(f"Error: image directory not found: {image_dir}")
-        sys.exit(1)
+        raise FileNotFoundError(f"image directory not found: {image_dir}")
     
-    # 画像ファイルを取得
-    image_files = sorted([f for f in os.listdir(image_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))])
+    # 画像ファイルを取得 (主要形式＋TIFF対応)
+    image_files = sorted([
+        f for f in os.listdir(image_dir) 
+        if f.lower().endswith(('.png', '.jpg', '.jpeg', '.tif', '.tiff'))
+    ])
     
     if not image_files:
-        print(f"Error: no image files found in {image_dir}")
-        sys.exit(1)
+        raise RuntimeError(f"no image files found in {image_dir}")
     
     print(f"Found {len(image_files)} image files in {image_dir}")
     print("=" * 80)
 
-    label_to_value_map = load_label_visualization_map(config)
+    label_to_value_map = load_label_visualization_map(cfg)
     if label_to_value_map:
         print(f"Loaded label visualization map for {len(label_to_value_map)} labels")
     else:
         print("Label visualization map not found. Falling back to generated grayscale values.")
 
-    if os.path.exists(config.oa_error_csv_path):
-        os.remove(config.oa_error_csv_path)
+    # 出力先ディレクトリの設定 (Gibbs専用フォルダに置換)
+    base_output_dir = cfg.est_label_folder_path.replace("estimation_results", "estimation_results_gibbs", 1)
+    os.makedirs(base_output_dir, exist_ok=True)
+
+    oa_error_csv_path = os.path.join(base_output_dir, "oa_error_trend.csv")
+    if os.path.exists(oa_error_csv_path):
+        os.remove(oa_error_csv_path)
     
     # 各画像に対してセグメンテーション推定を実行
     total_start_time = time.time()
@@ -2013,15 +2070,15 @@ if __name__ == '__main__':
             file_start_time = time.time()
             
             # セグメンテーション推定
-            X_est = estimate_segmentation(image_path, config)
+            X_est = estimate_segmentation(image_path, cfg, oa_error_csv_path=oa_error_csv_path)
             
             # 結果を保存
-            save_results(X_est, config.est_label_folder_path, image_file, label_to_value_map)
+            save_results(X_est, base_output_dir, image_file, label_to_value_map, cfg)
             
             elapsed = time.time() - file_start_time
-            print(f"  ✓ Completed {image_file} ({elapsed:.2f}s)")
+            print(f"  [OK] Completed {image_file} ({elapsed:.2f}s)")
         except Exception as e:
-            print(f"  ✗ Error processing {image_file}: {e}")
+            print(f"  [ERROR] Error processing {image_file}: {e}")
             import traceback
             traceback.print_exc()
     
@@ -2029,3 +2086,16 @@ if __name__ == '__main__':
     print("\n" + "=" * 80)
     print(f"All {len(image_files)} images processed in {total_time:.2f}s!")
     print(f"Average time per image: {total_time / len(image_files):.2f}s")
+
+
+if __name__ == '__main__':
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="ddCRP Image Segmentation (Gibbs Sampling)")
+    parser.add_argument("--config", type=str, default="config.py", help="Path to config file (default: config.py)")
+    args = parser.parse_args()
+    
+    print(f"Loading custom config from: {args.config}")
+    cfg, cfg_module = load_custom_config(args.config)
+    
+    process_test_images(cfg, cfg_module)
