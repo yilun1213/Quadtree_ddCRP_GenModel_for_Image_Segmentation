@@ -113,5 +113,32 @@ def train(config: Config):
 
 
 
+def load_custom_config(config_path: str) -> Config:
+    import importlib.util
+    import sys
+    abs_path = os.path.abspath(config_path)
+    if not os.path.exists(abs_path):
+        raise FileNotFoundError(f"Config file not found: {abs_path}")
+    module_name = "custom_config_train"
+    spec = importlib.util.spec_from_file_location(module_name, abs_path)
+    module = importlib.util.module_from_spec(spec)
+    config_dir = os.path.dirname(abs_path)
+    if config_dir not in sys.path:
+        sys.path.insert(0, config_dir)
+    spec.loader.exec_module(module)
+    return module.config
+
+
 if __name__ == '__main__':
-    train(config)
+    import argparse
+    parser = argparse.ArgumentParser(description="ddCRP Parameter Estimation (Train)")
+    parser.add_argument("--config", type=str, default="config.py", help="Path to config file (default: config.py)")
+    args = parser.parse_args()
+    
+    if args.config != "config.py":
+        print(f"Loading custom config from: {args.config}")
+        cfg = load_custom_config(args.config)
+    else:
+        cfg = config
+        
+    train(cfg)

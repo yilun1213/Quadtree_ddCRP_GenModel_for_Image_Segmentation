@@ -1,6 +1,4 @@
-# generate.py
-
-from config_gen import Config, DataSavingConfig, load_config
+from config_gen import Config, DataSavingConfig
 import os
 import sys
 import numpy as np
@@ -9,6 +7,28 @@ import random
 from model.quadtree.node import Node
 import traceback
 from typing import Callable
+import argparse
+import importlib.util
+
+def load_config_from_path(config_path: str) -> Config:
+    abs_path = os.path.abspath(config_path)
+    if not os.path.exists(abs_path):
+        raise FileNotFoundError(f"設定ファイルが見つかりません: {config_path}")
+    
+    module_name = os.path.splitext(os.path.basename(abs_path))[0]
+    
+    spec = importlib.util.spec_from_file_location(module_name, abs_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"設定ファイルを読み込めませんでした: {config_path}")
+        
+    config_module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = config_module
+    spec.loader.exec_module(config_module)
+    
+    if not hasattr(config_module, 'load_config'):
+        raise AttributeError(f"指定された設定ファイルに 'load_config' 関数が定義されていません: {config_path}")
+        
+    return config_module.load_config()
 
 def ensure_split_dirs(base_dir: str) -> None:
     for sub in ("images", "labels", "labels/visualize", "regions", "quadtrees"):
@@ -46,28 +66,60 @@ def overlap_1d(a1: int, a2: int, b1: int, b2: int) -> bool:
 def precompute_adjacencies(all_leaves: list[Node]) -> dict[Node, list[Node]]:
     """
     事前にすべての葉ノード間の隣接関係を計算し、辞書として返す。
+    O(N)のグリッドベースの実装で高速化。
     """
-    adjacency_dict = {leaf: [] for leaf in all_leaves}
-    # 葉ノードを空間的に効率よく検索できるようにグリッドにマッピングする
-    # ここでは簡単のため、総当たりで計算するが、それでも一度だけなので許容範囲
-    for i, leaf1 in enumerate(all_leaves):
-        for leaf2 in all_leaves[i + 1:]:
-            # 水平方向の隣接チェック
-            is_horizontally_adjacent = (leaf1.right_edge == leaf2.left_edge or
-                                        leaf2.right_edge == leaf1.left_edge)
-            y_overlap = (leaf1.upper_edge < leaf2.lower_edge and
-                         leaf1.lower_edge > leaf2.upper_edge)
-
-            # 垂直方向の隣接チェック
-            is_vertically_adjacent = (leaf1.lower_edge == leaf2.upper_edge or
-                                      leaf2.lower_edge == leaf1.upper_edge)
-            x_overlap = (leaf1.left_edge < leaf2.right_edge and
-                         leaf1.right_edge > leaf2.left_edge)
-
-            if (is_horizontally_adjacent and y_overlap) or (is_vertically_adjacent and x_overlap):
-                adjacency_dict[leaf1].append(leaf2)
-                adjacency_dict[leaf2].append(leaf1)
-    return adjacency_dict
+    if not all_leaves:
+        return {}
+        
+    max_x = max(leaf.right_edge for leaf in all_leaves)
+    max_y = max(leaf.lower_edge for leaf in all_leaves)
+    
+    grid = [[None for _ in range(max_x)] for _ in range(max_y)]
+    for leaf in all_leaves:
+        for r in range(leaf.upper_edge, leaf.lower_edge):
+            for c in range(leaf.left_edge, leaf.right_edge):
+                grid[r][c] = leaf
+                
+    adjacency_dict = {leaf: set() for leaf in all_leaves}
+    
+    for leaf in all_leaves:
+        # 上辺のチェック
+        if leaf.upper_edge > 0:
+            r = leaf.upper_edge - 1
+            for c in range(leaf.left_edge, leaf.right_edge):
+                neighbor = grid[r][c]
+                if neighbor and neighbor != leaf:
+                    adjacency_dict[leaf].add(neighbor)
+                    adjacency_dict[neighbor].add(leaf)
+                    
+        # 下辺のチェック
+        if leaf.lower_edge < max_y:
+            r = leaf.lower_edge
+            for c in range(leaf.left_edge, leaf.right_edge):
+                neighbor = grid[r][c]
+                if neighbor and neighbor != leaf:
+                    adjacency_dict[leaf].add(neighbor)
+                    adjacency_dict[neighbor].add(leaf)
+                    
+        # 左辺のチェック
+        if leaf.left_edge > 0:
+            c = leaf.left_edge - 1
+            for r in range(leaf.upper_edge, leaf.lower_edge):
+                neighbor = grid[r][c]
+                if neighbor and neighbor != leaf:
+                    adjacency_dict[leaf].add(neighbor)
+                    adjacency_dict[neighbor].add(leaf)
+                    
+        # 右辺のチェック
+        if leaf.right_edge < max_x:
+            c = leaf.right_edge
+            for r in range(leaf.upper_edge, leaf.lower_edge):
+                neighbor = grid[r][c]
+                if neighbor and neighbor != leaf:
+                    adjacency_dict[leaf].add(neighbor)
+                    adjacency_dict[neighbor].add(leaf)
+                    
+    return {leaf: list(neighbors) for leaf, neighbors in adjacency_dict.items()}
 
 
 def ddcrp_region_generation(
@@ -119,11 +171,11 @@ def ddcrp_region_generation(
         affinities = {}
         affinity_sum = 0.0
         for leaf_neighbor in neighbors:
-            aff = affinity_func(leaf_s, leaf_neighbor, adjacency_dict, **affinity_params)
-            if aff > 0:
-                affinities[leaf_neighbor] = aff
-                affinity_sum += aff
-                affinity_values.append(aff)
+            aff_log = affinity_func(leaf_s, leaf_neighbor, adjacency_dict, **affinity_params)
+            aff = np.exp(aff_log)
+            affinities[leaf_neighbor] = aff
+            affinity_sum += aff
+            affinity_values.append(aff)
         
         # サンプリング確率を計算
         denominator = alpha + affinity_sum
@@ -381,11 +433,20 @@ def generate_split_data(config: Config, split_cfg: DataSavingConfig, split_name:
 
 
 def main():
-    # 設定の読み込み（config_gen.py 側でパラメータディレクトリ/ファイル名を管理）
+    parser = argparse.ArgumentParser(description="Generate synthetic data for image segmentation using Quadtree-ddCRP.")
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="config_gen.py",
+        help="Path to the config Python file (default: config_gen.py)"
+    )
+    args = parser.parse_args()
+
+    # 設定の読み込み
     try:
-        config_gen = load_config()
-    except FileNotFoundError as e:
-        print("エラー: パラメータファイルが見つかりません。")
+        config_gen = load_config_from_path(args.config)
+    except Exception as e:
+        print("エラー: 設定ファイルの読み込みに失敗しました。")
         print(str(e))
         sys.exit(1)
 

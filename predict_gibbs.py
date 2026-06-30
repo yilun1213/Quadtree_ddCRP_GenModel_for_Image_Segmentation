@@ -1488,78 +1488,106 @@ def compute_log_affinity(leaf1, leaf2, adjacency_dict, cfg: Config):
 def sample_connection(leaf_node, connections, leaf_nodes, adjacency_dict, 
                      image, label_param, pixel_param, cfg: Config, node_likelihood_cache, alpha=0.001,
                      verbose=False):
-    _t0 = time.time()
-
-    # 1. 現在の接続を一時的に削除（ddCRPの基本操作）
+    global _node_to_region, _base_region_log_M_cache
+    
+    r_old = _node_to_region.get(leaf_node)
+    if r_old is None:
+        r_old = frozenset([leaf_node])
+        _node_to_region[leaf_node] = r_old
+        log_M_terms = compute_log_marginal_terms(list(r_old), image, label_param, pixel_param, node_likelihood_cache)
+        _base_region_log_M_cache[r_old] = _logsumexp(log_M_terms)
+        
+    old_target = connections.get(leaf_node)
     if leaf_node in connections:
         del connections[leaf_node]
         
-    # 2. 削除後のベース領域 (R_{-s}) を計算
-    regions_before = get_regions_from_connections(connections)
-    
-    # 各ノードがどのベース領域に属しているかのマッピングを作成
-    node_to_region_base = {}
-    for region_nodes in regions_before:
-        for n in region_nodes:
-            node_to_region_base[n] = region_nodes
+    if len(r_old) <= 1:
+        r_leaf_base = r_old
+        r_rest = frozenset()
+    else:
+        in_edges = {n: [] for n in r_old}
+        for n in r_old:
+            if n != leaf_node and n in connections:
+                parent = connections[n]
+                if parent in in_edges:
+                    in_edges[parent].append(n)
+                    
+        descendants = []
+        stack = [leaf_node]
+        visited = {leaf_node}
+        while stack:
+            curr = stack.pop()
+            descendants.append(curr)
+            for child in in_edges[curr]:
+                if child not in visited:
+                    visited.add(child)
+                    stack.append(child)
+                    
+        descendant_set = frozenset(descendants)
+        r_leaf_base = descendant_set
+        r_rest = r_old - descendant_set
+        
+    log_M_leaf_base_sum = _base_region_log_M_cache.get(r_leaf_base)
+    if log_M_leaf_base_sum is None:
+        terms = compute_log_marginal_terms(list(r_leaf_base), image, label_param, pixel_param, node_likelihood_cache)
+        log_M_leaf_base_sum = _logsumexp(terms)
+        _base_region_log_M_cache[r_leaf_base] = log_M_leaf_base_sum
+        
+    for n in r_leaf_base:
+        _node_to_region[n] = r_leaf_base
+        
+    if r_rest:
+        log_M_rest_sum = _base_region_log_M_cache.get(r_rest)
+        if log_M_rest_sum is None:
+            terms = compute_log_marginal_terms(list(r_rest), image, label_param, pixel_param, node_likelihood_cache)
+            log_M_rest_sum = _logsumexp(terms)
+            _base_region_log_M_cache[r_rest] = log_M_rest_sum
+        for n in r_rest:
+            _node_to_region[n] = r_rest
 
-    # connections から消えた孤立ノード用に、ノードごとの単一領域を再利用する。
-    # これにより r_s(c_-s) == r_{s'}(c_-s) の判定が自己結合時にも安定する。
-    singleton_region_cache = {}
-
-    def _get_base_region(node):
-        region = node_to_region_base.get(node)
-        if region is not None:
-            return region
-        if node not in singleton_region_cache:
-            singleton_region_cache[node] = [node]
-        return singleton_region_cache[node]
-            
-    # leaf_node のベース領域 r_l を取得（どこにも属していない場合は単独）
-    r_leaf_base = _get_base_region(leaf_node)
-    
-    # ベース領域 M(r_l) の対数尤度を計算
-    log_M_leaf_base_terms = compute_log_marginal_terms(r_leaf_base, image, label_param, pixel_param, node_likelihood_cache)
-    log_M_leaf_base_sum = _logsumexp(log_M_leaf_base_terms)
-
-    # 領域ごとの尤度キャッシュ（候補ごとの再計算を防ぐ）
-    base_region_log_M_cache = { id(r_leaf_base): log_M_leaf_base_sum }
+    log_M_leaf_base_sum = _base_region_log_M_cache[r_leaf_base]
 
     candidates = list(adjacency_dict.get(leaf_node, [])) + [leaf_node]
     log_probs = []
     
+    base_region_log_M_cache = { r_leaf_base: log_M_leaf_base_sum }
+    if r_rest:
+        base_region_log_M_cache[r_rest] = _base_region_log_M_cache[r_rest]
+
     for candidate in candidates:
-        r_cand_base = _get_base_region(candidate)
-        
-        # 親和度
+        r_cand_base = _node_to_region.get(candidate)
+        if r_cand_base is None:
+            r_cand_base = frozenset([candidate])
+            _node_to_region[candidate] = r_cand_base
+            terms = compute_log_marginal_terms(list(r_cand_base), image, label_param, pixel_param, node_likelihood_cache)
+            _base_region_log_M_cache[r_cand_base] = _logsumexp(terms)
+            
         log_affinity = compute_log_affinity(leaf_node, candidate, adjacency_dict, cfg)
         prior_prob = _safe_log(alpha) if candidate == leaf_node else log_affinity
         
-        # 尤度比 Γ(Y, R) の計算
-        if id(r_leaf_base) == id(r_cand_base):
-            # 結合しても領域構造が変わらない場合
+        if r_leaf_base == r_cand_base:
             log_likelihood_ratio = 0.0
         else:
-            # 結合によって2つの領域が統合される場合
-            r_merged = r_leaf_base + r_cand_base
+            r_merged = r_leaf_base | r_cand_base
+            log_M_merged_sum = _base_region_log_M_cache.get(r_merged)
+            if log_M_merged_sum is None:
+                log_M_merged_terms = compute_log_marginal_terms(list(r_merged), image, label_param, pixel_param, node_likelihood_cache)
+                log_M_merged_sum = _logsumexp(log_M_merged_terms)
+                _base_region_log_M_cache[r_merged] = log_M_merged_sum
+                
+            if r_cand_base not in base_region_log_M_cache:
+                log_M_cand_base_sum = _base_region_log_M_cache.get(r_cand_base)
+                if log_M_cand_base_sum is None:
+                    terms = compute_log_marginal_terms(list(r_cand_base), image, label_param, pixel_param, node_likelihood_cache)
+                    log_M_cand_base_sum = _logsumexp(terms)
+                    _base_region_log_M_cache[r_cand_base] = log_M_cand_base_sum
+                base_region_log_M_cache[r_cand_base] = log_M_cand_base_sum
+            log_M_cand_base_sum = base_region_log_M_cache[r_cand_base]
             
-            # 統合された領域 M(r_k)
-            log_M_merged_terms = compute_log_marginal_terms(r_merged, image, label_param, pixel_param, node_likelihood_cache)
-            log_M_merged_sum = _logsumexp(log_M_merged_terms)
-            
-            # 結合先のベース領域 M(r_m)
-            cand_id = id(r_cand_base)
-            if cand_id not in base_region_log_M_cache:
-                terms = compute_log_marginal_terms(r_cand_base, image, label_param, pixel_param, node_likelihood_cache)
-                base_region_log_M_cache[cand_id] = _logsumexp(terms)
-            log_M_cand_base_sum = base_region_log_M_cache[cand_id]
-            
-            # log_likelihood_ratio = log M(r_k) - log M(r_l) - log M(r_m)
             log_likelihood_ratio = log_M_merged_sum - log_M_leaf_base_sum - log_M_cand_base_sum
             
         log_probs.append(prior_prob + log_likelihood_ratio)
         
-    # サンプリング確率計算のロバスト化
     log_probs = np.array(log_probs, dtype=np.float64)
     log_probs[np.isnan(log_probs)] = -np.inf
     
@@ -1567,7 +1595,6 @@ def sample_connection(leaf_node, connections, leaf_nodes, adjacency_dict,
     posinf_mask = np.isposinf(log_probs)
     
     if np.any(posinf_mask):
-        # +inf がある場合はその候補群に一様配分
         probs[posinf_mask] = 1.0 / float(np.sum(posinf_mask))
     else:
         finite_mask = np.isfinite(log_probs)
@@ -1579,7 +1606,6 @@ def sample_connection(leaf_node, connections, leaf_nodes, adjacency_dict,
             if np.isfinite(weight_sum) and weight_sum > 0.0:
                 probs = weights / weight_sum
                 
-    # 正規化に失敗した場合は自己結合（最後の候補 = leaf_node）へフォールバック
     if (not np.all(np.isfinite(probs))) or float(np.sum(probs)) <= 0.0:
         probs.fill(0.0)
         probs[-1] = 1.0
@@ -1590,6 +1616,19 @@ def sample_connection(leaf_node, connections, leaf_nodes, adjacency_dict,
     new_target = candidates[new_idx]
     
     connections[leaf_node] = new_target
+    
+    if new_target != leaf_node:
+        r_cand_base = _node_to_region[new_target]
+        r_merged = r_leaf_base | r_cand_base
+        log_M_merged_sum = _base_region_log_M_cache.get(r_merged)
+        if log_M_merged_sum is None:
+            terms = compute_log_marginal_terms(list(r_merged), image, label_param, pixel_param, node_likelihood_cache)
+            log_M_merged_sum = _logsumexp(terms)
+            _base_region_log_M_cache[r_merged] = log_M_merged_sum
+            
+        for n in r_merged:
+            _node_to_region[n] = r_merged
+            
     return new_target, float(probs[new_idx])
 
 
@@ -1735,6 +1774,18 @@ def estimate_label_gibbs_sampling(
     # 初期化
     print(f"\nInitializing Gibbs sampling...")
     connections = initialize_connections(leaf_nodes)
+    
+    # グローバルな領域トラッキング・尤度キャッシュの初期化
+    global _node_to_region, _base_region_log_M_cache
+    _node_to_region = {}
+    _base_region_log_M_cache = {}
+    initial_regions = get_regions_from_connections(connections)
+    for r in initial_regions:
+        r_set = frozenset(r)
+        log_M_terms = compute_log_marginal_terms(list(r_set), image, label_param, pixel_param, node_likelihood_cache)
+        _base_region_log_M_cache[r_set] = _logsumexp(log_M_terms)
+        for n in r_set:
+            _node_to_region[n] = r_set
 
     # label_paramにimage_sizeを追加（ループ前に一度だけ作成）
     label_param_with_size = label_param.copy()
@@ -1745,7 +1796,6 @@ def estimate_label_gibbs_sampling(
     oa_history = []
 
     if region_output_dir is not None:
-        initial_regions = get_regions_from_connections(connections)
         initial_region_path = os.path.join(region_output_dir, f"{image_stem}_0000.png")
         save_region_growing_image_from_regions(H, initial_regions, initial_region_path)
         print(f"  [OK] Saved initial region partition to {initial_region_path}")

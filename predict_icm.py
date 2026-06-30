@@ -1538,58 +1538,116 @@ def update_connection_icm(leaf_node, connections, leaf_nodes, adjacency_dict,
     また、ラベルについても周辺化（logsumexp）ではなく、その領域での最適ラベルの尤度（np.max）を使用する。
     """
     current_target = connections.get(leaf_node)
+    r_old = _node_to_region.get(leaf_node)
+    if r_old is None:
+        r_old = frozenset([leaf_node])
+        _node_to_region[leaf_node] = r_old
+        log_M_max = float(np.max(compute_log_marginal_terms(list(r_old), image, label_param, pixel_param, node_likelihood_cache)))
+        _base_region_log_M_cache[r_old] = log_M_max
+        
     if leaf_node in connections:
         del connections[leaf_node]
         
-    regions_before = get_regions_from_connections(connections)
-    node_to_region_base = {n: r for r in regions_before for n in r}
+    if len(r_old) <= 1:
+        r_leaf_base = r_old
+        r_rest = frozenset()
+    else:
+        in_edges = {n: [] for n in r_old}
+        for n in r_old:
+            if n != leaf_node and n in connections:
+                parent = connections[n]
+                if parent in in_edges:
+                    in_edges[parent].append(n)
+                    
+        descendants = []
+        stack = [leaf_node]
+        visited = {leaf_node}
+        while stack:
+            curr = stack.pop()
+            descendants.append(curr)
+            for child in in_edges[curr]:
+                if child not in visited:
+                    visited.add(child)
+                    stack.append(child)
+                    
+        descendant_set = frozenset(descendants)
+        r_leaf_base = descendant_set
+        r_rest = r_old - descendant_set
+        
+    log_M_leaf_base_max = _base_region_log_M_cache.get(r_leaf_base)
+    if log_M_leaf_base_max is None:
+        log_M_leaf_base_max = float(np.max(compute_log_marginal_terms(list(r_leaf_base), image, label_param, pixel_param, node_likelihood_cache)))
+        _base_region_log_M_cache[r_leaf_base] = log_M_leaf_base_max
+        
+    for n in r_leaf_base:
+        _node_to_region[n] = r_leaf_base
+        
+    if r_rest:
+        log_M_rest_max = _base_region_log_M_cache.get(r_rest)
+        if log_M_rest_max is None:
+            log_M_rest_max = float(np.max(compute_log_marginal_terms(list(r_rest), image, label_param, pixel_param, node_likelihood_cache)))
+            _base_region_log_M_cache[r_rest] = log_M_rest_max
+        for n in r_rest:
+            _node_to_region[n] = r_rest
 
-    # connections から消えた孤立ノード用に、ノードごとの単一領域を再利用する。
-    singleton_region_cache = {}
-
-    def _get_base_region(node):
-        region = node_to_region_base.get(node)
-        if region is not None:
-            return region
-        if node not in singleton_region_cache:
-            singleton_region_cache[node] = [node]
-        return singleton_region_cache[node]
-
-    r_leaf_base = _get_base_region(leaf_node)
-
-    # 周辺化(logsumexp)ではなく、最適ラベルの尤度(max)を使用する
-    log_M_leaf_base_max = float(np.max(compute_log_marginal_terms(r_leaf_base, image, label_param, pixel_param, node_likelihood_cache)))
-    base_region_log_M_cache = {id(r_leaf_base): log_M_leaf_base_max}
+    log_M_leaf_base_max = _base_region_log_M_cache[r_leaf_base]
 
     candidates = list(adjacency_dict.get(leaf_node, [])) + [leaf_node]
     log_probs = []
     
+    base_region_log_M_cache = { r_leaf_base: log_M_leaf_base_max }
+    if r_rest:
+        base_region_log_M_cache[r_rest] = _base_region_log_M_cache[r_rest]
+
     for candidate in candidates:
-        r_cand_base = _get_base_region(candidate)
+        r_cand_base = _node_to_region.get(candidate)
+        if r_cand_base is None:
+            r_cand_base = frozenset([candidate])
+            _node_to_region[candidate] = r_cand_base
+            log_M_max = float(np.max(compute_log_marginal_terms(list(r_cand_base), image, label_param, pixel_param, node_likelihood_cache)))
+            _base_region_log_M_cache[r_cand_base] = log_M_max
+            
         prior_prob = _safe_log(alpha) if candidate == leaf_node else compute_log_affinity(leaf_node, candidate, adjacency_dict, cfg)
         
-        if id(r_leaf_base) == id(r_cand_base):
+        if r_leaf_base == r_cand_base:
             log_likelihood_ratio = 0.0
         else:
-            r_merged = r_leaf_base + r_cand_base
-            log_M_merged_max = float(np.max(compute_log_marginal_terms(r_merged, image, label_param, pixel_param, node_likelihood_cache)))
-            
-            cand_id = id(r_cand_base)
-            if cand_id not in base_region_log_M_cache:
-                base_region_log_M_cache[cand_id] = float(np.max(compute_log_marginal_terms(r_cand_base, image, label_param, pixel_param, node_likelihood_cache)))
-            log_M_cand_base_max = base_region_log_M_cache[cand_id]
+            r_merged = r_leaf_base | r_cand_base
+            log_M_merged_max = _base_region_log_M_cache.get(r_merged)
+            if log_M_merged_max is None:
+                log_M_merged_max = float(np.max(compute_log_marginal_terms(list(r_merged), image, label_param, pixel_param, node_likelihood_cache)))
+                _base_region_log_M_cache[r_merged] = log_M_merged_max
+                
+            if r_cand_base not in base_region_log_M_cache:
+                log_M_cand_base_max = _base_region_log_M_cache.get(r_cand_base)
+                if log_M_cand_base_max is None:
+                    log_M_cand_base_max = float(np.max(compute_log_marginal_terms(list(r_cand_base), image, label_param, pixel_param, node_likelihood_cache)))
+                    _base_region_log_M_cache[r_cand_base] = log_M_cand_base_max
+                base_region_log_M_cache[r_cand_base] = log_M_cand_base_max
+            log_M_cand_base_max = base_region_log_M_cache[r_cand_base]
             
             log_likelihood_ratio = log_M_merged_max - log_M_leaf_base_max - log_M_cand_base_max
             
         log_probs.append(prior_prob + log_likelihood_ratio)
         
-    # 確率的サンプリングを行わず、最大のスコアを持つ結合先を選択 (Greedy)
     log_probs_arr = np.array(log_probs, dtype=np.float64)
     log_probs_arr[np.isnan(log_probs_arr)] = -np.inf
     best_idx = int(np.argmax(log_probs_arr))
     new_target = candidates[best_idx]
     
     connections[leaf_node] = new_target
+    
+    if new_target != leaf_node:
+        r_cand_base = _node_to_region[new_target]
+        r_merged = r_leaf_base | r_cand_base
+        log_M_merged_max = _base_region_log_M_cache.get(r_merged)
+        if log_M_merged_max is None:
+            log_M_merged_max = float(np.max(compute_log_marginal_terms(list(r_merged), image, label_param, pixel_param, node_likelihood_cache)))
+            _base_region_log_M_cache[r_merged] = log_M_merged_max
+            
+        for n in r_merged:
+            _node_to_region[n] = r_merged
+            
     return new_target, current_target != new_target
 
 
@@ -1632,6 +1690,19 @@ def estimate_label_icm(
     node_likelihood_cache = build_node_likelihood_cache(leaf_nodes, image, label_param, pixel_param, pixel_log_likelihood_integrals, cfg=cfg, image_stem=image_stem)
 
     connections = initialize_connections(leaf_nodes)
+    
+    # グローバルな領域トラッキング・尤度キャッシュの初期化
+    global _node_to_region, _base_region_log_M_cache
+    _node_to_region = {}
+    _base_region_log_M_cache = {}
+    initial_regions = get_regions_from_connections(connections)
+    for r in initial_regions:
+        r_set = frozenset(r)
+        log_M_max = float(np.max(compute_log_marginal_terms(list(r_set), image, label_param, pixel_param, node_likelihood_cache)))
+        _base_region_log_M_cache[r_set] = log_M_max
+        for n in r_set:
+            _node_to_region[n] = r_set
+
     label_param_with_size = label_param.copy()
     label_param_with_size['image_size'] = H
     X_est, oa_history = None, []

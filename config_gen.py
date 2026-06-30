@@ -145,10 +145,10 @@ def load_config() -> Config:
     # - log_affinity_target_shallow_exp: リンク先が浅いほど（大きいほど）優遇する単純モデル
     # - log_affinity_boundary_only: 共有境界線の長さのみに基づく
     # - log_affinity_constant: 一定の親和度（テスト用）
-    affinity_function = affinity_module.log_affinity_boundary_and_depth
+    # - log_affinity_depth_only: 深さの差に基づく対数親和度（paper.tex 仕様）
+    affinity_function = affinity_module.log_affinity_depth_only
     affinity_function_params = {
-        "beta": 8.0,  # 共有境界長 B(s, s') の重み
-        "eta": 6.0,    # depth(s) - depth(s') の重み
+        "eta": 10.0,    # depth(s) - depth(s') の重み
     }
 
     return Config(
@@ -161,7 +161,7 @@ def load_config() -> Config:
         seed=1,
         quadtree_config=quadtree_config,
         affinity_func=affinity_function,
-        alpha=0.00000001,  # ddCRP パラメータ（小さくすると結合しやすく、新領域が減る）
+        alpha=1e-8,  # ddCRP パラメータ（自己接続の重み、paper.tex に従い 1.0 * 10^-8）
         affinity_params=affinity_function_params,
         label_config=label_config,
         pixel_config=pixel_config,

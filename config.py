@@ -83,11 +83,10 @@ config = Config(
     label_model=label_model,
     pixel_model=pixel_model,
     quadtree_model=quadtree_model,
-    affinity_func=region_model.log_affinity_boundary_and_depth,
+    affinity_func=region_model.log_affinity_depth_only,
     alpha=_ALPHA,  # ddCRPパラメータ（新領域生成確率）
     gibbs_num_iterations=5,
     affinity_params={
-        "beta": _BETA,
         "eta": _ETA,
     },
     oa_log_filepath=os.path.join(DATASET_DIR, "estimation_results" + _PARAM_SUFFIX, "label", "oa_log.txt"),
