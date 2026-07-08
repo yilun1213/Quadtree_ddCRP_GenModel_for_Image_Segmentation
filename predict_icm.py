@@ -1903,6 +1903,18 @@ def process_test_images(cfg: Config, cfg_module) -> None:
 
     # 出力先ディレクトリの設定 (ICM専用フォルダに置換)
     base_output_dir = cfg.est_label_folder_path.replace("estimation_results", "estimation_results_icm", 1)
+    
+    # 以前の実行結果が残らないように古いディレクトリをクリーンアップ
+    import shutil
+    for sub in [cfg.est_region_dirname, cfg.est_quadtree_dirname, cfg.est_label_dirname, "oa_log"]:
+        subdir = os.path.join(base_output_dir, sub)
+        if os.path.exists(subdir):
+            print(f"Clearing old directory: {subdir}")
+            try:
+                shutil.rmtree(subdir)
+            except Exception as e:
+                print(f"[WARN] Failed to clear {subdir}: {e}")
+                
     os.makedirs(base_output_dir, exist_ok=True)
 
     oa_error_csv_path = os.path.join(base_output_dir, "oa_error_trend.csv")
